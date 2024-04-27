@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:remote/constants/key_codes.dart';
+import 'package:remote/models/samsung_tv.dart';
 import 'package:remote/screens/remoteScreen/components/controller_button.dart';
 
 class DirectionKeys extends StatelessWidget {
+  final SmartTV tv;
   const DirectionKeys({
     super.key,
+    required this.tv,
   });
 
   @override
@@ -15,7 +19,7 @@ class DirectionKeys extends StatelessWidget {
             alignment: Alignment.topLeft,
             child: ControllerButton(
               onPressed: () async {
-                // await tv.sendKey(KeyCodes.KEY_HOME);
+                 await tv.sendKey(KeyCodes.KEY_HOME);
               },
               child: const Text(
                 "SMART",
@@ -37,7 +41,7 @@ class DirectionKeys extends StatelessWidget {
                     color: Colors.white54),
               ),
               onPressed: () async {
-                // await tv.sendKey(KeyCodes.KEY_SOURCE);
+                 await tv.sendKey(KeyCodes.KEY_SOURCE);
               },
             ),
           ),
@@ -52,7 +56,7 @@ class DirectionKeys extends StatelessWidget {
                     color: Colors.white54),
               ),
               onPressed: () async {
-                // await tv.sendKey(KeyCodes.KEY_RETURN);
+                 await tv.sendKey(KeyCodes.KEY_RETURN);
               },
             ),
           ),
@@ -67,7 +71,7 @@ class DirectionKeys extends StatelessWidget {
                     color: Colors.white54),
               ),
               onPressed: () async {
-                // await tv.sendKey(KeyCodes.KEY_EXT41);
+                 await tv.sendKey(KeyCodes.KEY_EXT41);
               },
             ),
           ),
@@ -82,7 +86,7 @@ class DirectionKeys extends StatelessWidget {
                     color: Colors.white),
               ),
               onPressed: () async {
-                // await tv.sendKey(KeyCodes.KEY_ENTER);
+                 await tv.sendKey(KeyCodes.KEY_ENTER);
               },
             ),
           ),
@@ -93,7 +97,7 @@ class DirectionKeys extends StatelessWidget {
               child: const Icon(Icons.arrow_drop_up,
                   size: 30, color: Colors.white),
               onPressed: () async {
-                // await tv.sendKey(KeyCodes.KEY_UP);
+                 await tv.sendKey(KeyCodes.KEY_UP);
               },
             ),
           ),
@@ -104,7 +108,7 @@ class DirectionKeys extends StatelessWidget {
               child: const Icon(Icons.arrow_drop_down,
                   size: 30, color: Colors.white),
               onPressed: () async {
-                // await tv.sendKey(KeyCodes.KEY_DOWN);
+                 await tv.sendKey(KeyCodes.KEY_DOWN);
               },
             ),
           ),
@@ -115,7 +119,7 @@ class DirectionKeys extends StatelessWidget {
               child:
                   const Icon(Icons.arrow_right, size: 30, color: Colors.white),
               onPressed: () async {
-                // await tv.sendKey(KeyCodes.KEY_RIGHT);
+                 await tv.sendKey(KeyCodes.KEY_RIGHT);
               },
             ),
           ),
@@ -126,7 +130,7 @@ class DirectionKeys extends StatelessWidget {
               child:
                   const Icon(Icons.arrow_left, size: 30, color: Colors.white),
               onPressed: () async {
-                // await tv.sendKey(KeyCodes.KEY_LEFT);
+                 await tv.sendKey(KeyCodes.KEY_LEFT);
               },
             ),
           ),

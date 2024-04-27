@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:remote/constants/key_codes.dart';
+import 'package:remote/models/samsung_tv.dart';
 import 'package:remote/screens/remoteScreen/components/controller_button.dart';
 
 class VolumeChannelControls extends StatelessWidget {
+  final SmartTV tv;
   const VolumeChannelControls({
-    super.key,
+    super.key, required this.tv,
   });
 
   @override
@@ -22,7 +25,7 @@ class VolumeChannelControls extends StatelessWidget {
                 child: const Icon(Icons.keyboard_arrow_up,
                     size: 20, color: Colors.white54),
                 onPressed: () async {
-                  // await tv.sendKey(KeyCodes.KEY_VOLUP);
+                   await tv.sendKey(KeyCodes.KEY_VOLUP);
                 },
               ),
               MaterialButton(
@@ -32,7 +35,7 @@ class VolumeChannelControls extends StatelessWidget {
                 child: const Icon(Icons.volume_off,
                     size: 20, color: Colors.white70),
                 onPressed: () async {
-                  // await tv.sendKey(KeyCodes.KEY_MUTE);
+                   await tv.sendKey(KeyCodes.KEY_MUTE);
                 },
               ),
               MaterialButton(
@@ -42,7 +45,7 @@ class VolumeChannelControls extends StatelessWidget {
                 child: const Icon(Icons.keyboard_arrow_down,
                     size: 20, color: Colors.white54),
                 onPressed: () async {
-                  // await tv.sendKey(KeyCodes.KEY_VOLDOWN);
+                   await tv.sendKey(KeyCodes.KEY_VOLDOWN);
                 },
               ),
             ],
@@ -60,7 +63,7 @@ class VolumeChannelControls extends StatelessWidget {
                     color: Colors.white54),
               ),
               onPressed: () async {
-                // await tv.sendKey(KeyCodes.KEY_HOME);
+                 await tv.sendKey(KeyCodes.KEY_HOME);
               },
             ),
             const SizedBox(height: 35),
@@ -74,7 +77,7 @@ class VolumeChannelControls extends StatelessWidget {
                     color: Colors.white54),
               ),
               onPressed: () async {
-                // await tv.sendKey(KeyCodes.KEY_MORE);
+                 await tv.sendKey(KeyCodes.KEY_MORE);
               },
             ),
           ],
@@ -90,7 +93,7 @@ class VolumeChannelControls extends StatelessWidget {
                 child: const Icon(Icons.keyboard_arrow_up,
                     size: 20, color: Colors.white54),
                 onPressed: () async {
-                  // await tv.sendKey(KeyCodes.KEY_CHUP);
+                   await tv.sendKey(KeyCodes.KEY_CHUP);
                 },
               ),
               const Padding(
@@ -105,7 +108,7 @@ class VolumeChannelControls extends StatelessWidget {
                 child: const Icon(Icons.keyboard_arrow_down,
                     size: 20, color: Colors.white54),
                 onPressed: () async {
-                  // await tv.sendKey(KeyCodes.KEY_CHDOWN);
+                   await tv.sendKey(KeyCodes.KEY_CHDOWN);
                 },
               ),
             ],

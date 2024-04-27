@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:remote/constants/key_codes.dart';
+import 'package:remote/models/samsung_tv.dart';
 
 import 'controller_button.dart';
 
 class NumPad extends StatelessWidget {
+  final SmartTV tv;
   const NumPad({
-    super.key,
+    super.key, required this.tv,
   });
 
   @override
@@ -26,7 +29,7 @@ class NumPad extends StatelessWidget {
                       color: Colors.white70),
                 ),
                 onPressed: () async {
-                  // await tv.sendKey(KeyCodes.KEY_1);
+                   await tv.sendKey(KeyCodes.KEY_1);
                 },
               ),
               ControllerButton(
@@ -38,7 +41,7 @@ class NumPad extends StatelessWidget {
                       color: Colors.white70),
                 ),
                 onPressed: () async {
-                  // await tv.sendKey(KeyCodes.KEY_2);
+                   await tv.sendKey(KeyCodes.KEY_2);
                 },
               ),
               ControllerButton(
@@ -50,7 +53,7 @@ class NumPad extends StatelessWidget {
                       color: Colors.white70),
                 ),
                 onPressed: () async {
-                  // // await tv.sendKey(KeyCodes.KEY_3);
+                    await tv.sendKey(KeyCodes.KEY_3);
                 },
               ),
             ],
@@ -67,7 +70,7 @@ class NumPad extends StatelessWidget {
                       color: Colors.white70),
                 ),
                 onPressed: () async {
-                  // await tv.sendKey(KeyCodes.KEY_4);
+                   await tv.sendKey(KeyCodes.KEY_4);
                 },
               ),
               ControllerButton(
@@ -79,7 +82,7 @@ class NumPad extends StatelessWidget {
                       color: Colors.white70),
                 ),
                 onPressed: () async {
-                  // await tv.sendKey(KeyCodes.KEY_5);
+                   await tv.sendKey(KeyCodes.KEY_5);
                 },
               ),
               ControllerButton(
@@ -91,7 +94,7 @@ class NumPad extends StatelessWidget {
                       color: Colors.white70),
                 ),
                 onPressed: () async {
-                  // await tv.sendKey(KeyCodes.KEY_6);
+                   await tv.sendKey(KeyCodes.KEY_6);
                 },
               ),
             ],
@@ -108,7 +111,7 @@ class NumPad extends StatelessWidget {
                       color: Colors.white70),
                 ),
                 onPressed: () async {
-                  // await tv.sendKey(KeyCodes.KEY_7);
+                   await tv.sendKey(KeyCodes.KEY_7);
                 },
               ),
               ControllerButton(
@@ -120,7 +123,7 @@ class NumPad extends StatelessWidget {
                       color: Colors.white70),
                 ),
                 onPressed: () async {
-                  // await tv.sendKey(KeyCodes.KEY_8);
+                   await tv.sendKey(KeyCodes.KEY_8);
                 },
               ),
               ControllerButton(
@@ -132,7 +135,7 @@ class NumPad extends StatelessWidget {
                       color: Colors.white70),
                 ),
                 onPressed: () async {
-                  // await tv.sendKey(KeyCodes.KEY_9);
+                   await tv.sendKey(KeyCodes.KEY_9);
                 },
               ),
             ],
@@ -149,7 +152,7 @@ class NumPad extends StatelessWidget {
                       color: Colors.white70),
                 ),
                 onPressed: () async {
-                  // await tv.sendKey(KeyCodes.KEY_TOOLS);
+                   await tv.sendKey(KeyCodes.KEY_TOOLS);
                 },
               ),
               ControllerButton(
@@ -161,7 +164,7 @@ class NumPad extends StatelessWidget {
                       color: Colors.white70),
                 ),
                 onPressed: () async {
-                  // await tv.sendKey(KeyCodes.KEY_0);
+                   await tv.sendKey(KeyCodes.KEY_0);
                 },
               ),
               ControllerButton(
@@ -173,7 +176,7 @@ class NumPad extends StatelessWidget {
                       color: Colors.white70),
                 ),
                 onPressed: () async {
-                  // await tv.sendKey(KeyCodes.KEY_GUIDE);
+                   await tv.sendKey(KeyCodes.KEY_GUIDE);
                 },
               ),
             ],
