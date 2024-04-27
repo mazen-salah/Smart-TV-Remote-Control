@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:remote/models/samsung_tv.dart';
 import 'components/components.dart';
 
 class RemoteScreen extends StatefulWidget {
@@ -10,8 +11,7 @@ class RemoteScreen extends StatefulWidget {
 }
 
 class _RemoteScreenState extends State<RemoteScreen> {
-  //TODO: implement SmartTV class
-  // late SmartTV tv;
+  SmartTV tv = SmartTV();
   bool _keypadShown = false;
 
   @override
@@ -21,13 +21,13 @@ class _RemoteScreenState extends State<RemoteScreen> {
 
   Future<void> connectTV() async {
     try {
-        // tv = await SmartTV.discover();
-        // await tv.connect();
+      tv = await SmartTV.discover();
+      await tv.connect();
       setState(() {});
     } catch (e) {
       log(e.toString());
     }
-    // log("this is the token to save somewere ${tv.token}");
+    log("this is the token to save somewere ${tv.token}");
   }
 
   void toggleKeypad() {
@@ -52,18 +52,26 @@ class _RemoteScreenState extends State<RemoteScreen> {
             const SizedBox(height: 50),
             Visibility(
               visible: _keypadShown,
-              child: NumPad(),
+              child: NumPad(tv: tv),
             ),
             Visibility(
               visible: !_keypadShown,
-              child: DirectionKeys(),
+              child: DirectionKeys(
+                tv: tv,
+              ),
             ),
             const SizedBox(height: 50),
-            ColorKeys(),
+            ColorKeys(
+              tv: tv,
+            ),
             const SizedBox(height: 50),
-            VolumeChannelControls(),
+            VolumeChannelControls(
+              tv: tv,
+            ),
             const SizedBox(height: 50),
-            MediaControls(),
+            MediaControls(
+              tv: tv,
+            ),
           ],
         ),
       ),
