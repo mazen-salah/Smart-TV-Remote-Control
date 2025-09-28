@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:remote/models/samsung_tv.dart';
 import 'package:remote/screens/remoteScreen/remote_screen.dart';
+import 'dart:async';
+import 'dart:io';
 
 class DeviceSelectionScreen extends StatefulWidget {
   const DeviceSelectionScreen({super.key});
@@ -13,11 +15,60 @@ class _DeviceSelectionScreenState extends State<DeviceSelectionScreen> {
   List<SmartTV> _availableDevices = [];
   bool _isScanning = false;
   String _scanStatus = '';
+  Timer? _wifiCheckTimer;
+  bool _wifiConnected = true;
 
   @override
   void initState() {
     super.initState();
     _startScanning();
+    _startWifiMonitoring();
+  }
+
+  @override
+  void dispose() {
+    _wifiCheckTimer?.cancel();
+    super.dispose();
+  }
+
+  void _startWifiMonitoring() {
+    _wifiCheckTimer = Timer.periodic(const Duration(seconds: 2), (timer) {
+      _checkWifiConnection();
+    });
+  }
+
+  Future<void> _checkWifiConnection() async {
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        if (!_wifiConnected) {
+          setState(() {
+            _wifiConnected = true;
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('WiFi reconectado'),
+              backgroundColor: Colors.green,
+              duration: Duration(seconds: 2),
+            ),
+          );
+          _startScanning(); // Reiniciar escaneo
+        }
+      }
+    } catch (e) {
+      if (_wifiConnected) {
+        setState(() {
+          _wifiConnected = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('WiFi desconectado - Verifica tu conexión'),
+            backgroundColor: Colors.red,
+            duration: Duration(seconds: 3),
+          ),
+        );
+      }
+    }
   }
 
   Future<void> _startScanning() async {
@@ -158,41 +209,43 @@ class _DeviceSelectionScreenState extends State<DeviceSelectionScreen> {
             
             // Device list
             Expanded(
-              child: _isScanning
-                  ? const Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          CircularProgressIndicator(
-                            valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+              child: !_wifiConnected
+                  ? _buildWifiOffState()
+                  : _isScanning
+                      ? const Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              CircularProgressIndicator(
+                                valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+                              ),
+                              SizedBox(height: 16),
+                              Text(
+                                'Buscando dispositivos Samsung...',
+                                style: TextStyle(color: Colors.white70),
+                              ),
+                            ],
                           ),
-                          SizedBox(height: 16),
-                          Text(
-                            'Buscando dispositivos Samsung...',
-                            style: TextStyle(color: Colors.white70),
-                          ),
-                        ],
-                      ),
-                    )
-                  : _availableDevices.isEmpty
-                      ? _buildEmptyState()
-                      : ListView.builder(
-                          itemCount: _availableDevices.length,
-                          itemBuilder: (context, index) {
-                            final device = _availableDevices[index];
-                            return DeviceListItem(
-                              device: device,
-                              onTap: () => _connectToDevice(device),
-                            );
-                          },
-                        ),
+                        )
+                      : _availableDevices.isEmpty
+                          ? _buildEmptyState()
+                          : ListView.builder(
+                              itemCount: _availableDevices.length,
+                              itemBuilder: (context, index) {
+                                final device = _availableDevices[index];
+                                return DeviceListItem(
+                                  device: device,
+                                  onTap: () => _connectToDevice(device),
+                                );
+                              },
+                            ),
             ),
             
             const SizedBox(height: 16),
             
             // Refresh button
             ElevatedButton.icon(
-              onPressed: _isScanning ? null : _startScanning,
+              onPressed: (!_wifiConnected || _isScanning) ? null : _startScanning,
               icon: const Icon(Icons.refresh),
               label: const Text('Buscar de nuevo'),
               style: ElevatedButton.styleFrom(
@@ -206,6 +259,53 @@ class _DeviceSelectionScreenState extends State<DeviceSelectionScreen> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildWifiOffState() {
+    return const Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.wifi_off,
+            size: 80,
+            color: Colors.red,
+          ),
+          SizedBox(height: 24),
+          Text(
+            'WiFi Desconectado',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          SizedBox(height: 16),
+          Text(
+            'Por favor, conecta tu dispositivo a una red WiFi para buscar televisores Samsung',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.white70,
+              fontSize: 16,
+            ),
+          ),
+          SizedBox(height: 24),
+          Icon(
+            Icons.wifi,
+            size: 48,
+            color: Colors.white38,
+          ),
+          SizedBox(height: 8),
+          Text(
+            'Activa WiFi y vuelve a intentar',
+            style: TextStyle(
+              color: Colors.white54,
+              fontSize: 14,
+            ),
+          ),
+        ],
       ),
     );
   }
