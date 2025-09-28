@@ -1,5 +1,7 @@
 import 'dart:developer';
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:remote/constants/key_codes.dart';
 import 'package:remote/models/samsung_tv.dart';
 import 'package:remote/screens/device_selection_screen.dart';
 import 'components/components.dart';
@@ -24,6 +26,9 @@ class _RemoteScreenState extends State<RemoteScreen> {
     super.initState();
     if (widget.selectedDevice != null) {
       tv = widget.selectedDevice!;
+      // Configurar callback de desconexión
+      tv.setOnDisconnectedCallback(_handleDisconnection);
+      
       // Si el dispositivo ya está conectado, actualizar el estado
       if (tv.isConnected) {
         setState(() {
@@ -36,13 +41,19 @@ class _RemoteScreenState extends State<RemoteScreen> {
     }
   }
 
+
   Future<void> _connectToSelectedDevice() async {
+    log('_connectToSelectedDevice called - attempting reconnection...');
     setState(() {
       _isConnecting = true;
       _connectionStatus = 'Conectando a la TV...';
     });
 
     try {
+      // Configurar callback de desconexión antes de conectar
+      tv.setOnDisconnectedCallback(_handleDisconnection);
+      
+      // Try to connect directly
       await tv.connect();
       
       setState(() {
@@ -50,34 +61,54 @@ class _RemoteScreenState extends State<RemoteScreen> {
         _isConnecting = false;
       });
       
+      log('Reconnection successful - TV is now connected');
+      
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('¡Conectado exitosamente a ${tv.deviceName ?? 'la TV Samsung'}!'),
+            content: Text('¡Reconectado exitosamente a ${tv.deviceName ?? 'la TV Samsung'}! El TV se ha encendido automáticamente.'),
             backgroundColor: Colors.green,
-            duration: const Duration(seconds: 3),
+            duration: const Duration(seconds: 4),
           ),
         );
       }
     } catch (e) {
+      log('Reconnection failed: $e');
       setState(() {
         _isConnecting = false;
         _connectionStatus = 'Error de conexión';
       });
       
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error: ${e.toString()}'),
-            backgroundColor: Colors.red,
-            duration: const Duration(seconds: 5),
-            action: SnackBarAction(
-              label: 'Reintentar',
-              textColor: Colors.white,
-              onPressed: _connectToSelectedDevice,
+        // Check if it's a connection refused error (TV is off)
+        if (e.toString().contains('Connection refused') || 
+            e.toString().contains('errno = 111')) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Text('El TV está apagado. Por favor, enciéndelo manualmente y vuelve a intentar.'),
+              backgroundColor: Colors.orange,
+              duration: const Duration(seconds: 5),
+              action: SnackBarAction(
+                label: 'Reintentar',
+                textColor: Colors.white,
+                onPressed: _connectToSelectedDevice,
+              ),
             ),
-          ),
-        );
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error al reconectar: ${e.toString()}'),
+              backgroundColor: Colors.red,
+              duration: const Duration(seconds: 5),
+              action: SnackBarAction(
+                label: 'Reintentar',
+                textColor: Colors.white,
+                onPressed: _connectToSelectedDevice,
+              ),
+            ),
+          );
+        }
       }
     }
   }
@@ -137,10 +168,114 @@ class _RemoteScreenState extends State<RemoteScreen> {
 
   void toggleKeypad() => setState(() => _keypadShown = ! _keypadShown);
 
+  Future<void> _handlePowerButton() async {
+    log('Power button pressed - turning off TV and redirecting...');
+    
+    try {
+      // Send the power command
+      await tv.sendKey(KeyCodes.KEY_POWER);
+      log('Power command sent successfully');
+      
+      // Wait a moment for the command to be sent
+      await Future.delayed(const Duration(milliseconds: 500));
+      
+      // Close connection immediately
+      tv.disconnect();
+      log('Connection closed after power command');
+      
+      // Redirect immediately
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const DeviceSelectionScreen(),
+          ),
+        );
+      }
+      
+    } catch (e) {
+      log('Error sending power command: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error al enviar comando: ${e.toString()}'),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
+    }
+  }
+
+  void _handleDisconnection(DisconnectionType disconnectionType) {
+    log('_handleDisconnection called in UI with type: $disconnectionType');
+    log('Widget mounted: $mounted');
+    log('Currently connecting: $_isConnecting');
+    
+    if (mounted) {
+      // Si estamos en proceso de reconexión, no mostrar alertas
+      if (_isConnecting) {
+        log('Currently reconnecting, ignoring disconnection event');
+        return;
+      }
+      
+      log('Handling disconnection in UI: $disconnectionType');
+      setState(() {
+        _connectionStatus = 'Desconectado';
+        _isConnecting = false;
+      });
+      
+      if (disconnectionType == DisconnectionType.wifiDisconnected) {
+        // WiFi desconectado - mostrar alerta inmediata
+        log('Showing WiFi disconnection alert');
+        _showWifiDisconnectionAlert();
+      } else {
+        // Otras desconexiones - redirigir directamente
+        log('Redirecting to device selection screen');
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const DeviceSelectionScreen(),
+          ),
+        );
+      }
+    } else {
+      log('Widget not mounted, cannot handle disconnection');
+    }
+  }
+
+  void _showWifiDisconnectionAlert() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Text('WiFi desconectado - Verifica tu conexión a internet'),
+        backgroundColor: Colors.orange,
+        duration: const Duration(seconds: 3),
+        action: SnackBarAction(
+          label: 'Reconectar',
+          textColor: Colors.white,
+          onPressed: _connectToSelectedDevice,
+        ),
+      ),
+    );
+    
+    // Navegar inmediatamente a selección de dispositivos
+    Future.delayed(const Duration(seconds: 3), () {
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const DeviceSelectionScreen(),
+          ),
+        );
+      }
+    });
+  }
+
   Color _getConnectionColor() {
     if (_isConnecting) return Colors.blue;
     if (_connectionStatus == 'Conectado') return Colors.green;
     if (_connectionStatus == 'Error de conexión') return Colors.red;
+    if (_connectionStatus == 'Desconectado') return Colors.orange;
     return Colors.grey;
   }
 
@@ -148,6 +283,7 @@ class _RemoteScreenState extends State<RemoteScreen> {
     if (_isConnecting) return Icons.sync;
     if (_connectionStatus == 'Conectado') return Icons.check_circle;
     if (_connectionStatus == 'Error de conexión') return Icons.error;
+    if (_connectionStatus == 'Desconectado') return Icons.wifi_off;
     return Icons.cast_connected;
   }
 
@@ -223,6 +359,7 @@ class _RemoteScreenState extends State<RemoteScreen> {
               PrimaryKeys(
                 connectTV: connectTV,
                 toggleKeypad: toggleKeypad,
+                handlePowerButton: _handlePowerButton,
                 keypadShown: _keypadShown,
                 isConnecting: _isConnecting,
                 connectionStatus: _connectionStatus,

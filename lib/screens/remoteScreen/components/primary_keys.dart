@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:remote/models/samsung_tv.dart';
-import 'package:remote/constants/key_codes.dart';
 
 class PrimaryKeys extends StatelessWidget {
   
   final void Function() connectTV;
   final void Function() toggleKeypad;
+  final Future<void> Function() handlePowerButton;
   final bool keypadShown;
   final bool isConnecting;
   final String connectionStatus;
@@ -13,6 +13,7 @@ class PrimaryKeys extends StatelessWidget {
   const PrimaryKeys({super.key,
     required this.connectTV,
     required this.toggleKeypad,
+    required this.handlePowerButton,
     required this.keypadShown,
     required this.isConnecting,
     required this.connectionStatus,
@@ -82,21 +83,7 @@ class PrimaryKeys extends StatelessWidget {
             ),
             IconButton(
               icon: const Icon(Icons.power_settings_new, color: Colors.red, size: 30),
-              onPressed: () async {
-                try {
-                  await tv.sendKey(KeyCodes.KEY_POWER);
-                } catch (e) {
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Error al enviar comando: ${e.toString()}'),
-                        backgroundColor: Colors.red,
-                        duration: const Duration(seconds: 3),
-                      ),
-                    );
-                  }
-                }
-              },
+              onPressed: handlePowerButton,
               tooltip: 'Encender/Apagar TV',
             ),
           ],
