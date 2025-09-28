@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:remote/constants/key_codes.dart';
-import 'package:remote/models/samsung_tv.dart';
-import 'package:remote/screens/remoteScreen/components/controller_button.dart';
+import 'package:remote/implementations/samsung_tv.dart';
+import 'controller_button.dart';
 
 class VolumeChannelControls extends StatelessWidget {
-  final SmartTV tv;
+  final SamsungTV tv;
   const VolumeChannelControls({
     super.key, required this.tv,
   });

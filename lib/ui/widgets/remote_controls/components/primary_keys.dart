@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:remote/models/samsung_tv.dart';
+import 'package:remote/implementations/samsung_tv.dart';
 
 class PrimaryKeys extends StatelessWidget {
   
@@ -9,7 +9,7 @@ class PrimaryKeys extends StatelessWidget {
   final bool keypadShown;
   final bool isConnecting;
   final String connectionStatus;
-  final SmartTV tv;
+  final SamsungTV tv;
   const PrimaryKeys({super.key,
     required this.connectTV,
     required this.toggleKeypad,

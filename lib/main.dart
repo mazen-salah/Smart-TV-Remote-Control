@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:remote/screens/device_selection_screen.dart';
+import 'package:remote/ui/screens/device_selection/device_selection_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:remote/models/samsung_tv.dart';
-import 'package:remote/screens/remoteScreen/remote_screen.dart';
+import 'package:remote/implementations/samsung_tv.dart';
+import 'package:remote/ui/screens/remote_control/remote_screen.dart';
 import 'dart:async';
 import 'dart:io';
 
@@ -12,7 +12,7 @@ class DeviceSelectionScreen extends StatefulWidget {
 }
 
 class _DeviceSelectionScreenState extends State<DeviceSelectionScreen> {
-  List<SmartTV> _availableDevices = [];
+  List<SamsungTV> _availableDevices = [];
   bool _isScanning = false;
   String _scanStatus = '';
   Timer? _wifiCheckTimer;
@@ -79,7 +79,7 @@ class _DeviceSelectionScreenState extends State<DeviceSelectionScreen> {
     });
 
     try {
-      final devices = await SmartTV.discoverAll();
+      final devices = await SamsungTV.discoverAll();
       setState(() {
         _availableDevices = devices;
         _isScanning = false;
@@ -110,7 +110,7 @@ class _DeviceSelectionScreenState extends State<DeviceSelectionScreen> {
     }
   }
 
-  Future<void> _connectToDevice(SmartTV device) async {
+  Future<void> _connectToDevice(SamsungTV device) async {
     try {
       await device.connect();
       
@@ -346,7 +346,7 @@ class _DeviceSelectionScreenState extends State<DeviceSelectionScreen> {
 }
 
 class DeviceListItem extends StatelessWidget {
-  final SmartTV device;
+  final SamsungTV device;
   final VoidCallback onTap;
 
   const DeviceListItem({

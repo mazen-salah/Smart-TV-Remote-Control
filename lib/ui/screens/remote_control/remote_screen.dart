@@ -2,12 +2,13 @@ import 'dart:developer';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:remote/constants/key_codes.dart';
-import 'package:remote/models/samsung_tv.dart';
-import 'package:remote/screens/device_selection_screen.dart';
-import 'components/components.dart';
+import 'package:remote/core/models/disconnection_type.dart';
+import 'package:remote/implementations/samsung_tv.dart';
+import 'package:remote/ui/screens/device_selection/device_selection_screen.dart';
+import 'package:remote/ui/widgets/remote_controls/components/components.dart';
 
 class RemoteScreen extends StatefulWidget {
-  final SmartTV? selectedDevice;
+  final SamsungTV? selectedDevice;
   
   const RemoteScreen({super.key, this.selectedDevice});
 
@@ -16,7 +17,7 @@ class RemoteScreen extends StatefulWidget {
 }
 
 class _RemoteScreenState extends State<RemoteScreen> {
-  SmartTV tv = SmartTV();
+  SamsungTV tv = SamsungTV();
   bool _keypadShown = false;
   bool _isConnecting = false;
   String _connectionStatus = 'No conectado';
@@ -120,7 +121,7 @@ class _RemoteScreenState extends State<RemoteScreen> {
     });
 
     try {
-      tv = await SmartTV.discover();
+      tv = await SamsungTV.discover();
       setState(() {
         _connectionStatus = 'Conectando a la TV...';
       });

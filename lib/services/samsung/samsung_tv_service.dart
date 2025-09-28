@@ -6,6 +6,7 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:remote/constants/key_codes.dart';
+import 'package:remote/core/models/disconnection_type.dart';
 import 'package:upnp2/upnp.dart';
 import 'package:web_socket_channel/io.dart';
 
@@ -14,14 +15,7 @@ const kKeyDelay = 200;
 const kWakeOnLanDelay = 5000;
 const kUpnpTimeout = 1000;
 
-enum DisconnectionType {
-  wifiDisconnected,
-  tvPowerOff,
-  unknown
-}
-
-class SmartTV {
-  final List<Map<String, dynamic>> services;
+class SamsungTVService {
   final String? host;
   final String? mac;
   final String? deviceName;
@@ -38,18 +32,13 @@ class SmartTV {
   Timer? _connectionCheckTimer;
   Function(DisconnectionType)? onDisconnected;
 
-  SmartTV({
+  SamsungTVService({
     this.host,
     this.mac,
     this.deviceName,
     this.modelName,
   })  : api = "http://$host:8001/api/v2/",
-        wsapi = "wss://$host:8002/api/v2/",
-        services = [];
-
-  addService(service) {
-    services.add(service);
-  }
+        wsapi = "wss://$host:8002/api/v2/";
 
   setOnDisconnectedCallback(Function(DisconnectionType) callback) {
     onDisconnected = callback;
@@ -66,7 +55,6 @@ class SmartTV {
 
     try {
       info = await getDeviceInfo();
-      // log (json.decode(info!.body).toString());
 
       final appNameBase64 = base64.encode(utf8.encode(appName));
       String channel =
@@ -147,11 +135,10 @@ class SmartTV {
   }
 
   void _startHeartbeat() {
-    _stopHeartbeat(); // Stop any existing heartbeat
+    _stopHeartbeat();
     _heartbeatTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
       if (isConnected && ws != null) {
         try {
-          // Just check if WebSocket is still open, don't send commands
           if (ws!.closeCode != null) {
             log('WebSocket closed detected in heartbeat');
             _handleDisconnection();
@@ -172,10 +159,9 @@ class SmartTV {
   }
 
   void _startConnectionCheck() {
-    _stopConnectionCheck(); // Stop any existing connection check
+    _stopConnectionCheck();
     _connectionCheckTimer = Timer.periodic(const Duration(milliseconds: 500), (timer) {
       if (isConnected && ws != null) {
-        // Check if WebSocket is still open
         if (ws!.closeCode != null) {
           log('WebSocket closed detected in connection check');
           _handleDisconnection();
@@ -193,8 +179,6 @@ class SmartTV {
     log('Starting disconnection type detection...');
     log('TV host: $host');
     
-    // Since we're automatically triggering disconnection for power button,
-    // we can assume it's TV power off when called from sendKey
     log('Assuming TV power off for automatic disconnection');
     return DisconnectionType.tvPowerOff;
   }
@@ -213,11 +197,9 @@ class SmartTV {
       
       log('After cleanup - WebSocket closed, starting disconnection type detection...');
       
-      // Detect the type of disconnection asynchronously
       _detectDisconnectionType().then((disconnectionType) {
         log('Disconnection type detected: $disconnectionType');
         
-        // Call the disconnection callback if set
         if (onDisconnected != null) {
           log('Calling disconnection callback with type: $disconnectionType');
           onDisconnected!(disconnectionType);
@@ -226,7 +208,6 @@ class SmartTV {
         }
       }).catchError((e) {
         log('Error in disconnection detection: $e');
-        // Fallback to unknown type
         if (onDisconnected != null) {
           log('Using fallback unknown disconnection type');
           onDisconnected!(DisconnectionType.unknown);
@@ -266,7 +247,6 @@ class SmartTV {
         }
       });
 
-      // Check if WebSocket is still connected before sending
       if (ws == null || ws!.closeCode != null) {
         log('WebSocket is closed, handling disconnection');
         _handleDisconnection();
@@ -285,7 +265,6 @@ class SmartTV {
       return Future.delayed(const Duration(milliseconds: kKeyDelay));
     } catch (e) {
       log('Error sending key command: $e');
-      // If connection fails, handle disconnection immediately
       _handleDisconnection();
       throw Exception('Failed to send key command: $e');
     }
@@ -305,14 +284,13 @@ class SmartTV {
     return devices.first;
   }
 
-  static Future<List<SmartTV>> discoverAll() async {
-    var completer = Completer<List<SmartTV>>();
-    final List<SmartTV> tvs = [];
+  static Future<List<SamsungTVService>> discoverAll() async {
+    var completer = Completer<List<SamsungTVService>>();
+    final List<SamsungTVService> tvs = [];
 
     final client = DeviceDiscoverer();
     await client.start(ipv6: false);
 
-    // Set a timeout for discovery
     Timer(const Duration(seconds: 10), () {
       if (!completer.isCompleted) {
         completer.complete(tvs);
@@ -330,20 +308,14 @@ class SmartTV {
         final device = await client.getDevice();
         Uri location = Uri.parse(client.location!);
         final deviceExists = tvs.firstWhere((tv) => tv.host == location.host,
-            orElse: () => SmartTV(host: null));
+            orElse: () => SamsungTVService(host: null));
         if (deviceExists.host == null) {
           log("Found ${device?.friendlyName} on IP ${location.host}");
-          final tv = SmartTV(
+          final tv = SamsungTVService(
             host: location.host,
             deviceName: device?.friendlyName,
             modelName: device?.modelName,
           );
-          tv.addService({
-            "location": client.location,
-            "server": client.server,
-            "st": client.st,
-            "usn": client.usn
-          });
           tvs.add(tv);
         }
       } catch (e, stack) {
