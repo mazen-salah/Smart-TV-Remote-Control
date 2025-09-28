@@ -14,6 +14,12 @@ const kKeyDelay = 200;
 const kWakeOnLanDelay = 5000;
 const kUpnpTimeout = 1000;
 
+enum DisconnectionType {
+  wifiDisconnected,
+  tvPowerOff,
+  unknown
+}
+
 class SmartTV {
   final List<Map<String, dynamic>> services;
   final String? host;
@@ -28,6 +34,9 @@ class SmartTV {
   Response? info;
   IOWebSocketChannel? ws;
   Timer? timer;
+  Timer? _heartbeatTimer;
+  Timer? _connectionCheckTimer;
+  Function(DisconnectionType)? onDisconnected;
 
   SmartTV({
     this.host,
@@ -40,6 +49,10 @@ class SmartTV {
 
   addService(service) {
     services.add(service);
+  }
+
+  setOnDisconnectedCallback(Function(DisconnectionType) callback) {
+    onDisconnected = callback;
   }
 
   connect({appName = 'DartSamsungSmartTVDriver'}) async {
@@ -90,13 +103,19 @@ class SmartTV {
         if (data["event"] == 'ms.channel.connect') {
           log('Connection successfully established');
           isConnected = true;
+          _startHeartbeat();
+          _startConnectionCheck();
           completer.complete();
         } else {
           log('TV responded with $data');
         }
       }, onError: (error) {
         log('WebSocket error: $error');
+        _handleDisconnection();
         completer.completeError('WebSocket connection failed: $error');
+      }, onDone: () {
+        log('WebSocket connection closed');
+        _handleDisconnection();
       });
 
       // Set a timeout for connection
@@ -120,9 +139,102 @@ class SmartTV {
   }
 
   disconnect() {
+    _stopHeartbeat();
+    _stopConnectionCheck();
     ws?.sink.close();
     isConnected = false;
     log('Disconnected from device');
+  }
+
+  void _startHeartbeat() {
+    _stopHeartbeat(); // Stop any existing heartbeat
+    _heartbeatTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
+      if (isConnected && ws != null) {
+        try {
+          // Just check if WebSocket is still open, don't send commands
+          if (ws!.closeCode != null) {
+            log('WebSocket closed detected in heartbeat');
+            _handleDisconnection();
+          } else {
+            log('Heartbeat check - connection still active');
+          }
+        } catch (e) {
+          log('Heartbeat failed: $e');
+          _handleDisconnection();
+        }
+      }
+    });
+  }
+
+  void _stopHeartbeat() {
+    _heartbeatTimer?.cancel();
+    _heartbeatTimer = null;
+  }
+
+  void _startConnectionCheck() {
+    _stopConnectionCheck(); // Stop any existing connection check
+    _connectionCheckTimer = Timer.periodic(const Duration(milliseconds: 500), (timer) {
+      if (isConnected && ws != null) {
+        // Check if WebSocket is still open
+        if (ws!.closeCode != null) {
+          log('WebSocket closed detected in connection check');
+          _handleDisconnection();
+        }
+      }
+    });
+  }
+
+  void _stopConnectionCheck() {
+    _connectionCheckTimer?.cancel();
+    _connectionCheckTimer = null;
+  }
+
+  Future<DisconnectionType> _detectDisconnectionType() async {
+    log('Starting disconnection type detection...');
+    log('TV host: $host');
+    
+    // Since we're automatically triggering disconnection for power button,
+    // we can assume it's TV power off when called from sendKey
+    log('Assuming TV power off for automatic disconnection');
+    return DisconnectionType.tvPowerOff;
+  }
+
+  void _handleDisconnection() {
+    log('_handleDisconnection called - isConnected: $isConnected');
+    if (isConnected) {
+      log('Connection lost - handling disconnection immediately');
+      log('Before cleanup - WebSocket closeCode: ${ws?.closeCode}');
+      
+      isConnected = false;
+      _stopHeartbeat();
+      _stopConnectionCheck();
+      ws?.sink.close();
+      ws = null;
+      
+      log('After cleanup - WebSocket closed, starting disconnection type detection...');
+      
+      // Detect the type of disconnection asynchronously
+      _detectDisconnectionType().then((disconnectionType) {
+        log('Disconnection type detected: $disconnectionType');
+        
+        // Call the disconnection callback if set
+        if (onDisconnected != null) {
+          log('Calling disconnection callback with type: $disconnectionType');
+          onDisconnected!(disconnectionType);
+        } else {
+          log('No disconnection callback set!');
+        }
+      }).catchError((e) {
+        log('Error in disconnection detection: $e');
+        // Fallback to unknown type
+        if (onDisconnected != null) {
+          log('Using fallback unknown disconnection type');
+          onDisconnected!(DisconnectionType.unknown);
+        }
+      });
+    } else {
+      log('Already disconnected, skipping disconnection handling');
+    }
   }
 
   bool get connectionStatus => isConnected && ws != null;
@@ -154,12 +266,27 @@ class SmartTV {
         }
       });
 
-      ws?.sink.add(data);
-      log("Key command sent successfully: $keyName");
+      // Check if WebSocket is still connected before sending
+      if (ws == null || ws!.closeCode != null) {
+        log('WebSocket is closed, handling disconnection');
+        _handleDisconnection();
+        throw Exception('WebSocket connection is closed');
+      }
+
+      try {
+        ws?.sink.add(data);
+        log("Key command sent successfully: $keyName");
+      } catch (e) {
+        log('Failed to send data to WebSocket: $e');
+        _handleDisconnection();
+        throw Exception('Failed to send data to WebSocket: $e');
+      }
       
       return Future.delayed(const Duration(milliseconds: kKeyDelay));
     } catch (e) {
       log('Error sending key command: $e');
+      // If connection fails, handle disconnection immediately
+      _handleDisconnection();
       throw Exception('Failed to send key command: $e');
     }
   }
