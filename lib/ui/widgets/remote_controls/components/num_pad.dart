@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:remote/constants/key_codes.dart';
-import 'package:remote/models/samsung_tv.dart';
+import 'package:remote/implementations/samsung_tv.dart';
 
 import 'controller_button.dart';
 
 class NumPad extends StatelessWidget {
-  final SmartTV tv;
+  final SamsungTV tv;
   const NumPad({
     super.key, required this.tv,
   });
