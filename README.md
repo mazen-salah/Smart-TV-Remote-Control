@@ -1,23 +1,23 @@
 # 📱 Smart TV Remote Control
 
-Una aplicación Flutter avanzada para controlar televisores Samsung y LG de forma remota a través de la red WiFi local.
+An advanced Flutter application to remotely control Samsung and LG TVs over the local WiFi network.
 
-## 🎯 Descripción del Proyecto
+## 🎯 Project Description
 
-Esta aplicación permite descubrir, conectar y controlar televisores inteligentes Samsung y LG desde tu dispositivo móvil Android/iOS. Utiliza protocolos UPnP para el descubrimiento de dispositivos, WebSocket para comunicación en tiempo real con Samsung TVs, y está re - diseñada con una arquitectura mas escalable que la version principal para soportar múltiples marcas de televisores.
+This app allows you to discover, connect, and control Samsung and LG smart TVs from your Android/iOS mobile device. It uses UPnP protocols for device discovery, WebSocket for real-time communication with Samsung TVs, and is redesigned with a more scalable architecture than the main version to support multiple TV brands.
 
-### ✨ Características Principales
+### ✨ Main Features
 
-- 🔍 **Descubrimiento Automático**: Encuentra TVs Samsung en la red local
-- 🔗 **Conexión Inteligente**: Conecta automáticamente con autenticación
-- 🎮 **Control Completo**: Botones de navegación, volumen, canales, colores y teclado numérico
-- ⚡ **Desconexión Inteligente**: Detecta cuando el TV se apaga o se pierde la conexión WiFi
-- 🔄 **Reconexión Automática**: Opción de reconectar fácilmente
-- 📱 **UI Moderna**: Interfaz intuitiva con diseño Material Design (va a cambiar con el tiempo)
+- 🔍 **Automatic Discovery**: Finds Samsung TVs on the local network
+- 🔗 **Smart Connection**: Connects automatically with authentication
+- 🎮 **Full Control**: Navigation buttons, volume, channels, color keys, and numeric keypad
+- ⚡ **Smart Disconnection**: Detects when the TV turns off or WiFi connection is lost
+- 🔄 **Automatic Reconnection**: Option to easily reconnect
+- 📱 **Modern UI**: Intuitive interface with Material Design (will change over time)
 
-## 🏗️ Arquitectura del Sistema
+## 🏗️ System Architecture
 
-### 📊 Diagrama de Arquitectura General
+### 📊 General Architecture Diagram
 
 ```mermaid
 graph TB
@@ -59,7 +59,7 @@ graph TB
     L --> R
 ```
 
-### 🔄 Flujo de Datos
+### 🔄 Data Flow
 
 ```mermaid
 sequenceDiagram
@@ -69,52 +69,52 @@ sequenceDiagram
     participant STS as SamsungTVService
     participant TV as Samsung TV
     
-    U->>DS: Abre aplicación
+    U->>DS: Opens app
     DS->>STS: discoverAll()
     STS->>TV: UPnP Discovery
     TV-->>STS: Device List
     STS-->>DS: SamsungTV[]
-    DS->>U: Muestra lista de TVs
+    DS->>U: Shows TV list
     
-    U->>DS: Selecciona TV
+    U->>DS: Selects TV
     DS->>STV: connect()
     STV->>STS: connect()
     STS->>TV: HTTP + WebSocket
     TV-->>STS: Connection OK
     STS-->>STV: Connected
     STV-->>DS: Success
-    DS->>U: Navega a Remote Control
+    DS->>U: Navigates to Remote Control
     
-    U->>STV: Presiona botón
+    U->>STV: Presses button
     STV->>STS: sendKey()
     STS->>TV: WebSocket Command
     TV-->>STS: Command Executed
 ```
 
-## 📁 Estructura del Proyecto
+## 📁 Project Structure
 
 ```
 lib/
-├── 📁 core/                           # 🎯 CAPA CORE - Sin dependencias externas
+├── 📁 core/                           # 🎯 CORE LAYER - No external dependencies
 │   ├── 📁 interfaces/
-│   │   └── tv_interface.dart          # Contrato base para todas las TVs
+│   │   └── tv_interface.dart          # Base contract for all TVs
 │   ├── 📁 models/
-│   │   ├── tv_device.dart             # Modelo de dispositivo TV
-│   │   ├── connection_state.dart      # Estados de conexión
-│   │   └── disconnection_type.dart    # Tipos de desconexión
+│   │   ├── tv_device.dart             # TV device model
+│   │   ├── connection_state.dart      # Connection states
+│   │   └── disconnection_type.dart    # Disconnection types
 │   └── 📁 exceptions/
-│       ├── tv_connection_exception.dart    # Excepciones de conexión
-│       └── device_discovery_exception.dart # Excepciones de descubrimiento
+│       ├── tv_connection_exception.dart    # Connection exceptions
+│       └── device_discovery_exception.dart # Discovery exceptions
 │
-├── 📁 services/                       # 🔧 CAPA DE SERVICIOS - Lógica de negocio
+├── 📁 services/                       # 🔧 SERVICE LAYER - Business logic
 │   └── 📁 samsung/
-│       └── samsung_tv_service.dart    # Servicio específico Samsung
+│       └── samsung_tv_service.dart    # Samsung-specific service
 │
-├── 📁 implementations/                # 🎮 CAPA DE IMPLEMENTACIONES - Adaptadores
-│   ├── samsung_tv.dart               # Implementación Samsung
-│   └── lg_tv.dart                     # Implementación LG (placeholder)
+├── 📁 implementations/                # 🎮 IMPLEMENTATION LAYER - Adapters
+│   ├── samsung_tv.dart                # Samsung implementation
+│   └── lg_tv.dart                     # LG implementation (placeholder)
 │
-├── 📁 ui/                            # 📱 CAPA DE UI - Interfaz de usuario
+├── 📁 ui/                             # 📱 UI LAYER - User interface
 │   ├── 📁 screens/
 │   │   ├── 📁 device_selection/
 │   │   │   └── device_selection_screen.dart
@@ -131,31 +131,31 @@ lib/
 │               ├── media_controls.dart
 │               └── controller_button.dart
 │
-└── 📁 constants/                     # 📋 Constantes globales
-    ├── key_codes.dart                # Códigos de teclas Samsung
-    └── app_colors.dart               # Paleta de colores
+└── 📁 constants/                      # 📋 Global constants
+    ├── key_codes.dart                 # Samsung key codes
+    └── app_colors.dart                # Color palette
 ```
 
-## 🔧 Componentes de la Arquitectura
+## 🔧 Architecture Components
 
-### 🎯 Core Layer (Capa Central)
+### 🎯 Core Layer
 
-**Propósito**: Define contratos y modelos fundamentales sin dependencias externas.
+**Purpose**: Defines fundamental contracts and models with no external dependencies.
 
 #### `TVInterface`
 ```dart
 abstract class TVInterface {
-  // Propiedades básicas
+  // Basic properties
   String? get host;
   String? get mac;
   String? get deviceName;
   String? get modelName;
   
-  // Estado de conexión
+  // Connection state
   bool get isConnected;
   ConnectionState get connectionState;
   
-  // Métodos principales
+  // Main methods
   Future<void> connect({String appName});
   void disconnect();
   Future<void> sendKey(KeyCodes key);
@@ -163,11 +163,11 @@ abstract class TVInterface {
 }
 ```
 
-**¿Por qué existe?**
-- Define un contrato común para todas las marcas de TV
-- Permite polimorfismo y extensibilidad
-- Facilita testing con mocks
-- Centraliza la interfaz de comunicación
+**Why does it exist?**
+- Defines a common contract for all TV brands
+- Enables polymorphism and extensibility
+- Facilitates testing with mocks
+- Centralizes the communication interface
 
 #### `ConnectionState` & `DisconnectionType`
 ```dart
@@ -180,55 +180,55 @@ enum DisconnectionType {
 }
 ```
 
-**¿Por qué existen?**
-- Tipado fuerte para estados de conexión
-- Diferenciación clara entre tipos de desconexión
-- Mejor manejo de errores y UX
+**Why do they exist?**
+- Strong typing for connection states
+- Clear differentiation between disconnection types
+- Better error handling and UX
 
-### 🔧 Service Layer (Capa de Servicios)
+### 🔧 Service Layer
 
-**Propósito**: Contiene la lógica de negocio específica para cada marca de TV.
+**Purpose**: Contains business logic specific to each TV brand.
 
 #### `SamsungTVService`
 ```dart
 class SamsungTVService {
-  // WebSocket para comandos en tiempo real
+  // WebSocket for real-time commands
   IOWebSocketChannel? ws;
   
-  // HTTP para información del dispositivo
+  // HTTP for device info
   Future<Response> getDeviceInfo();
   
-  // UPnP para descubrimiento
+  // UPnP for discovery
   static Future<List<SamsungTVService>> discoverAll();
   
-  // Heartbeat para mantener conexión
+  // Heartbeat to keep connection alive
   Timer? _heartbeatTimer;
 }
 ```
 
-**¿Por qué existe?**
-- Separa la lógica específica de Samsung del modelo
-- Reutilizable por diferentes implementaciones
-- Fácil testing independiente
-- Encapsula protocolos complejos (WebSocket, UPnP, HTTP)
+**Why does it exist?**
+- Separates Samsung-specific logic from the model
+- Reusable by different implementations
+- Easy independent testing
+- Encapsulates complex protocols (WebSocket, UPnP, HTTP)
 
-**Funcionalidades Clave:**
-- **UPnP Discovery**: Encuentra TVs Samsung en la red
-- **WebSocket Communication**: Envía comandos en tiempo real
-- **Heartbeat System**: Mantiene la conexión activa
-- **Disconnection Detection**: Detecta cuando el TV se apaga
-- **Error Handling**: Maneja errores de red y conexión
+**Key Features:**
+- **UPnP Discovery**: Finds Samsung TVs on the network
+- **WebSocket Communication**: Sends real-time commands
+- **Heartbeat System**: Keeps the connection active
+- **Disconnection Detection**: Detects when the TV turns off
+- **Error Handling**: Handles network and connection errors
 
-### 🎮 Implementation Layer (Capa de Implementaciones)
+### 🎮 Implementation Layer
 
-**Propósito**: Actúa como adaptador entre la interfaz y el servicio específico.
+**Purpose**: Acts as an adapter between the interface and the specific service.
 
 #### `SamsungTV`
 ```dart
 class SamsungTV implements TVInterface {
   final SamsungTVService _service;
   
-  // Delega todas las llamadas al servicio
+  // Delegates all calls to the service
   @override
   Future<void> connect({String appName}) => _service.connect(appName: appName);
   
@@ -237,70 +237,70 @@ class SamsungTV implements TVInterface {
 }
 ```
 
-**¿Por qué existe?**
-- Implementa `TVInterface` de forma consistente
-- Delega lógica compleja al servicio
-- Permite agregar lógica específica de la implementación
-- Facilita el cambio de servicios sin afectar la UI
+**Why does it exist?**
+- Implements `TVInterface` consistently
+- Delegates complex logic to the service
+- Allows adding implementation-specific logic
+- Makes it easy to swap services without affecting the UI
 
 #### `LGTV` (Placeholder)
 ```dart
 class LGTV implements TVInterface {
-  // Implementación placeholder para WebOS
-  // TODO: Implementar protocolo LG WebOS
+  // Placeholder implementation for WebOS
+  // TODO: Implement LG WebOS protocol
 }
 ```
 
-**¿Por qué existe?**
-- Demuestra la extensibilidad de la arquitectura
-- Prepara el terreno para futuras implementaciones
-- Mantiene consistencia en la interfaz
+**Why does it exist?**
+- Demonstrates the extensibility of the architecture
+- Prepares for future implementations
+- Maintains interface consistency
 
-### 📱 UI Layer (Capa de Interfaz)
+### 📱 UI Layer
 
-**Propósito**: Maneja la presentación y interacción del usuario.
+**Purpose**: Handles user presentation and interaction.
 
-#### Pantallas Principales
+#### Main Screens
 
 **`DeviceSelectionScreen`**
-- Descubre TVs disponibles en la red
-- Muestra lista con información del dispositivo
-- Maneja estados de WiFi desconectado
-- Conecta al dispositivo seleccionado
+- Discovers available TVs on the network
+- Shows a list with device information
+- Handles WiFi disconnected states
+- Connects to the selected device
 
 **`RemoteScreen`**
-- Interfaz principal del control remoto
-- Muestra estado de conexión en tiempo real
-- Maneja desconexiones y reconexiones
-- Contiene todos los controles del TV
+- Main remote control interface
+- Shows real-time connection status
+- Handles disconnections and reconnections
+- Contains all TV controls
 
-#### Componentes de Control
+#### Control Components
 
-**`PrimaryKeys`**: Botones principales (Power, Home, Back)
-**`DirectionKeys`**: Navegación direccional (Up, Down, Left, Right, OK)
-**`VolumeChannelControls`**: Control de volumen y canales
-**`ColorKeys`**: Botones de colores (Rojo, Verde, Azul, Amarillo)
-**`NumPad`**: Teclado numérico para canales
-**`MediaControls`**: Controles multimedia (Play, Pause, Stop, etc.)
+**`PrimaryKeys`**: Main buttons (Power, Home, Back)  
+**`DirectionKeys`**: Directional navigation (Up, Down, Left, Right, OK)  
+**`VolumeChannelControls`**: Volume and channel control  
+**`ColorKeys`**: Color buttons (Red, Green, Blue, Yellow)  
+**`NumPad`**: Numeric keypad for channels  
+**`MediaControls`**: Media controls (Play, Pause, Stop, etc.)
 
-## 🔄 Flujos de Trabajo
+## 🔄 Workflows
 
-### 1. Descubrimiento de Dispositivos
+### 1. Device Discovery
 
 ```mermaid
 flowchart TD
-    A[Usuario abre app] --> B[DeviceSelectionScreen]
-    B --> C[Inicia UPnP Discovery]
-    C --> D[Busca dispositivos Samsung]
-    D --> E{¿Encontró dispositivos?}
-    E -->|Sí| F[Muestra lista de TVs]
-    E -->|No| G[Muestra mensaje "No encontrados"]
-    F --> H[Usuario selecciona TV]
-    H --> I[Conecta al dispositivo]
-    I --> J[Navega a RemoteScreen]
+    A[User opens app] --> B[DeviceSelectionScreen]
+    B --> C[Starts UPnP Discovery]
+    C --> D[Searches for Samsung devices]
+    D --> E{Devices found?}
+    E -->|Yes| F[Shows TV list]
+    E -->|No| G[Shows "Not found" message]
+    F --> H[User selects TV]
+    H --> I[Connects to device]
+    I --> J[Navigates to RemoteScreen]
 ```
 
-### 2. Proceso de Conexión
+### 2. Connection Process
 
 ```mermaid
 sequenceDiagram
@@ -320,7 +320,7 @@ sequenceDiagram
     STV-->>UI: Update UI State
 ```
 
-### 3. Envío de Comandos
+### 3. Sending Commands
 
 ```mermaid
 sequenceDiagram
@@ -338,42 +338,42 @@ sequenceDiagram
     STV-->>UI: Update UI (if needed)
 ```
 
-### 4. Detección de Desconexión
+### 4. Disconnection Detection
 
 ```mermaid
 flowchart TD
-    A[Heartbeat Timer] --> B[Envía comando de prueba]
-    B --> C{¿Respuesta OK?}
-    C -->|Sí| D[Mantiene conexión]
-    C -->|No| E[Detecta desconexión]
-    E --> F[Determina tipo de desconexión]
-    F --> G{¿WiFi desconectado?}
-    G -->|Sí| H[Muestra alerta WiFi]
-    G -->|No| I[Muestra alerta TV apagado]
-    H --> J[Opción de reconectar]
-    I --> K[Cuenta regresiva 10s]
-    K --> L[Redirige a Device Selection]
+    A[Heartbeat Timer] --> B[Sends test command]
+    B --> C{OK response?}
+    C -->|Yes| D[Keeps connection]
+    C -->|No| E[Detects disconnection]
+    E --> F[Determines disconnection type]
+    F --> G{WiFi disconnected?}
+    G -->|Yes| H[Shows WiFi alert]
+    G -->|No| I[Shows TV off alert]
+    H --> J[Reconnect option]
+    I --> K[10s countdown]
+    K --> L[Redirects to Device Selection]
 ```
 
-## 📦 Dependencias y sus Propósitos
+## 📦 Dependencies and Their Purposes
 
-### Dependencias Principales
+### Main Dependencies
 
-| Dependencia | Versión | Propósito | Uso en el Proyecto |
-|-------------|---------|-----------|-------------------|
-| `flutter` | 3.32.6 | Framework base | UI, navegación, estado |
-| `http` | 1.5.0 | Cliente HTTP | Comunicación con API Samsung |
-| `web_socket_channel` | 2.4.5 | WebSocket | Comandos en tiempo real |
-| `upnp2` | 3.0.12 | UPnP Discovery | Encontrar TVs en la red |
+| Dependency | Version | Purpose | Usage in Project |
+|------------|---------|---------|------------------|
+| `flutter` | 3.32.6 | Base framework | UI, navigation, state |
+| `http` | 1.5.0 | HTTP client | Samsung API communication |
+| `web_socket_channel` | 2.4.5 | WebSocket | Real-time commands |
+| `upnp2` | 3.0.12 | UPnP Discovery | Find TVs on the network |
 
-### Dependencias de Desarrollo
+### Development Dependencies
 
-| Dependencia | Versión | Propósito |
-|-------------|---------|-----------|
+| Dependency | Version | Purpose |
+|------------|---------|---------|
 | `flutter_test` | 0.0.0 | Testing framework |
 | `flutter_lints` | 3.0.2 | Linting rules |
 
-### Análisis de Dependencias
+### Dependency Analysis
 
 ```mermaid
 graph LR
@@ -405,129 +405,129 @@ graph LR
     F --> I
 ```
 
-## 🎯 Ventajas de la Arquitectura
+## 🎯 Architecture Advantages
 
-### ✅ Escalabilidad
-- **Fácil agregar nuevas marcas**: Solo crear nuevo Service + Implementation
-- **Modular**: Cada capa tiene responsabilidades claras
-- **Extensible**: Interfaces permiten nuevas funcionalidades
+### ✅ Scalability
+- **Easy to add new brands**: Just create a new Service + Implementation
+- **Modular**: Each layer has clear responsibilities
+- **Extensible**: Interfaces allow new features
 
-### ✅ Mantenibilidad
-- **Separación de responsabilidades**: Cada clase tiene un propósito específico
-- **Bajo acoplamiento**: Las capas no dependen de implementaciones específicas
-- **Alto cohesión**: Funcionalidades relacionadas están agrupadas
+### ✅ Maintainability
+- **Separation of concerns**: Each class has a specific purpose
+- **Low coupling**: Layers don't depend on specific implementations
+- **High cohesion**: Related functionalities are grouped
 
-### ✅ Testabilidad
-- **Interfaces mockeables**: Fácil crear mocks para testing
-- **Servicios aislados**: Cada servicio se puede testear independientemente
-- **UI desacoplada**: La UI no depende de implementaciones específicas
+### ✅ Testability
+- **Mockable interfaces**: Easy to create mocks for testing
+- **Isolated services**: Each service can be tested independently
+- **Decoupled UI**: UI doesn't depend on specific implementations
 
-### ✅ Reutilización
-- **Servicios reutilizables**: `SamsungTVService` puede ser usado por diferentes implementaciones
-- **Componentes UI modulares**: Los componentes de control son reutilizables
-- **Lógica centralizada**: Evita duplicación de código
+### ✅ Reusability
+- **Reusable services**: `SamsungTVService` can be used by different implementations
+- **Modular UI components**: Control components are reusable
+- **Centralized logic**: Avoids code duplication
 
-## ⚠️ Desventajas y Limitaciones
+## ⚠️ Desadvantages and Limitations
 
-### ❌ Complejidad Inicial
-- **Curva de aprendizaje**: Requiere entender múltiples capas
-- **Overhead**: Más archivos y abstracciones para casos simples
-- **Documentación**: Necesita documentación detallada para nuevos desarrolladores
+### ❌ Initial Complexity
+- **Learning curve**: Requires understanding multiple layers
+- **Overhead**: More files and abstractions for simple cases
+- **Documentation**: Needs detailed docs for new developers
 
-### ❌ Limitaciones Técnicas
-- **Protocolos específicos**: Samsung usa protocolos propietarios
-- **Dependencia de red**: Requiere WiFi estable
-- **Compatibilidad**: Solo funciona con TVs Samsung compatibles
+### ❌ Technical Limitations
+- **Specific protocols**: Samsung uses proprietary protocols
+- **Network dependency**: Requires stable WiFi
+- **Compatibility**: Only works with compatible Samsung TVs
 
-### ❌ Mantenimiento
-- **Múltiples puntos de falla**: Cada capa puede tener errores
-- **Sincronización**: Cambios en interfaces requieren actualizar implementaciones
-- **Debugging**: Errores pueden estar en múltiples capas
+### ❌ Maintenance
+- **Multiple failure points**: Each layer can have errors
+- **Synchronization**: Interface changes require updating implementations
+- **Debugging**: Errors can be in multiple layers
 
-## 🚀 Casos de Uso y Escenarios
+## 🚀 Use Cases and Scenarios
 
-### 📱 Caso de Uso Principal: Control Remoto Básico
+### 📱 Main Use Case: Basic Remote Control
 
 ```mermaid
 journey
-    title Flujo de Usuario: Control Remoto
-    section Descubrimiento
-      Abrir app: 5: Usuario
-      Buscar TVs: 4: Usuario
-      Seleccionar TV: 5: Usuario
-    section Conexión
-      Conectar: 3: Usuario
-      Esperar conexión: 2: Usuario
-      Verificar estado: 4: Usuario
+    title User Flow: Remote Control
+    section Discovery
+      Open app: 5: User
+      Search TVs: 4: User
+      Select TV: 5: User
+    section Connection
+      Connect: 3: User
+      Wait for connection: 2: User
+      Check status: 4: User
     section Control
-      Usar controles: 5: Usuario
-      Cambiar volumen: 5: Usuario
-      Navegar menús: 4: Usuario
-    section Desconexión
-      Detectar apagado: 3: Usuario
-      Manejar desconexión: 2: Usuario
+      Use controls: 5: User
+      Change volume: 5: User
+      Navigate menus: 4: User
+    section Disconnection
+      Detect power off: 3: User
+      Handle disconnection: 2: User
 ```
 
-### 🔄 Caso de Uso: Reconexión Automática
+### 🔄 Use Case: Automatic Reconnection
 
-1. **Usuario pierde WiFi**
-   - App detecta desconexión instantáneamente
-   - Muestra alerta específica de WiFi
-   - Ofrece opción de reconectar
+1. **User loses WiFi**
+   - App instantly detects disconnection
+   - Shows specific WiFi alert
+   - Offers option to reconnect
 
-2. **TV se apaga**
-   - App detecta desconexión del WebSocket
-   - Muestra alerta de TV apagado
-   - Cuenta regresiva de 10 segundos
-   - Redirige a selección de dispositivos
+2. **TV turns off**
+   - App detects WebSocket disconnection
+   - Shows TV off alert
+   - 10-second countdown
+   - Redirects to device selection
 
-3. **Reconexión exitosa**
-   - App intenta reconectar automáticamente
-   - Verifica estado del TV
-   - Restaura conexión si es posible
+3. **Successful reconnection**
+   - App tries to reconnect automatically
+   - Checks TV status
+   - Restores connection if possible
 
-## 🛠️ Instalación y Configuración
+## 🛠️ Installation and Setup
 
-### Prerrequisitos
+### Prerequisites
 - Flutter SDK 3.32.6+
 - Dart SDK 3.8.1+
 - Android Studio / VS Code
-- Dispositivo Android/iOS para testing
-- Samsung TV compatible en la misma red WiFi
+- Android/iOS device for testing
+- Compatible Samsung TV on the same WiFi network
 
-### Pasos de Instalación
+### Installation Steps
 
-1. **Clonar el repositorio**
+1. **Clone the repository**
 ```bash
-git clone https://github.com/tu-usuario/smart-tv-remote-control.git
+git clone https://github.com/your-username/smart-tv-remote-control.git
 cd smart-tv-remote-control
 ```
 
-2. **Instalar dependencias**
+2. **Install dependencies**
 ```bash
 flutter pub get
 ```
 
-3. **Configurar dispositivo**
+3. **Set up device**
 ```bash
 flutter devices
 flutter run
 ```
 
-### Configuración del TV Samsung
+### Samsung TV Setup
 
-1. **Habilitar Smart View**
-   - Ir a Settings > General > External Device Manager
-   - Habilitar "Device Connect Manager"
-   - Habilitar "Access Notification"
+1. **Enable Smart View**
+   - Go to Settings > General > External Device Manager
+   - Enable "Device Connect Manager"
+   - Enable "Access Notification"
 
-2. **Configurar red**
-   - Asegurar que TV y dispositivo móvil estén en la misma red WiFi
-   - Verificar que no hay firewall bloqueando puertos 8001 y 8002
+2. **Configure network**
+   - Ensure TV and mobile device are on the same WiFi network
+   - Make sure no firewall is blocking ports 8001 and 8002
 
-## 🧪 Testing y Debugging
+## 🧪 Testing and Debugging
 
-### Estrategia de Testing
+### Testing Strategy
 
 ```mermaid
 graph TB
@@ -548,48 +548,48 @@ graph TB
 
 ### Debugging Tips
 
-1. **Logs de Conexión**
+1. **Connection Logs**
 ```dart
-// Habilitar logs detallados
+// Enable detailed logs
 import 'dart:developer' as developer;
 developer.log('Connection attempt', name: 'TVConnection');
 ```
 
-2. **Verificar Estado de Red**
+2. **Check Network Status**
 ```dart
-// Verificar conectividad WiFi
+// Check WiFi connectivity
 final connectivity = await Connectivity().checkConnectivity();
 ```
 
 3. **Debug WebSocket**
 ```dart
-// Monitorear mensajes WebSocket
+// Monitor WebSocket messages
 ws.stream.listen((data) {
   print('WebSocket received: $data');
 });
 ```
 
-## 🔮 Roadmap y Futuras Mejoras
+## 🔮 Roadmap and Future Improvements
 
-### 🎯 Funcionalidades Planificadas
+### 🎯 Planned Features
 
-- [ ] **Soporte para LG WebOS**: Implementar protocolo LG completo
-- [ ] **Soporte para Sony Bravia**: Agregar compatibilidad con TVs Sony
-- [ ] **Control de Apps**: Lanzar aplicaciones específicas
-- [ ] **Grabación de Macros**: Secuencias de comandos personalizables
-- [ ] **Modo Oscuro**: Tema oscuro para la aplicación
-- [ ] **Widgets**: Widgets de acceso rápido para Android
-- [ ] **Compartir Dispositivos**: Múltiples usuarios controlando el mismo TV
+- [ ] **LG WebOS Support**: Implement full LG protocol
+- [ ] **Sony Bravia Support**: Add compatibility for Sony TVs
+- [ ] **App Control**: Launch specific applications
+- [ ] **Macro Recording**: Customizable command sequences
+- [ ] **Dark Mode**: Dark theme for the app
+- [ ] **Widgets**: Quick access widgets for Android
+- [ ] **Device Sharing**: Multiple users controlling the same TV
 
-### 🏗️ Mejoras Arquitecturales
+### 🏗️ Architectural Improvements
 
-- [ ] **Dependency Injection**: Implementar inyección de dependencias
-- [ ] **State Management**: Migrar a Bloc/Riverpod para estado global
-- [ ] **Offline Mode**: Cache de dispositivos para uso offline
-- [ ] **Analytics**: Tracking de uso y errores
-- [ ] **CI/CD**: Pipeline de integración continua
+- [ ] **Dependency Injection**: Implement dependency injection
+- [ ] **State Management**: Migrate to Bloc/Riverpod for global state
+- [ ] **Offline Mode**: Device cache for offline use
+- [ ] **Analytics**: Usage and error tracking
+- [ ] **CI/CD**: Continuous integration pipeline
 
-### 📊 Métricas y Monitoreo
+### 📊 Metrics and Monitoring
 
 ```mermaid
 graph LR
@@ -604,48 +604,48 @@ graph LR
     H --> I
 ```
 
-## 🤝 Contribución
+## 🤝 Contribution
 
-### Cómo Contribuir
+### How to Contribute
 
-1. **Fork del repositorio**
-2. **Crear branch de feature**: `git checkout -b feature/nueva-funcionalidad`
-3. **Hacer cambios**: Seguir las convenciones de código
-4. **Tests**: Asegurar que todos los tests pasen
-5. **Pull Request**: Describir cambios y casos de uso
+1. **Fork the repository**
+2. **Create a feature branch**: `git checkout -b feature/new-feature`
+3. **Make changes**: Follow code conventions
+4. **Tests**: Ensure all tests pass
+5. **Pull Request**: Describe changes and use cases
 
-### Convenciones de Código
+### Code Conventions
 
-- **Naming**: camelCase para variables, PascalCase para clases
-- **Documentación**: Comentarios JSDoc para métodos públicos
-- **Testing**: Cobertura mínima del 80%
-- **Commits**: Mensajes descriptivos siguiendo Conventional Commits
+- **Naming**: camelCase for variables, PascalCase for classes
+- **Documentation**: JSDoc comments for public methods
+- **Testing**: Minimum 80% coverage
+- **Commits**: Descriptive messages following Conventional Commits
 
-### Estructura de Commits
+### Commit Structure
 
 ```
-feat: agregar soporte para LG WebOS
-fix: corregir detección de desconexión WiFi
-docs: actualizar documentación de API
-test: agregar tests para SamsungTVService
-refactor: reorganizar estructura de carpetas
+feat: add support for LG WebOS
+fix: fix WiFi disconnection detection
+docs: update API documentation
+test: add tests for SamsungTVService
+refactor: reorganize folder structure
 ```
 
-## 📄 Licencia
+## 📄 License
 
-Este proyecto está bajo la Licencia MIT. Ver `LICENSE` para más detalles.
+This project is under the MIT License. See `LICENSE` for more details.
 
-## 🙏 Agradecimientos
+## 🙏 Acknowledgements
 
-- **Samsung**: Por la documentación de Smart View API
-- **Flutter Team**: Por el excelente framework
-- **Comunidad UPnP**: Por las librerías de descubrimiento
-- **Contribuidores**: Por las mejoras y reportes de bugs
+- **Samsung**: For Smart View API documentation
+- **Flutter Team**: For the excellent framework
+- **UPnP Community**: For discovery libraries
+- **Contributors**: For improvements and bug reports
 
-## 📞 Soporte
+## 📞 Support
 
-- **Issues**: escribirme xD
+- **Issues**: just write me xD
 
 ---
 2025
-**Desarrollado con ❤️ usando Flutter**
+**Developed with ❤️ using Flutter**
