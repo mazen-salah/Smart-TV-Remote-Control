@@ -44,9 +44,9 @@ class LgTvService {
     String? clientKey,
     String? pinnedCertificateSha256,
     bool preferSecure = true,
-  })  : _clientKey = clientKey,
-        _pinnedCert = pinnedCertificateSha256,
-        _secure = preferSecure;
+  }) : _clientKey = clientKey,
+       _pinnedCert = pinnedCertificateSha256,
+       _secure = preferSecure;
 
   final String host;
 
@@ -96,15 +96,18 @@ class LgTvService {
       if (pinned == null) return true; // first use: pin after pairing
       if (fingerprint == pinned) return true;
       _certificateRejected = true;
-      log('LG: certificate for $host changed (expected $pinned, got $fingerprint)');
+      log(
+        'LG: certificate for $host changed (expected $pinned, got $fingerprint)',
+      );
       return false;
     };
 
   Future<void> connect() async {
     if (_isConnected) return;
 
-    final candidates =
-        _secure ? [_secureUri, _plainUri] : [_plainUri, _secureUri];
+    final candidates = _secure
+        ? [_secureUri, _plainUri]
+        : [_plainUri, _secureUri];
     Object? lastError;
     for (final uri in candidates) {
       _certificateRejected = false;
@@ -242,7 +245,7 @@ class LgTvService {
         'id': id,
         'type': 'request',
         'uri': uri,
-        if (payload != null) 'payload': payload,
+        'payload': ?payload,
       }),
     );
     return id;
@@ -402,8 +405,10 @@ class LgTvService {
         ..remove('signed')
         ..remove('signatures')
         ..['appVersion'] = '1.0';
-      (manifest['permissions'] as List<dynamic>)
-          .addAll(['CONTROL_INPUT_TEXT', 'CONTROL_MOUSE_AND_KEYBOARD']);
+      (manifest['permissions'] as List<dynamic>).addAll([
+        'CONTROL_INPUT_TEXT',
+        'CONTROL_MOUSE_AND_KEYBOARD',
+      ]);
     }
     return <String, dynamic>{
       'id': 'register_0',

@@ -7,8 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [Unreleased]
-
 ### Changed
 - **LG webOS client rewritten against the current protocol.** Connects to
   `wss://<ip>:3001` first (required by firmware since January 2023) and
