@@ -195,8 +195,13 @@ class TvRepository {
   /// key, pinned certificate, and the known-TV entry. If it is the active
   /// connection, that is closed too.
   Future<void> forget(TVDevice device) async {
-    final identifier = _identifierFor(device);
-    if (identifier != null) {
+    // Credentials may have been saved under the host before the MAC was
+    // known, so clear every alias, not just the preferred identifier.
+    final aliases = {
+      device.mac,
+      device.host,
+    }.whereType<String>().where((id) => id.isNotEmpty);
+    for (final identifier in aliases) {
       for (final brand in TvBrand.values) {
         final key = _tokenKeyFor(brand, identifier);
         await _tokenStorage.clear(key);

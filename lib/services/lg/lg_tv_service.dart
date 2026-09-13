@@ -171,8 +171,10 @@ class LgTvService {
     );
 
     // The saved key is only sent over TLS; on plaintext the TV re-prompts.
-    // Only trust the key to a peer we have pinned; otherwise pair fresh.
+    // Only trust the saved key to a peer we have pinned; otherwise pair
+    // fresh. Keys handed out over TLS are always worth keeping.
     _sendKeyInRegister = secure && _pinnedCert != null;
+    _persistClientKey = secure;
     channel.sink.add(jsonEncode(_registerPayload(signed: true)));
     await registration.future.timeout(
       kLgPairingTimeout,
@@ -188,6 +190,7 @@ class LgTvService {
   }
 
   bool _sendKeyInRegister = true;
+  bool _persistClientKey = false;
 
   void _onMessage(dynamic raw) {
     final data = _decode(raw);
@@ -202,7 +205,7 @@ class LgTvService {
     switch (type) {
       case 'registered':
         final key = payloadMap['client-key'] as String?;
-        if (key != null && key != _clientKey && _sendKeyInRegister) {
+        if (key != null && key != _clientKey && _persistClientKey) {
           _clientKey = key;
           onClientKeyReceived?.call(key);
         }

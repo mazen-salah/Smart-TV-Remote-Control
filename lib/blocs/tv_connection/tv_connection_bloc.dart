@@ -20,6 +20,10 @@ class TvConnectionBloc extends Bloc<TvConnectionEvent, TvConnectionState> {
 
   final TvRepository _repository;
 
+  /// Bumped by forget/disconnect so a connect that finishes afterwards is
+  /// discarded instead of resurrecting the TV.
+  int _generation = 0;
+
   Future<void> _onConnectRequested(
     TvConnectRequested event,
     Emitter<TvConnectionState> emit,
@@ -36,6 +40,7 @@ class TvConnectionBloc extends Bloc<TvConnectionEvent, TvConnectionState> {
       ),
     );
 
+    final generation = _generation;
     try {
       await _repository.connect(
         event.device,
@@ -44,8 +49,14 @@ class TvConnectionBloc extends Bloc<TvConnectionEvent, TvConnectionState> {
           add(TvDisconnectionDetected(type.name));
         },
       );
+      if (generation != _generation) {
+        // Forgotten or disconnected while connecting: drop the session.
+        await _repository.disconnect();
+        return;
+      }
       emit(state.copyWith(status: TvConnectionStatus.connected));
     } catch (e) {
+      if (generation != _generation) return;
       emit(
         state.copyWith(
           status: TvConnectionStatus.error,
@@ -59,6 +70,7 @@ class TvConnectionBloc extends Bloc<TvConnectionEvent, TvConnectionState> {
     TvDisconnectRequested event,
     Emitter<TvConnectionState> emit,
   ) async {
+    _generation++;
     await _repository.disconnect();
     emit(
       state.copyWith(
@@ -95,6 +107,7 @@ class TvConnectionBloc extends Bloc<TvConnectionEvent, TvConnectionState> {
     TvForgetRequested event,
     Emitter<TvConnectionState> emit,
   ) async {
+    _generation++;
     final device = event.device;
     if (device == null) {
       await _repository.forgetCurrent();

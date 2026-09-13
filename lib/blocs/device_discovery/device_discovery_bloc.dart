@@ -20,6 +20,9 @@ class DeviceDiscoveryBloc
 
   final TvRepository _repository;
 
+  /// Hosts forgotten while a sweep was in flight; excluded from its result.
+  final Set<String> _forgottenDuringSweep = {};
+
   Future<void> _onDiscoveryStarted(
     DeviceDiscoveryEvent event,
     Emitter<DeviceDiscoveryState> emit,
@@ -37,10 +40,15 @@ class DeviceDiscoveryBloc
       ),
     );
 
+    _forgottenDuringSweep.clear();
     try {
       final discovered = await _repository.discoverAll();
-      // Known first so a saved MAC and name survive; discovery fills gaps.
-      final merged = TVDevice.mergeByHost([...known, ...discovered]);
+      // Re-read known TVs: a forget may have completed during the sweep.
+      final knownNow = _repository.knownTvs();
+      final merged = TVDevice.mergeByHost([
+        ...knownNow,
+        ...discovered,
+      ]).where((d) => !_forgottenDuringSweep.contains(d.host)).toList();
       emit(
         state.copyWith(
           status: merged.isEmpty
@@ -76,9 +84,9 @@ class DeviceDiscoveryBloc
     DeviceForgotten event,
     Emitter<DeviceDiscoveryState> emit,
   ) {
-    final remaining = state.devices
-        .where((d) => d.host != event.device.host)
-        .toList();
+    final host = event.device.host;
+    if (host != null) _forgottenDuringSweep.add(host);
+    final remaining = state.devices.where((d) => d.host != host).toList();
     emit(
       state.copyWith(
         devices: remaining,
