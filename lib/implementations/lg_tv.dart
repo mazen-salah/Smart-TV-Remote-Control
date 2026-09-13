@@ -1,11 +1,14 @@
+import 'dart:developer';
+
 import 'package:remote/constants/key_codes.dart';
 import 'package:remote/core/interfaces/tv_interface.dart';
 import 'package:remote/core/models/connection_state.dart';
 import 'package:remote/core/models/disconnection_type.dart';
+import 'package:remote/services/lg/lg_buttons.dart';
 import 'package:remote/services/lg/lg_tv_service.dart';
 
-/// Maps Samsung-style [KeyCodes] (the shared interface) to LG WebOS commands.
-/// Not every key has a one-to-one mapping; unmapped keys are no-ops.
+/// LG webOS implementation of [TVInterface]. Key mapping lives in
+/// `lg_buttons.dart`; keys with no webOS equivalent are logged and ignored.
 class LGTV implements TVInterface {
   LGTV({
     required String host,
@@ -75,28 +78,21 @@ class LGTV implements TVInterface {
   @override
   Future<void> sendKey(KeyCodes key) async {
     await ensureConnection();
-    switch (key) {
-      case KeyCodes.KEY_POWER:
-        await _service.power();
-      case KeyCodes.KEY_VOLUP:
-        await _service.volumeUp();
-      case KeyCodes.KEY_VOLDOWN:
-        await _service.volumeDown();
-      case KeyCodes.KEY_MUTE:
-        await _service.mute(true);
-      case KeyCodes.KEY_CHUP:
-        await _service.channelUp();
-      case KeyCodes.KEY_CHDOWN:
-        await _service.channelDown();
-      case KeyCodes.KEY_HOME:
-        await _service.sendUri(
-          'ssap://system.launcher/launch',
-          payload: {'id': 'com.webos.app.home'},
-        );
-      case _:
-        // Unsupported key for LG path right now; ignored silently.
-        break;
+    if (key == KeyCodes.KEY_POWER) {
+      await _service.power();
+      return;
     }
+    final media = lgMediaCommandFor(key);
+    if (media != null) {
+      await _service.media(media);
+      return;
+    }
+    final button = lgButtonFor(key);
+    if (button != null) {
+      await _service.sendButton(button);
+      return;
+    }
+    log('LG: no webOS mapping for ${key.name}, ignored');
   }
 
   Future<void> launchApp(String appId) => _service.launchApp(appId);
