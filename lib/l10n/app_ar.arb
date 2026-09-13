@@ -68,5 +68,9 @@
   "inputSource": "مصدر الإدخال",
   "unknown": "غير معروف",
   "manualIpHint": "192.168.1.42",
-  "manualNameHint": "تلفزيون غرفة المعيشة"
+  "manualNameHint": "تلفزيون غرفة المعيشة",
+  "forgetTv": "نسيان هذا التلفزيون",
+  "forgetTvConfirm": "هل تريد إزالة {name} واقترانه؟ ستحتاج إلى السماح للتطبيق على التلفزيون مرة أخرى.",
+  "forget": "نسيان",
+  "connectionFailed": "تعذر الاتصال: {reason}"
 }

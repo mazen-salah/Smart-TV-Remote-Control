@@ -96,5 +96,23 @@
         "type": "String"
       }
     }
+  },
+  "forgetTv": "Forget this TV",
+  "forgetTvConfirm": "Remove {name} and its pairing? You will need to allow the app on the TV again.",
+  "forget": "Forget",
+  "connectionFailed": "Could not connect: {reason}",
+  "@forgetTvConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@connectionFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
   }
 }

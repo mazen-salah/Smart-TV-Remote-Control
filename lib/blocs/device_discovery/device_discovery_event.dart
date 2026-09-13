@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:remote/core/models/tv_brand.dart';
+import 'package:remote/core/models/tv_device.dart';
 
 sealed class DeviceDiscoveryEvent extends Equatable {
   const DeviceDiscoveryEvent();
@@ -28,4 +29,13 @@ final class ManualDeviceAdded extends DeviceDiscoveryEvent {
 
   @override
   List<Object?> get props => [host, name, brand];
+}
+
+/// The user removed [device] from the picker (and its pairing).
+final class DeviceForgotten extends DeviceDiscoveryEvent {
+  const DeviceForgotten(this.device);
+  final TVDevice device;
+
+  @override
+  List<Object?> get props => [device];
 }

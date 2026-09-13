@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- SSDP discovery could hang forever (and keep the Android multicast lock)
+  when a TV accepted the description request but never answered; device
+  descriptions are now fetched after the sweep, each with its own timeout,
+  and the whole sweep has a hard ceiling.
+- A changed LG certificate was unrecoverable from the app. Long-press a TV
+  in the picker to forget it (pairing, pinned certificate and saved entry);
+  connection failures are now shown on the picker too. Closes #10.
+- One failed key press on LG (e.g. the pointer socket being slow) no longer
+  drops the whole session; the main connection stays usable.
+- Wake-on-LAN retry works again for LG sets that are fully off: the
+  handshake timeout is now recognised as "TV unreachable".
+- The saved LG client key is only sent to a TV whose certificate is already
+  pinned; unpinned connections pair fresh.
+- Declining the LG pairing prompt no longer triggers a second prompt; only
+  a rejected manifest retries unsigned.
+- Tapping a TV twice, or auto-connect plus a tap, no longer opens two
+  sockets and two pairing prompts; the row shows a spinner while connecting.
+- Overlapping discovery sweeps no longer release the Android multicast lock
+  early; the lock is reference-counted and repeat scans are ignored while
+  one runs.
+- A paired TV no longer appears twice in the picker (saved entry with MAC
+  plus discovered entry without); results are merged by host.
+
 ## [0.4.0] - 2026-09-13
 
 ### Changed

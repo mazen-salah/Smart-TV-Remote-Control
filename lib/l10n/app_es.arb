@@ -68,5 +68,9 @@
   "inputSource": "Fuente de entrada",
   "unknown": "desconocido",
   "manualIpHint": "192.168.1.42",
-  "manualNameHint": "TV de la sala"
+  "manualNameHint": "TV de la sala",
+  "forgetTv": "Olvidar este TV",
+  "forgetTvConfirm": "¿Quitar {name} y su emparejamiento? Tendrás que permitir la app en el TV de nuevo.",
+  "forget": "Olvidar",
+  "connectionFailed": "No se pudo conectar: {reason}"
 }

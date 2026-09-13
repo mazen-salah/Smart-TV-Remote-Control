@@ -3,10 +3,20 @@ import 'package:remote/core/models/tv_device.dart';
 import 'package:remote/l10n/app_localizations.dart';
 
 class DeviceListItem extends StatelessWidget {
-  const DeviceListItem({required this.device, required this.onTap, super.key});
+  const DeviceListItem({
+    required this.device,
+    required this.onTap,
+    this.onLongPress,
+    this.busy = false,
+    super.key,
+  });
 
   final TVDevice device;
   final VoidCallback onTap;
+  final VoidCallback? onLongPress;
+
+  /// Shows a spinner instead of the chevron while this TV is connecting.
+  final bool busy;
 
   @override
   Widget build(BuildContext context) {
@@ -50,12 +60,15 @@ class DeviceListItem extends StatelessWidget {
               ),
           ],
         ),
-        trailing: const Icon(
-          Icons.arrow_forward_ios,
-          color: Colors.grey,
-          size: 16,
-        ),
+        trailing: busy
+            ? const SizedBox(
+                width: 18,
+                height: 18,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              )
+            : const Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 16),
         onTap: onTap,
+        onLongPress: onLongPress,
       ),
     );
   }

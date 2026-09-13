@@ -513,6 +513,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Living-room TV'**
   String get manualNameHint;
+
+  /// No description provided for @forgetTv.
+  ///
+  /// In en, this message translates to:
+  /// **'Forget this TV'**
+  String get forgetTv;
+
+  /// No description provided for @forgetTvConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove {name} and its pairing? You will need to allow the app on the TV again.'**
+  String forgetTvConfirm(String name);
+
+  /// No description provided for @forget.
+  ///
+  /// In en, this message translates to:
+  /// **'Forget'**
+  String get forget;
+
+  /// No description provided for @connectionFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not connect: {reason}'**
+  String connectionFailed(String reason);
 }
 
 class _AppLocalizationsDelegate

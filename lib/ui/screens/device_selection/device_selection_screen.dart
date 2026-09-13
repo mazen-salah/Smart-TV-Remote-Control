@@ -32,6 +32,22 @@ class _DeviceSelectionScreenState extends State<DeviceSelectionScreen> {
             );
           },
         ),
+        BlocListener<TvConnectionBloc, TvConnectionState>(
+          listenWhen: (prev, next) =>
+              prev.status != next.status &&
+              next.status == TvConnectionStatus.error,
+          listener: (context, state) {
+            final l = AppLocalizations.of(context);
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  l.connectionFailed(state.errorMessage ?? l.unknown),
+                ),
+                backgroundColor: Colors.red,
+              ),
+            );
+          },
+        ),
         BlocListener<DeviceDiscoveryBloc, DeviceDiscoveryState>(
           listenWhen: (prev, next) =>
               !_autoConnectTried &&
@@ -238,20 +254,50 @@ class _DeviceList extends StatelessWidget {
       return const _EmptyState();
     }
 
+    final connection = context.watch<TvConnectionBloc>().state;
     return ListView.builder(
       itemCount: state.devices.length,
       itemBuilder: (context, index) {
         final device = state.devices[index];
+        final busy =
+            connection.isConnecting && connection.device?.host == device.host;
         return DeviceListItem(
           device: device,
+          busy: busy,
           onTap: () => _onTapDevice(context, device),
+          onLongPress: () => _onForgetDevice(context, device),
         );
       },
     );
   }
 
   void _onTapDevice(BuildContext context, TVDevice device) {
+    if (context.read<TvConnectionBloc>().state.isConnecting) return;
     context.read<TvConnectionBloc>().add(TvConnectRequested(device));
+  }
+
+  Future<void> _onForgetDevice(BuildContext context, TVDevice device) async {
+    final l = AppLocalizations.of(context);
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(l.forgetTv),
+        content: Text(l.forgetTvConfirm(device.displayName)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: Text(l.cancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: Text(l.forget),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !context.mounted) return;
+    context.read<TvConnectionBloc>().add(TvForgetRequested(device: device));
+    context.read<DeviceDiscoveryBloc>().add(DeviceForgotten(device));
   }
 }
 
