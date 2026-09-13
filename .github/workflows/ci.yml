@@ -22,7 +22,7 @@ jobs:
           java-version: '17'
 
       - name: Cache pub dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: |
             ~/.pub-cache
