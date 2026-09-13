@@ -60,7 +60,7 @@ class KnownTvsStorage {
     await _prefs.setString(_lastTvKey, json.encode(_toJson(device)));
   }
 
-  Future<void> clearLastUsed() async => _prefs.remove(_lastTvKey);
+  Future<void> clearLastUsed() => _prefs.remove(_lastTvKey);
 
   Map<String, dynamic> _toJson(TVDevice d) => <String, dynamic>{
         'host': d.host,

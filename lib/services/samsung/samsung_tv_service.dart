@@ -82,8 +82,7 @@ class SamsungTVService {
         Uri.parse(channel),
         pingInterval: kPingInterval,
         customClient: HttpClient()
-          ..badCertificateCallback =
-              (X509Certificate cert, String host, int port) => true,
+          ..badCertificateCallback = (cert, host, port) => true,
       );
 
       _wsSub = _ws!.stream.listen(
@@ -156,10 +155,10 @@ class SamsungTVService {
       }
     }
 
-    return completer.future;
+    return await completer.future;
   }
 
-  Future<http.Response> getDeviceInfo() async {
+  Future<http.Response> getDeviceInfo() {
     log('Getting device info from $api');
     return http.get(Uri.parse(api)).timeout(kConnectionTimeout);
   }
@@ -313,6 +312,6 @@ class SamsungTVService {
       },
     );
 
-    return completer.future;
+    return await completer.future;
   }
 }
