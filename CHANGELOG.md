@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.1] - 2026-09-14
+
 ### Fixed
 - SSDP discovery could hang forever (and keep the Android multicast lock)
   when a TV accepted the description request but never answered; device
@@ -143,7 +145,8 @@ Flutter architecture with real protocol support for two TV brands.
 - Basic on-screen remote (power, volume, channel, D-pad).
 - Single-screen Flutter UI.
 
-[Unreleased]: https://github.com/mazen-salah/Smart-TV-Remote-Control/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/mazen-salah/Smart-TV-Remote-Control/compare/v0.4.1...HEAD
+[0.4.1]: https://github.com/mazen-salah/Smart-TV-Remote-Control/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/mazen-salah/Smart-TV-Remote-Control/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/mazen-salah/Smart-TV-Remote-Control/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/mazen-salah/Smart-TV-Remote-Control/compare/v0.1.0...v0.2.0
