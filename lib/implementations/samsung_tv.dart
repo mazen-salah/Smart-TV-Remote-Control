@@ -12,12 +12,12 @@ class SamsungTV implements TVInterface {
     String? modelName,
     String? token,
   }) : _service = SamsungTVService(
-         host: host,
-         mac: mac,
-         deviceName: deviceName,
-         modelName: modelName,
-         token: token,
-       );
+          host: host,
+          mac: mac,
+          deviceName: deviceName,
+          modelName: modelName,
+          token: token,
+        );
 
   SamsungTV.fromService(this._service);
 

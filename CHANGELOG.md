@@ -7,8 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [Unreleased]
+
 ### Changed
-<<<<<<< HEAD
+- **LG webOS client rewritten against the current protocol.** Connects to
+  `wss://<ip>:3001` first (required by firmware since January 2023) and
+  falls back to `ws://<ip>:3000` for older sets; registers with LG's signed
+  sample manifest and retries unsigned if rejected; drives navigation,
+  colour, digit, mute, volume and channel keys through the pointer input
+  socket and transport keys through `media.controls`. Mute now toggles.
+  The TV's self-signed certificate is pinned on first pairing and the saved
+  client key is only ever sent over that pinned TLS connection; the
+  plaintext fallback for pre-2018 sets asks the TV to pair again instead.
+  Still untested on hardware (#9).
 - **Discovery rebuilt on the platform service browsers.** mDNS now uses
   `bonsoir` (Bonjour on iOS, NSD on Android) instead of raw multicast
   sockets, which never worked on a real iPhone without Apple's restricted
@@ -20,18 +31,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Samsung and LG sets; other devices are no longer listed.
 - Dart SDK floor raised to 3.8 (required by `bonsoir`); sources reformatted
   for the 3.8 formatter style.
-=======
-- **LG webOS client rewritten against the current protocol.** Connects to
-  `wss://<ip>:3001` first (required by firmware since January 2023) and
-  falls back to `ws://<ip>:3000` for older sets; registers with LG's signed
-  sample manifest and retries unsigned if rejected; drives navigation,
-  colour, digit, mute, volume and channel keys through the pointer input
-  socket and transport keys through `media.controls`. Mute now toggles.
-  The TV's self-signed certificate is pinned on first pairing and the saved
-  client key is only ever sent over that pinned TLS connection; the
-  plaintext fallback for pre-2018 sets asks the TV to pair again instead.
-  Still untested on hardware (#9).
->>>>>>> 3d19576 (feat(lg): secure transport, signed pairing, pointer-socket keys, media controls)
 
 ## [0.3.0] - 2026-09-13
 

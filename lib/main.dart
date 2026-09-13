@@ -34,9 +34,8 @@ class RemoteApp extends StatelessWidget {
         BlocProvider(create: (_) => ConnectivityCubit()),
         BlocProvider(create: (_) => TvConnectionBloc(repository: repository)),
         BlocProvider(
-          create: (_) =>
-              DeviceDiscoveryBloc(repository: repository)
-                ..add(const DiscoveryStarted()),
+          create: (_) => DeviceDiscoveryBloc(repository: repository)
+            ..add(const DiscoveryStarted()),
         ),
       ],
       child: MaterialApp(

@@ -10,8 +10,8 @@ export 'device_discovery_state.dart';
 class DeviceDiscoveryBloc
     extends Bloc<DeviceDiscoveryEvent, DeviceDiscoveryState> {
   DeviceDiscoveryBloc({required TvRepository repository})
-    : _repository = repository,
-      super(const DeviceDiscoveryState()) {
+      : _repository = repository,
+        super(const DeviceDiscoveryState()) {
     on<DiscoveryStarted>(_onDiscoveryStarted);
     on<DiscoveryRefreshRequested>(_onDiscoveryStarted);
     on<ManualDeviceAdded>(_onManualDeviceAdded);
@@ -40,9 +40,8 @@ class DeviceDiscoveryBloc
       final merged = <TVDevice>{...known, ...discovered}.toList();
       emit(
         state.copyWith(
-          status: merged.isEmpty
-              ? DiscoveryStatus.empty
-              : DiscoveryStatus.success,
+          status:
+              merged.isEmpty ? DiscoveryStatus.empty : DiscoveryStatus.success,
           devices: merged,
         ),
       );

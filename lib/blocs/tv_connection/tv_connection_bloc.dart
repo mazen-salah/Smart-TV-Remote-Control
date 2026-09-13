@@ -9,8 +9,8 @@ export 'tv_connection_state.dart';
 
 class TvConnectionBloc extends Bloc<TvConnectionEvent, TvConnectionState> {
   TvConnectionBloc({required TvRepository repository})
-    : _repository = repository,
-      super(const TvConnectionState.idle()) {
+      : _repository = repository,
+        super(const TvConnectionState.idle()) {
     on<TvConnectRequested>(_onConnectRequested);
     on<TvDisconnectRequested>(_onDisconnectRequested);
     on<TvSendKeyRequested>(_onSendKeyRequested);

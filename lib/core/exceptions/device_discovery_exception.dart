@@ -10,14 +10,14 @@ abstract class DeviceDiscoveryException implements Exception {
 /// No se encontraron dispositivos
 class NoDevicesFoundException extends DeviceDiscoveryException {
   const NoDevicesFoundException()
-    : super(
-        'No se encontraron TVs en la red.\n\n'
-        'Verifica que:\n'
-        '• Tu TV esté encendida\n'
-        '• Ambos dispositivos estén en la misma red WiFi\n'
-        '• El protocolo UPnP esté habilitado en tu router\n'
-        '• Tu TV tenga habilitada la función de red',
-      );
+      : super(
+          'No se encontraron TVs en la red.\n\n'
+          'Verifica que:\n'
+          '• Tu TV esté encendida\n'
+          '• Ambos dispositivos estén en la misma red WiFi\n'
+          '• El protocolo UPnP esté habilitado en tu router\n'
+          '• Tu TV tenga habilitada la función de red',
+        );
 }
 
 /// Error durante el proceso de descubrimiento
@@ -28,11 +28,11 @@ class DiscoveryFailedException extends DeviceDiscoveryException {
 /// Error de permisos de red
 class NetworkPermissionException extends DeviceDiscoveryException {
   const NetworkPermissionException()
-    : super('Permisos de red insuficientes para descubrir dispositivos');
+      : super('Permisos de red insuficientes para descubrir dispositivos');
 }
 
 /// Error de timeout en descubrimiento
 class DiscoveryTimeoutException extends DeviceDiscoveryException {
   const DiscoveryTimeoutException()
-    : super('Timeout durante el descubrimiento de dispositivos');
+      : super('Timeout durante el descubrimiento de dispositivos');
 }
