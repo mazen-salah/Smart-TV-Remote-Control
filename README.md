@@ -22,7 +22,8 @@
 
 - **Android:** grab the signed APK from the
   [latest release](https://github.com/mazen-salah/Smart-TV-Remote-Control/releases/latest).
-  Your phone will ask you to allow installs from this source the first time.
+  Most phones want the `arm64-v8a` build; pick `universal` if unsure. Your
+  phone will ask you to allow installs from this source the first time.
 - **iOS:** not on TestFlight yet. Build from source with the
   [Quickstart](#quickstart) below.
 
@@ -122,6 +123,8 @@ Requirements:
 
 DI is wired with `get_it` in `lib/di/service_locator.dart`. Blocs depend on repositories; repositories depend on services. UI never touches a service directly.
 
+The wire protocols themselves (Samsung WebSocket v2 pairing, LG webOS registration and the pointer socket, SSDP and Bonjour discovery) are written up in [docs/protocols.md](docs/protocols.md).
+
 ---
 
 ## Troubleshooting
@@ -158,7 +161,7 @@ Known limitation: iOS background reconnect is best-effort, the system may suspen
 
 ## Contributing
 
-Pull requests welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, code style, and the commit convention, and [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) for community expectations. Security issues go through [SECURITY.md](SECURITY.md).
+Pull requests welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, code style, and the commit convention, and [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) for community expectations. Security issues go through [SECURITY.md](SECURITY.md). The app collects no data; see [PRIVACY.md](PRIVACY.md).
 
 If you have a TV the app does not handle yet, an issue with the brand, model and firmware year is the most useful thing you can send.
 

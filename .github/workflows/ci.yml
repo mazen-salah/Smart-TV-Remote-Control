@@ -60,3 +60,24 @@ jobs:
           path: build/app/outputs/flutter-apk/app-debug.apk
           if-no-files-found: warn
           retention-days: 14
+
+  ios:
+    name: Build iOS (no codesign)
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.47.0'
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build iOS app without signing
+        run: flutter build ios --debug --no-codesign
