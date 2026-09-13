@@ -10,7 +10,7 @@ class ConnectivityCubit extends Cubit<ConnectivityStateView> {
   ConnectivityCubit({Connectivity? connectivity})
       : _connectivity = connectivity ?? Connectivity(),
         super(const ConnectivityStateView.unknown()) {
-    _bootstrap();
+    unawaited(_bootstrap());
   }
 
   final Connectivity _connectivity;
@@ -26,6 +26,6 @@ class ConnectivityCubit extends Cubit<ConnectivityStateView> {
   @override
   Future<void> close() async {
     await _sub?.cancel();
-    return super.close();
+    await super.close();
   }
 }

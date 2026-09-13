@@ -105,7 +105,7 @@ class LgTvService {
       }
     }
 
-    return completer.future;
+    return await completer.future;
   }
 
   Future<void> sendUri(String uri, {Map<String, dynamic>? payload}) async {
