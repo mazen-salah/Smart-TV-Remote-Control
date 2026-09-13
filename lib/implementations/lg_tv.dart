@@ -16,11 +16,16 @@ class LGTV implements TVInterface {
     String? deviceName,
     String? modelName,
     String? clientKey,
-  }) : _service = LgTvService(host: host, clientKey: clientKey),
-       _host = host,
-       _mac = mac,
-       _deviceName = deviceName,
-       _modelName = modelName;
+    String? pinnedCertificateSha256,
+  })  : _service = LgTvService(
+          host: host,
+          clientKey: clientKey,
+          pinnedCertificateSha256: pinnedCertificateSha256,
+        ),
+        _host = host,
+        _mac = mac,
+        _deviceName = deviceName,
+        _modelName = modelName;
 
   final LgTvService _service;
   final String _host;
@@ -61,6 +66,10 @@ class LGTV implements TVInterface {
 
   void setOnClientKeyReceivedCallback(void Function(String key) callback) {
     _service.onClientKeyReceived = callback;
+  }
+
+  void setOnCertificatePinnedCallback(void Function(String sha256) callback) {
+    _service.onCertificatePinned = callback;
   }
 
   @override

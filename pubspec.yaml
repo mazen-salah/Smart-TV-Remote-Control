@@ -21,6 +21,7 @@ dependencies:
   bonsoir: ^7.1.5
   wake_on_lan: ^4.0.0
   connectivity_plus: ^7.3.1
+  crypto: ^3.0.6
 
   # State management & DI
   flutter_bloc: ^9.0.0

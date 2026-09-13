@@ -27,6 +27,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   sample manifest and retries unsigned if rejected; drives navigation,
   colour, digit, mute, volume and channel keys through the pointer input
   socket and transport keys through `media.controls`. Mute now toggles.
+  The TV's self-signed certificate is pinned on first pairing and the saved
+  client key is only ever sent over that pinned TLS connection; the
+  plaintext fallback for pre-2018 sets asks the TV to pair again instead.
   Still untested on hardware (#9).
 >>>>>>> 3d19576 (feat(lg): secure transport, signed pairing, pointer-socket keys, media controls)
 

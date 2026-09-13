@@ -3,11 +3,13 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:crypto/crypto.dart';
 import 'package:remote/core/models/disconnection_type.dart';
 import 'package:remote/services/lg/lg_pairing.dart';
 import 'package:web_socket_channel/io.dart';
 
-const Duration kLgConnectTimeout = Duration(seconds: 12);
+/// How long the user gets to accept the on-screen pairing prompt.
+const Duration kLgPairingTimeout = Duration(seconds: 60);
 const Duration kLgSocketOpenTimeout = Duration(seconds: 4);
 const Duration kLgRequestTimeout = Duration(seconds: 5);
 const Duration kLgPingInterval = Duration(seconds: 10);
@@ -18,6 +20,13 @@ const Duration kLgPingInterval = Duration(seconds: 10);
 /// older models) only accept `wss://<host>:3001` with a self-signed
 /// certificate; sets from before 2018 only offer `ws://<host>:3000`. We try
 /// the secure port first and fall back, then remember which one worked.
+///
+/// Certificate: the TV's certificate is self-signed, so it is pinned on
+/// first use (trust-on-first-use): the SHA-256 of the certificate seen when
+/// the user approved pairing is handed to [onCertificatePinned], and later
+/// connections reject any other certificate. The saved `client-key` is only
+/// ever sent over a pinned TLS connection; on the plaintext fallback the TV
+/// is asked to pair again instead.
 ///
 /// Pairing: send a `register` message carrying LG's signed sample manifest.
 /// With a saved `client-key` the TV answers `registered` at once; without one
@@ -33,8 +42,10 @@ class LgTvService {
   LgTvService({
     required this.host,
     String? clientKey,
+    String? pinnedCertificateSha256,
     bool preferSecure = true,
   })  : _clientKey = clientKey,
+        _pinnedCert = pinnedCertificateSha256,
         _secure = preferSecure;
 
   final String host;
@@ -43,6 +54,12 @@ class LgTvService {
   String? get clientKey => _clientKey;
 
   bool _secure;
+
+  /// SHA-256 (lowercase hex) of the certificate approved on first use.
+  String? _pinnedCert;
+  String? get pinnedCertificateSha256 => _pinnedCert;
+  String? _seenCert;
+  bool _certificateRejected = false;
 
   /// Whether the last successful connection used `wss://:3001`.
   bool get usesSecureTransport => _secure;
@@ -56,6 +73,7 @@ class LgTvService {
   Completer<IOWebSocketChannel>? _pointerOpening;
 
   int _nextId = 1;
+  int _generation = 0;
   final Map<String, Completer<Map<String, dynamic>>> _pending = {};
   Completer<void>? _registration;
   bool _triedUnsigned = false;
@@ -63,11 +81,24 @@ class LgTvService {
   void Function(DisconnectionType)? onDisconnected;
   void Function(String key)? onClientKeyReceived;
 
+  /// Called once the TV has registered us over TLS, with the certificate
+  /// fingerprint to remember for that TV.
+  void Function(String sha256)? onCertificatePinned;
+
   Uri get _secureUri => Uri(scheme: 'wss', host: host, port: 3001);
   Uri get _plainUri => Uri(scheme: 'ws', host: host, port: 3000);
 
-  static HttpClient _insecureClient() =>
-      HttpClient()..badCertificateCallback = (cert, host, port) => true;
+  HttpClient _pinningClient() => HttpClient()
+    ..badCertificateCallback = (cert, host, port) {
+      final fingerprint = sha256.convert(cert.der).toString();
+      _seenCert = fingerprint;
+      final pinned = _pinnedCert;
+      if (pinned == null) return true; // first use: pin after pairing
+      if (fingerprint == pinned) return true;
+      _certificateRejected = true;
+      log('LG: certificate for $host changed (expected $pinned, got $fingerprint)');
+      return false;
+    };
 
   Future<void> connect() async {
     if (_isConnected) return;
@@ -76,27 +107,46 @@ class LgTvService {
         _secure ? [_secureUri, _plainUri] : [_plainUri, _secureUri];
     Object? lastError;
     for (final uri in candidates) {
+      _certificateRejected = false;
       try {
-        await _connectTo(uri).timeout(kLgConnectTimeout);
+        await _connectTo(uri);
         _secure = uri.scheme == 'wss';
         return;
-      } catch (e) {
-        log('LG: ${uri.scheme}://${uri.host}:${uri.port} failed: $e');
-        lastError = e;
+      } on _SocketOpenFailure catch (e) {
         _teardown();
+        if (_certificateRejected) {
+          // Never fall back to plaintext when TLS failed because the TV's
+          // certificate is not the one we pinned.
+          throw Exception(
+            'LG certificate changed; forget this TV and pair again',
+          );
+        }
+        log('LG: ${uri.scheme}://${uri.host}:${uri.port} unreachable: $e');
+        lastError = e;
+      } catch (e) {
+        // The socket opened but registration failed or timed out. Trying
+        // the other port would not help and would drop the pairing prompt.
+        _teardown();
+        throw Exception('LG connect failed: $e');
       }
     }
     throw Exception('LG connect failed: $lastError');
   }
 
   Future<void> _connectTo(Uri uri) async {
-    final channel = IOWebSocketChannel.connect(
-      uri,
-      pingInterval: kLgPingInterval,
-      connectTimeout: kLgSocketOpenTimeout,
-      customClient: uri.scheme == 'wss' ? _insecureClient() : null,
-    );
-    await channel.ready;
+    final secure = uri.scheme == 'wss';
+    final IOWebSocketChannel channel;
+    try {
+      channel = IOWebSocketChannel.connect(
+        uri,
+        pingInterval: kLgPingInterval,
+        connectTimeout: kLgSocketOpenTimeout,
+        customClient: secure ? _pinningClient() : null,
+      );
+      await channel.ready.timeout(kLgSocketOpenTimeout);
+    } catch (e) {
+      throw _SocketOpenFailure(e);
+    }
 
     final registration = Completer<void>();
     _registration = registration;
@@ -120,9 +170,23 @@ class LgTvService {
       },
     );
 
+    // The saved key is only sent over TLS; on plaintext the TV re-prompts.
+    _sendKeyInRegister = secure;
     channel.sink.add(jsonEncode(_registerPayload(signed: true)));
-    await registration.future;
+    await registration.future.timeout(
+      kLgPairingTimeout,
+      onTimeout: () => throw TimeoutException('LG pairing not accepted'),
+    );
+    if (secure) {
+      final seen = _seenCert;
+      if (_pinnedCert == null && seen != null) {
+        _pinnedCert = seen;
+        onCertificatePinned?.call(seen);
+      }
+    }
   }
+
+  bool _sendKeyInRegister = true;
 
   void _onMessage(dynamic raw) {
     final data = _decode(raw);
@@ -137,7 +201,7 @@ class LgTvService {
     switch (type) {
       case 'registered':
         final key = payloadMap['client-key'] as String?;
-        if (key != null && key != _clientKey) {
+        if (key != null && key != _clientKey && _sendKeyInRegister) {
           _clientKey = key;
           onClientKeyReceived?.call(key);
         }
@@ -167,18 +231,12 @@ class LgTvService {
     }
   }
 
-  /// Sends an `ssap://` request and resolves with the response payload.
-  Future<Map<String, dynamic>> request(
-    String uri, {
-    Map<String, dynamic>? payload,
-  }) async {
+  String _send(String uri, Map<String, dynamic>? payload) {
     final ws = _ws;
     if (!_isConnected || ws == null || ws.closeCode != null) {
       throw StateError('LG TV not connected');
     }
     final id = '${_nextId++}';
-    final completer = Completer<Map<String, dynamic>>();
-    _pending[id] = completer;
     ws.sink.add(
       jsonEncode(<String, dynamic>{
         'id': id,
@@ -187,6 +245,17 @@ class LgTvService {
         if (payload != null) 'payload': payload,
       }),
     );
+    return id;
+  }
+
+  /// Sends an `ssap://` request and resolves with the response payload.
+  Future<Map<String, dynamic>> request(
+    String uri, {
+    Map<String, dynamic>? payload,
+  }) async {
+    final completer = Completer<Map<String, dynamic>>();
+    final id = _send(uri, payload);
+    _pending[id] = completer;
     return await completer.future.timeout(
       kLgRequestTimeout,
       onTimeout: () {
@@ -196,16 +265,10 @@ class LgTvService {
     );
   }
 
-  /// Fire-and-forget variant of [request]; failures are only logged.
+  /// Sends a command without waiting for the TV's reply. Throws only when
+  /// there is no connection to send on.
   Future<void> sendUri(String uri, {Map<String, dynamic>? payload}) async {
-    try {
-      await request(uri, payload: payload);
-    } on TimeoutException {
-      // The TV acts on most commands without replying; not an error.
-    } catch (e) {
-      log('LG: $uri failed: $e');
-      rethrow;
-    }
+    _send(uri, payload);
   }
 
   /// Presses a remote button through the pointer input socket.
@@ -221,6 +284,7 @@ class LgTvService {
     if (opening != null) return await opening.future;
 
     final completer = Completer<IOWebSocketChannel>();
+    final generation = _generation;
     _pointerOpening = completer;
     try {
       final response = await request(
@@ -234,9 +298,14 @@ class LgTvService {
       final channel = IOWebSocketChannel.connect(
         uri,
         connectTimeout: kLgSocketOpenTimeout,
-        customClient: uri.scheme == 'wss' ? _insecureClient() : null,
+        customClient: uri.scheme == 'wss' ? _pinningClient() : null,
       );
       await channel.ready;
+      if (generation != _generation) {
+        // Disconnected while the socket was opening; don't keep it.
+        unawaited(channel.sink.close());
+        throw StateError('LG connection closed');
+      }
       channel.stream.listen(
         (_) {},
         onError: (Object e) => _dropPointer(channel),
@@ -247,7 +316,7 @@ class LgTvService {
     } catch (e) {
       completer.completeError(e);
     } finally {
-      _pointerOpening = null;
+      if (identical(_pointerOpening, completer)) _pointerOpening = null;
     }
     return await completer.future;
   }
@@ -282,6 +351,8 @@ class LgTvService {
   }
 
   void _teardown() {
+    _generation++;
+    _pointerOpening = null;
     _isConnected = false;
     unawaited(_wsSub?.cancel());
     _wsSub = null;
@@ -339,8 +410,18 @@ class LgTvService {
       'type': 'register',
       'payload': <String, dynamic>{
         ...pairing,
-        if (_clientKey != null) 'client-key': _clientKey,
+        if (_sendKeyInRegister && _clientKey != null) 'client-key': _clientKey,
       },
     };
   }
+}
+
+/// The TCP/TLS/WebSocket handshake itself failed, as opposed to the TV
+/// refusing or timing out the registration afterwards.
+class _SocketOpenFailure implements Exception {
+  _SocketOpenFailure(this.cause);
+  final Object cause;
+
+  @override
+  String toString() => cause.toString();
 }
