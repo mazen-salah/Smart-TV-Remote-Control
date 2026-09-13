@@ -45,9 +45,18 @@ android {
 
     buildTypes {
         release {
-            signingConfig =
-                if (keystorePropertiesFile.exists()) signingConfigs.getByName("release")
-                else signingConfigs.getByName("debug")
+            if (keystorePropertiesFile.exists()) {
+                signingConfig = signingConfigs.getByName("release")
+            } else {
+                // Same default as the Flutter template so `flutter run --release`
+                // works on a fresh clone. Never distribute an APK built this way;
+                // published releases are built by the maintainer with key.properties.
+                logger.warn(
+                    "android/key.properties not found: release build will be signed " +
+                        "with the debug key and must not be distributed."
+                )
+                signingConfig = signingConfigs.getByName("debug")
+            }
         }
     }
 }

@@ -86,6 +86,7 @@ Flutter architecture with real protocol support for two TV brands.
 - Basic on-screen remote (power, volume, channel, D-pad).
 - Single-screen Flutter UI.
 
-[Unreleased]: https://github.com/your-org/Smart-TV-Remote-Control/compare/v0.2.0...HEAD
-[0.2.0]: https://github.com/your-org/Smart-TV-Remote-Control/compare/v0.1.0...v0.2.0
-[0.1.0]: https://github.com/your-org/Smart-TV-Remote-Control/releases/tag/v0.1.0
+[Unreleased]: https://github.com/mazen-salah/Smart-TV-Remote-Control/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/mazen-salah/Smart-TV-Remote-Control/compare/v0.2.0...v0.3.0
+[0.2.0]: https://github.com/mazen-salah/Smart-TV-Remote-Control/compare/v0.1.0...v0.2.0
+[0.1.0]: https://github.com/mazen-salah/Smart-TV-Remote-Control/releases/tag/v0.1.0

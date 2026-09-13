@@ -136,6 +136,21 @@ class TvRepository {
       manufacturer: device.manufacturer ?? brand.manufacturer,
     );
 
+    // The device is keyed by MAC once one is known. If we paired under the
+    // host-only key, carry the token over so the next connect doesn't prompt.
+    final resolvedIdentifier = _identifierFor(resolved);
+    if (tokenKey != null &&
+        resolvedIdentifier != null &&
+        resolvedIdentifier != identifier) {
+      final token = _tokenStorage.load(tokenKey);
+      if (token != null) {
+        await _tokenStorage.save(
+          _tokenKeyFor(brand, resolvedIdentifier),
+          token,
+        );
+      }
+    }
+
     _current = tv;
     _currentDevice = resolved;
     await _knownTvsStorage.save(resolved);
