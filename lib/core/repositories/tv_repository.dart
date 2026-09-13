@@ -11,7 +11,8 @@ import 'package:remote/core/services/tv_token_storage.dart';
 import 'package:remote/core/services/wake_on_lan_service.dart';
 import 'package:remote/implementations/lg_tv.dart';
 import 'package:remote/implementations/samsung_tv.dart';
-import 'package:remote/services/mdns/mdns_discovery_service.dart';
+import 'package:remote/services/mdns/bonjour_discovery_service.dart';
+import 'package:remote/services/upnp/ssdp_discovery_service.dart';
 
 /// Single coordinator for discovery, connect, send-key, and disconnect.
 ///
@@ -23,18 +24,21 @@ class TvRepository {
     required TvTokenStorage tokenStorage,
     required KnownTvsStorage knownTvsStorage,
     required WakeOnLanService wakeOnLanService,
-    required MdnsDiscoveryService mdnsDiscoveryService,
-  })  : _tokenStorage = tokenStorage,
-        _knownTvsStorage = knownTvsStorage,
-        _wol = wakeOnLanService,
-        _mdns = mdnsDiscoveryService;
+    required SsdpDiscoveryService ssdpDiscoveryService,
+    required BonjourDiscoveryService bonjourDiscoveryService,
+  }) : _tokenStorage = tokenStorage,
+       _knownTvsStorage = knownTvsStorage,
+       _wol = wakeOnLanService,
+       _ssdp = ssdpDiscoveryService,
+       _bonjour = bonjourDiscoveryService;
 
   static const Duration _wakeRetryDelay = Duration(seconds: 6);
 
   final TvTokenStorage _tokenStorage;
   final KnownTvsStorage _knownTvsStorage;
   final WakeOnLanService _wol;
-  final MdnsDiscoveryService _mdns;
+  final SsdpDiscoveryService _ssdp;
+  final BonjourDiscoveryService _bonjour;
 
   TVInterface? _current;
   TVDevice? _currentDevice;
@@ -42,19 +46,14 @@ class TvRepository {
   TVInterface? get current => _current;
   TVDevice? get currentDevice => _currentDevice;
 
+  /// Runs SSDP and Bonjour sweeps in parallel and merges the results,
+  /// de-duplicated by host and MAC via [TVDevice.==].
   Future<List<TVDevice>> discoverAll() async {
-    // Run UPnP (Samsung) and mDNS in parallel for fastest coverage.
     final results = await Future.wait<List<TVDevice>>([
-      SamsungTV.discoverAll()
-          .then((list) => list.map(_toDevice).toList())
-          .catchError((Object _) => <TVDevice>[]),
-      _mdns.discoverAll().catchError((Object _) => <TVDevice>[]),
+      _ssdp.discoverAll().catchError((Object _) => <TVDevice>[]),
+      _bonjour.discoverAll().catchError((Object _) => <TVDevice>[]),
     ]);
-
-    final merged = <TVDevice>{
-      for (final list in results) ...list,
-    }.toList();
-    return merged;
+    return <TVDevice>{for (final list in results) ...list}.toList();
   }
 
   /// Connect to [device]. If the TV refuses the connection and we have
@@ -87,8 +86,9 @@ class TvRepository {
   }) async {
     final brand = TvBrand.fromDevice(device);
     final identifier = _identifierFor(device);
-    final tokenKey =
-        identifier != null ? _tokenKeyFor(brand, identifier) : null;
+    final tokenKey = identifier != null
+        ? _tokenKeyFor(brand, identifier)
+        : null;
     final savedToken = tokenKey != null ? _tokenStorage.load(tokenKey) : null;
     void onDisconnect(DisconnectionType type) => onDisconnected?.call(type);
 
@@ -200,9 +200,9 @@ class TvRepository {
   /// Samsung tokens keep the bare identifier so existing installs keep
   /// their pairing; other brands are namespaced.
   String _tokenKeyFor(TvBrand brand, String identifier) => switch (brand) {
-        TvBrand.samsung => identifier,
-        TvBrand.lg => 'lg:$identifier',
-      };
+    TvBrand.samsung => identifier,
+    TvBrand.lg => 'lg:$identifier',
+  };
 
   String? _identifierFor(TVDevice device) {
     final mac = device.mac;
@@ -211,12 +211,4 @@ class TvRepository {
     if (host != null && host.isNotEmpty) return host;
     return null;
   }
-
-  TVDevice _toDevice(SamsungTV tv) => TVDevice(
-        host: tv.host,
-        mac: tv.mac,
-        deviceName: tv.deviceName,
-        modelName: tv.modelName,
-        manufacturer: 'Samsung',
-      );
 }

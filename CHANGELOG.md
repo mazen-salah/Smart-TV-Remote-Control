@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- **Discovery rebuilt on the platform service browsers.** mDNS now uses
+  `bonsoir` (Bonjour on iOS, NSD on Android) instead of raw multicast
+  sockets, which never worked on a real iPhone without Apple's restricted
+  multicast entitlement. SSDP moved out of the Samsung service into
+  `SsdpDiscoveryService`, recognises LG webOS responders, skips non-TV
+  devices before fetching their description, and holds an Android
+  `MulticastLock` (new method channel in `MainActivity`) so replies are
+  actually delivered. AirPlay and Cast TXT records are used to identify
+  Samsung and LG sets; other devices are no longer listed.
+- Dart SDK floor raised to 3.8 (required by `bonsoir`); sources reformatted
+  for the 3.8 formatter style.
+
 ## [0.3.0] - 2026-09-13
 
 ### Added

@@ -18,11 +18,9 @@ const Duration kLgPingInterval = Duration(seconds: 10);
 ///      with a fresh client-key we must persist for next time.
 ///   3. Issue commands via `{ id, type: 'request', uri: 'ssap://...' }`.
 class LgTvService {
-  LgTvService({
-    required this.host,
-    String? clientKey,
-  })  : api = 'ws://$host:3000',
-        _clientKey = clientKey;
+  LgTvService({required this.host, String? clientKey})
+    : api = 'ws://$host:3000',
+      _clientKey = clientKey;
 
   final String host;
   final String api;
@@ -76,9 +74,7 @@ class LgTvService {
         },
         onError: (Object error) {
           if (!completer.isCompleted) {
-            completer.completeError(
-              Exception('LG WebSocket failed: $error'),
-            );
+            completer.completeError(Exception('LG WebSocket failed: $error'));
           }
           _handleDisconnection(_classify(error));
         },
@@ -117,7 +113,7 @@ class LgTvService {
       'id': '${_nextId++}',
       'type': 'request',
       'uri': uri,
-      if (payload != null) 'payload': payload,
+      'payload': ?payload,
     };
     ws.sink.add(jsonEncode(message));
   }
@@ -192,9 +188,7 @@ class LgTvService {
             'created': '20140509',
             'appId': 'com.lge.test',
             'vendorId': 'com.lge',
-            'localizedAppNames': <String, dynamic>{
-              '': 'Smart TV Remote',
-            },
+            'localizedAppNames': <String, dynamic>{'': 'Smart TV Remote'},
             'permissions': const <String>[
               'CONTROL_INPUT_TEXT',
               'CONTROL_MOUSE_AND_KEYBOARD',

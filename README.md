@@ -31,7 +31,8 @@
 ## Features
 
 ### Discovery
-- Parallel UPnP and mDNS network scan
+- Parallel SSDP (UPnP) and Bonjour/mDNS sweeps. mDNS goes through the platform's own service browser, so it works on iOS without Apple's multicast entitlement and on Android without extra setup; SSDP holds an Android `MulticastLock` while it runs
+- AirPlay and Cast advertisements are inspected for the manufacturer, so an LG or Samsung set that only announces those still shows up, while Apple TVs and Chromecasts are filtered out
 - Manual IP entry as a fallback when the TV refuses to broadcast
 - Known-TV memory: previously paired sets are remembered and auto-connected on next launch
 
@@ -110,9 +111,10 @@ Requirements:
                 │ delegates to
 ┌───────────────┴─────────────────────────────────────┐
 │  Service layer  (lib/services/, lib/implementations)│
-│   - samsung/samsung_tv_service.dart (UPnP + WSS v2) │
-│   - lg/lg_tv_service.dart           (WebOS ws)      │
-│   - mdns/mdns_discovery_service.dart                │
+│   - samsung/samsung_tv_service.dart (WSS v2)        │
+│   - lg/lg_tv_service.dart           (webOS wss)     │
+│   - upnp/ssdp_discovery_service.dart (SSDP, both)   │
+│   - mdns/bonjour_discovery_service.dart (Bonjour)   │
 └───────────────▲─────────────────────────────────────┘
                 │ TCP / UDP / WebSocket
 ┌───────────────┴─────────────────────────────────────┐
