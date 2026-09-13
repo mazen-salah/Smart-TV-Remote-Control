@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-09-13
+
 ### Changed
 - **LG webOS client rewritten against the current protocol.** Connects to
   `wss://<ip>:3001` first (required by firmware since January 2023) and
@@ -29,6 +31,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Samsung and LG sets; other devices are no longer listed.
 - Dart SDK floor raised to 3.8 (required by `bonsoir`); sources reformatted
   for the 3.8 formatter style.
+
+### Added
+- Per-ABI release APKs (`arm64-v8a`, `armeabi-v7a`, `x86_64`, ~15-19 MB)
+  next to the universal build, produced by a tag-triggered release
+  workflow that signs from repository secrets.
+- CI builds iOS (no code signing) on every push.
+- `PRIVACY.md` and `docs/protocols.md` (Samsung WSS v2, LG webOS, SSDP,
+  Bonjour, Wake-on-LAN).
 
 ## [0.3.0] - 2026-09-13
 
@@ -109,7 +119,8 @@ Flutter architecture with real protocol support for two TV brands.
 - Basic on-screen remote (power, volume, channel, D-pad).
 - Single-screen Flutter UI.
 
-[Unreleased]: https://github.com/mazen-salah/Smart-TV-Remote-Control/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/mazen-salah/Smart-TV-Remote-Control/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/mazen-salah/Smart-TV-Remote-Control/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/mazen-salah/Smart-TV-Remote-Control/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/mazen-salah/Smart-TV-Remote-Control/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/mazen-salah/Smart-TV-Remote-Control/releases/tag/v0.1.0
