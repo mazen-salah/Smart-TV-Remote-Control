@@ -5,7 +5,7 @@
 [![CI](https://github.com/mazen-salah/Smart-TV-Remote-Control/actions/workflows/ci.yml/badge.svg)](https://github.com/mazen-salah/Smart-TV-Remote-Control/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/mazen-salah/Smart-TV-Remote-Control?label=release)](https://github.com/mazen-salah/Smart-TV-Remote-Control/releases/latest)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
-![Flutter](https://img.shields.io/badge/Flutter-%3E%3D3.24-02569B?logo=flutter)
+![Flutter](https://img.shields.io/badge/Flutter-%3E%3D3.47-02569B?logo=flutter)
 [![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen)](CONTRIBUTING.md)
 
 ---
@@ -77,7 +77,7 @@ flutter run
 
 Requirements:
 
-- Flutter `>= 3.24.0`, Dart `>= 3.5.0`
+- Flutter `>= 3.47.0` (the Android project uses Gradle 9.3 and AGP 9.1, which older Flutter Gradle plugins cannot drive)
 - Phone and TV must be on the same Wi-Fi / VLAN
 - On Android 13+ grant the **Local Network** / nearby-devices permission when prompted
 
@@ -143,7 +143,7 @@ DI is wired with `get_it` in `lib/di/service_locator.dart`. Blocs depend on repo
 
 ## Roadmap / Known limitations
 
-Each item is tracked as a GitHub issue; pick one up if it interests you.
+Each planned item is tracked as a GitHub issue; pick one up if it interests you.
 
 - LG WebOS verification on real hardware — help wanted
 - Hardware volume-button capture (Android `MediaSession` / iOS `MPRemoteCommandCenter`) — not yet wired
@@ -151,7 +151,8 @@ Each item is tracked as a GitHub issue; pick one up if it interests you.
 - Swipe trackpad for cursor-style WebOS navigation — planned
 - Sony Bravia (IRCC-IP) and Roku (ECP) — not implemented
 - iOS TestFlight distribution — not yet set up
-- iOS background reconnect is best-effort; system may suspend the socket
+
+Known limitation: iOS background reconnect is best-effort, the system may suspend the socket.
 
 ---
 
