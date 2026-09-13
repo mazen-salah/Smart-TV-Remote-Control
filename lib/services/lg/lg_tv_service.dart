@@ -61,9 +61,6 @@ class LgTvService {
   String? _seenCert;
   bool _certificateRejected = false;
 
-  /// Whether the last successful connection used `wss://:3001`.
-  bool get usesSecureTransport => _secure;
-
   bool _isConnected = false;
   bool get isConnected => _isConnected;
 
@@ -174,7 +171,10 @@ class LgTvService {
     );
 
     // The saved key is only sent over TLS; on plaintext the TV re-prompts.
-    _sendKeyInRegister = secure;
+    // Only trust the saved key to a peer we have pinned; otherwise pair
+    // fresh. Keys handed out over TLS are always worth keeping.
+    _sendKeyInRegister = secure && _pinnedCert != null;
+    _persistClientKey = secure;
     channel.sink.add(jsonEncode(_registerPayload(signed: true)));
     await registration.future.timeout(
       kLgPairingTimeout,
@@ -190,6 +190,7 @@ class LgTvService {
   }
 
   bool _sendKeyInRegister = true;
+  bool _persistClientKey = false;
 
   void _onMessage(dynamic raw) {
     final data = _decode(raw);
@@ -204,7 +205,7 @@ class LgTvService {
     switch (type) {
       case 'registered':
         final key = payloadMap['client-key'] as String?;
-        if (key != null && key != _clientKey && _sendKeyInRegister) {
+        if (key != null && key != _clientKey && _persistClientKey) {
           _clientKey = key;
           onClientKeyReceived?.call(key);
         }
@@ -217,9 +218,10 @@ class LgTvService {
         final error = payloadMap['error'] ?? data['error'];
         final reg = _registration;
         if (reg != null && !reg.isCompleted) {
-          if (!_triedUnsigned) {
-            // Some firmware rejects the signed sample manifest; retry once
-            // without the signature, as lgtv2 does.
+          if (!_triedUnsigned && _isManifestRejection(error)) {
+            // Some firmware blacklists the signed sample manifest; retry
+            // once without the signature, as lgtv2 does. Any other error
+            // (e.g. "403 cancelled" when the user presses Deny) is final.
             _triedUnsigned = true;
             log('LG: signed register rejected ($error), retrying unsigned');
             _ws?.sink.add(jsonEncode(_registerPayload(signed: false)));
@@ -331,17 +333,6 @@ class LgTvService {
   Future<void> launchApp(String appId) =>
       sendUri('ssap://system.launcher/launch', payload: {'id': appId});
 
-  Future<void> setVolume(int volume) =>
-      sendUri('ssap://audio/setVolume', payload: {'volume': volume});
-
-  Future<void> volumeUp() => sendUri('ssap://audio/volumeUp');
-  Future<void> volumeDown() => sendUri('ssap://audio/volumeDown');
-  Future<void> setMute({required bool mute}) =>
-      sendUri('ssap://audio/setMute', payload: {'mute': mute});
-
-  Future<void> channelUp() => sendUri('ssap://tv/channelUp');
-  Future<void> channelDown() => sendUri('ssap://tv/channelDown');
-
   /// `play`, `pause`, `stop`, `rewind` or `fastForward`.
   Future<void> media(String command) =>
       sendUri('ssap://media.controls/$command');
@@ -375,6 +366,13 @@ class LgTvService {
     if (!_isConnected && _ws == null) return;
     _teardown();
     onDisconnected?.call(type);
+  }
+
+  static bool _isManifestRejection(Object? error) {
+    final m = error.toString().toLowerCase();
+    return m.contains('blacklist') ||
+        m.contains('signature') ||
+        m.contains('certificate');
   }
 
   Map<String, dynamic>? _decode(dynamic raw) {

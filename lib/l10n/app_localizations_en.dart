@@ -224,4 +224,20 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get manualNameHint => 'Living-room TV';
+
+  @override
+  String get forgetTv => 'Forget this TV';
+
+  @override
+  String forgetTvConfirm(String name) {
+    return 'Remove $name and its pairing? You will need to allow the app on the TV again.';
+  }
+
+  @override
+  String get forget => 'Forget';
+
+  @override
+  String connectionFailed(String reason) {
+    return 'Could not connect: $reason';
+  }
 }

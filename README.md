@@ -61,7 +61,7 @@
 | Brand | Models | Protocol | Notes |
 | --- | --- | --- | --- |
 | Samsung | 2016+ Tizen | WebSocket v2 (`wss://<ip>:8002`) | Token saved after first "Allow". Tested. |
-| LG | webOS 3.0+ | WebSocket (`wss://<ip>:3001`, falls back to `ws://<ip>:3000`) | Client-key pairing persisted. Needs hardware testing. Not mapped yet: input source, tools, guide, more, record. |
+| LG | webOS 3.0+ | WebSocket (`wss://<ip>:3001`, falls back to `ws://<ip>:3000`) | Client key and TV certificate persisted over TLS; pre-2018 sets that only offer plaintext prompt on every connect. Needs hardware testing. Not mapped yet: input source, tools, guide, more, record. |
 
 Sony Bravia, Roku, Android TV and others are not supported yet. See the
 [roadmap](#roadmap--known-limitations).

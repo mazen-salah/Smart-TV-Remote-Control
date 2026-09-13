@@ -13,8 +13,20 @@ class MulticastLock {
     'com.summationworks.smarttvremote/multicast',
   );
 
-  Future<void> acquire() => _invoke('acquire');
-  Future<void> release() => _invoke('release');
+  int _holders = 0;
+
+  /// Reference-counted: the OS lock is taken by the first caller and
+  /// released when the last concurrent sweep finishes.
+  Future<void> acquire() async {
+    _holders++;
+    if (_holders == 1) await _invoke('acquire');
+  }
+
+  Future<void> release() async {
+    if (_holders == 0) return;
+    _holders--;
+    if (_holders == 0) await _invoke('release');
+  }
 
   Future<void> _invoke(String method) async {
     if (!Platform.isAndroid) return;

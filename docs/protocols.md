@@ -105,7 +105,9 @@ the client key (`TvTokenStorage`, key `cert:lg:<identifier>`). Later TLS
 connections reject any other certificate and do **not** fall back to
 plaintext; the app reports that the certificate changed and asks the user to
 forget the TV and pair again. The saved client key is only ever sent over a
-pinned TLS connection. On the plaintext fallback the `register` message omits
+pinned TLS connection; when no pin exists yet (first connection, or an
+upgrade from a version without pinning) the app pairs fresh and pins the
+certificate the TV presented during that approved pairing. On the plaintext fallback the `register` message omits
 it, so pre-2018 sets show the pairing prompt on every session, and the key
 they hand back is not stored.
 
@@ -114,8 +116,10 @@ the on-screen prompt) whose payload is LG's signed sample manifest (`lg_pairing.
 is covered by the signature and must not be edited). With a stored
 `client-key` the TV replies `registered` immediately; without one it shows an
 on-screen prompt and returns a new `client-key` in the `registered` payload,
-which is persisted. If a TV rejects the signed manifest the client retries
-once with the unsigned variant.
+which is persisted. If a TV rejects the signed manifest (an error mentioning a
+blacklisted certificate or signature) the client retries once with the
+unsigned variant; any other error, such as `403 cancelled` when the user
+presses Deny, is final.
 
 **Requests** — JSON messages with an `id`, `type: "request"`, an `ssap://`
 URI and an optional payload. Responses carry the same `id`. Used here:

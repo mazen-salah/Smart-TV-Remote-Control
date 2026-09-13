@@ -29,8 +29,13 @@ final class TvSendKeyRequested extends TvConnectionEvent {
   List<Object?> get props => [key];
 }
 
+/// Forget [device], or the currently connected TV when null.
 final class TvForgetRequested extends TvConnectionEvent {
-  const TvForgetRequested();
+  const TvForgetRequested({this.device});
+  final TVDevice? device;
+
+  @override
+  List<Object?> get props => [device];
 }
 
 final class TvDisconnectionDetected extends TvConnectionEvent {

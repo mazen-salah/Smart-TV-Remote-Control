@@ -34,6 +34,32 @@ class TVDevice {
 
   String get displayName => deviceName ?? modelName ?? 'Unknown TV';
 
+  /// Collapses entries that describe the same set (same host) into one,
+  /// keeping the first entry's values and filling its gaps (MAC, names,
+  /// manufacturer) from later ones. Entries without a host are kept as-is.
+  static List<TVDevice> mergeByHost(Iterable<TVDevice> devices) {
+    final byHost = <String, TVDevice>{};
+    final hostless = <TVDevice>[];
+    for (final device in devices) {
+      final host = device.host;
+      if (host == null || host.isEmpty) {
+        hostless.add(device);
+        continue;
+      }
+      final existing = byHost[host];
+      byHost[host] = existing == null
+          ? device
+          : existing.copyWith(
+              mac: existing.mac ?? device.mac,
+              deviceName: existing.deviceName ?? device.deviceName,
+              modelName: existing.modelName ?? device.modelName,
+              manufacturer: existing.manufacturer ?? device.manufacturer,
+              serialNumber: existing.serialNumber ?? device.serialNumber,
+            );
+    }
+    return [...byHost.values, ...hostless];
+  }
+
   TVDevice copyWith({
     String? host,
     String? mac,

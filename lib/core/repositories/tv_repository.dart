@@ -46,14 +46,14 @@ class TvRepository {
   TVInterface? get current => _current;
   TVDevice? get currentDevice => _currentDevice;
 
-  /// Runs SSDP and Bonjour sweeps in parallel and merges the results,
-  /// de-duplicated by host and MAC via [TVDevice.==].
+  /// Runs SSDP and Bonjour sweeps in parallel and merges the results by
+  /// host, so a set seen by both shows up once with the richer record.
   Future<List<TVDevice>> discoverAll() async {
     final results = await Future.wait<List<TVDevice>>([
       _ssdp.discoverAll().catchError((Object _) => <TVDevice>[]),
       _bonjour.discoverAll().catchError((Object _) => <TVDevice>[]),
     ]);
-    return <TVDevice>{for (final list in results) ...list}.toList();
+    return TVDevice.mergeByHost([for (final list in results) ...list]);
   }
 
   /// Connect to [device]. If the TV refuses the connection and we have
@@ -171,7 +171,10 @@ class TvRepository {
     return m.contains('connection refused') ||
         m.contains('errno = 111') ||
         m.contains('failed host lookup') ||
-        m.contains('connection timeout');
+        m.contains('timeout') ||
+        m.contains('timed out') ||
+        m.contains('unreachable') ||
+        m.contains('no route to host');
   }
 
   Future<void> sendKey(KeyCodes key) async {
@@ -188,18 +191,37 @@ class TvRepository {
     _currentDevice = null;
   }
 
+  /// Drops everything remembered about [device]: pairing token or client
+  /// key, pinned certificate, and the known-TV entry. If it is the active
+  /// connection, that is closed too.
+  Future<void> forget(TVDevice device) async {
+    // Credentials may have been saved under the host before the MAC was
+    // known, so clear every alias, not just the preferred identifier.
+    final aliases = {
+      device.mac,
+      device.host,
+    }.whereType<String>().where((id) => id.isNotEmpty);
+    for (final identifier in aliases) {
+      for (final brand in TvBrand.values) {
+        final key = _tokenKeyFor(brand, identifier);
+        await _tokenStorage.clear(key);
+        await _tokenStorage.clear('cert:$key');
+      }
+    }
+    await _knownTvsStorage.remove(device);
+    final last = _knownTvsStorage.loadLastUsed();
+    if (last != null && last.host == device.host) {
+      await _knownTvsStorage.clearLastUsed();
+    }
+    if (_currentDevice != null && _currentDevice!.host == device.host) {
+      await disconnect();
+    }
+  }
+
   Future<void> forgetCurrent() async {
     final device = _currentDevice;
     if (device != null) {
-      final identifier = _identifierFor(device);
-      if (identifier != null) {
-        for (final brand in TvBrand.values) {
-          final key = _tokenKeyFor(brand, identifier);
-          await _tokenStorage.clear(key);
-          await _tokenStorage.clear('cert:$key');
-        }
-      }
-      await _knownTvsStorage.remove(device);
+      await forget(device);
     }
     await disconnect();
     await _knownTvsStorage.clearLastUsed();
