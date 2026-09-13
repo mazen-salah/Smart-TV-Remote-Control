@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-09-13
+
+### Added
+- **LG WebOS is now wired into the app.** The repository picks the LG client
+  for devices tagged `LG` by mDNS, and the manual-IP dialog has a brand
+  selector so an LG set can be added by address. The LG client key is
+  persisted like the Samsung token. Not yet verified on real hardware —
+  testers wanted.
+- **Localized UI.** Every string in the picker, dialog and remote now comes
+  from the ARB files (English, Spanish, Arabic) instead of hardcoded text.
+- **Screenshots** in the README, plus `tool/screenshots/` to regenerate them.
+- Community files: `CODE_OF_CONDUCT.md`, `SECURITY.md`, Dependabot config.
+- First signed Android APK published on the GitHub Releases page.
+
+### Changed
+- Application id is now `com.summationworks.smarttvremote` on every platform
+  (was the Flutter template default `com.example.remote`).
+- `analysis_options.yaml` and `pubspec.lock` are committed; CI now fails on
+  test failures instead of ignoring them, and runs on Flutter 3.47.
+- Discovery copy no longer says "Samsung TVs" when scanning for all brands.
+
+### Fixed
+- Source formatting, which had failed the CI format check since 0.2.0.
+
 ## [0.2.0] - 2026-05-25
 
 Major rewrite. The app moves from a single-screen prototype to a layered

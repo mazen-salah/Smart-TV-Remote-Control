@@ -1,4 +1,4 @@
-package com.example.remote
+package com.summationworks.smarttvremote
 
 import io.flutter.embedding.android.FlutterActivity
 
