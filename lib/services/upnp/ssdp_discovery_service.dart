@@ -18,7 +18,7 @@ import 'package:upnp2/upnp.dart';
 /// and Bonjour discovery covers the gap.
 class SsdpDiscoveryService {
   SsdpDiscoveryService({required MulticastLock multicastLock})
-      : _lock = multicastLock;
+    : _lock = multicastLock;
 
   final MulticastLock _lock;
 

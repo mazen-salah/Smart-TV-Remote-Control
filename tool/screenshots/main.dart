@@ -40,13 +40,13 @@ final _bedroom = TVDevice(
 
 class _ScreenshotRepository extends TvRepository {
   _ScreenshotRepository({required this.autoConnect})
-      : super(
-          tokenStorage: sl(),
-          knownTvsStorage: sl(),
-          wakeOnLanService: sl(),
-          ssdpDiscoveryService: sl(),
-          bonjourDiscoveryService: sl(),
-        );
+    : super(
+        tokenStorage: sl(),
+        knownTvsStorage: sl(),
+        wakeOnLanService: sl(),
+        ssdpDiscoveryService: sl(),
+        bonjourDiscoveryService: sl(),
+      );
 
   final bool autoConnect;
 
@@ -78,8 +78,8 @@ class _ScreenshotRepository extends TvRepository {
 class _ScreenshotConnectivity implements Connectivity {
   @override
   Future<List<ConnectivityResult>> checkConnectivity() async => [
-        ConnectivityResult.wifi,
-      ];
+    ConnectivityResult.wifi,
+  ];
 
   @override
   Stream<List<ConnectivityResult>> get onConnectivityChanged =>
@@ -109,8 +109,9 @@ Future<void> main() async {
         ),
         BlocProvider(create: (_) => TvConnectionBloc(repository: repository)),
         BlocProvider(
-          create: (_) => DeviceDiscoveryBloc(repository: repository)
-            ..add(const DiscoveryStarted()),
+          create: (_) =>
+              DeviceDiscoveryBloc(repository: repository)
+                ..add(const DiscoveryStarted()),
         ),
       ],
       child: MaterialApp(

@@ -26,11 +26,11 @@ class TvRepository {
     required WakeOnLanService wakeOnLanService,
     required SsdpDiscoveryService ssdpDiscoveryService,
     required BonjourDiscoveryService bonjourDiscoveryService,
-  })  : _tokenStorage = tokenStorage,
-        _knownTvsStorage = knownTvsStorage,
-        _wol = wakeOnLanService,
-        _ssdp = ssdpDiscoveryService,
-        _bonjour = bonjourDiscoveryService;
+  }) : _tokenStorage = tokenStorage,
+       _knownTvsStorage = knownTvsStorage,
+       _wol = wakeOnLanService,
+       _ssdp = ssdpDiscoveryService,
+       _bonjour = bonjourDiscoveryService;
 
   static const Duration _wakeRetryDelay = Duration(seconds: 6);
 
@@ -86,8 +86,9 @@ class TvRepository {
   }) async {
     final brand = TvBrand.fromDevice(device);
     final identifier = _identifierFor(device);
-    final tokenKey =
-        identifier != null ? _tokenKeyFor(brand, identifier) : null;
+    final tokenKey = identifier != null
+        ? _tokenKeyFor(brand, identifier)
+        : null;
     final savedToken = tokenKey != null ? _tokenStorage.load(tokenKey) : null;
     void onDisconnect(DisconnectionType type) => onDisconnected?.call(type);
 
@@ -119,8 +120,9 @@ class TvRepository {
           deviceName: device.deviceName,
           modelName: device.modelName,
           clientKey: savedToken,
-          pinnedCertificateSha256:
-              certKey != null ? _tokenStorage.load(certKey) : null,
+          pinnedCertificateSha256: certKey != null
+              ? _tokenStorage.load(certKey)
+              : null,
         )..setOnDisconnectedCallback(onDisconnect);
         if (tokenKey != null) {
           lg.setOnClientKeyReceivedCallback((key) {
@@ -209,9 +211,9 @@ class TvRepository {
   /// Samsung tokens keep the bare identifier so existing installs keep
   /// their pairing; other brands are namespaced.
   String _tokenKeyFor(TvBrand brand, String identifier) => switch (brand) {
-        TvBrand.samsung => identifier,
-        TvBrand.lg => 'lg:$identifier',
-      };
+    TvBrand.samsung => identifier,
+    TvBrand.lg => 'lg:$identifier',
+  };
 
   String? _identifierFor(TVDevice device) {
     final mac = device.mac;

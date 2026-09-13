@@ -17,15 +17,15 @@ class LGTV implements TVInterface {
     String? modelName,
     String? clientKey,
     String? pinnedCertificateSha256,
-  })  : _service = LgTvService(
-          host: host,
-          clientKey: clientKey,
-          pinnedCertificateSha256: pinnedCertificateSha256,
-        ),
-        _host = host,
-        _mac = mac,
-        _deviceName = deviceName,
-        _modelName = modelName;
+  }) : _service = LgTvService(
+         host: host,
+         clientKey: clientKey,
+         pinnedCertificateSha256: pinnedCertificateSha256,
+       ),
+       _host = host,
+       _mac = mac,
+       _deviceName = deviceName,
+       _modelName = modelName;
 
   final LgTvService _service;
   final String _host;

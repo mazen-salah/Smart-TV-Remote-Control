@@ -8,8 +8,8 @@ export 'connectivity_state.dart';
 
 class ConnectivityCubit extends Cubit<ConnectivityStateView> {
   ConnectivityCubit({Connectivity? connectivity})
-      : _connectivity = connectivity ?? Connectivity(),
-        super(const ConnectivityStateView.unknown()) {
+    : _connectivity = connectivity ?? Connectivity(),
+      super(const ConnectivityStateView.unknown()) {
     unawaited(_bootstrap());
   }
 

@@ -78,8 +78,8 @@ class _RemoteScreenState extends State<RemoteScreen> {
                 final device = context.read<TvConnectionBloc>().state.device;
                 if (device != null) {
                   context.read<TvConnectionBloc>().add(
-                        TvConnectRequested(device),
-                      );
+                    TvConnectRequested(device),
+                  );
                 }
               },
             ),

@@ -19,10 +19,10 @@ class SamsungTVService {
     this.deviceName,
     this.modelName,
     String? token,
-  })  : api = 'http://$host:8001/api/v2/',
-        wsapi = 'wss://$host:8002/api/v2/',
-        _mac = mac,
-        _token = token;
+  }) : api = 'http://$host:8001/api/v2/',
+       wsapi = 'wss://$host:8002/api/v2/',
+       _mac = mac,
+       _token = token;
 
   final String? host;
   String? _mac;
