@@ -113,16 +113,25 @@ class TvRepository {
         if (host == null || host.isEmpty) {
           throw ArgumentError('LG TVs need an IP address to connect');
         }
+        final certKey = tokenKey != null ? 'cert:$tokenKey' : null;
         final lg = LGTV(
           host: host,
           mac: device.mac,
           deviceName: device.deviceName,
           modelName: device.modelName,
           clientKey: savedToken,
+          pinnedCertificateSha256: certKey != null
+              ? _tokenStorage.load(certKey)
+              : null,
         )..setOnDisconnectedCallback(onDisconnect);
         if (tokenKey != null) {
           lg.setOnClientKeyReceivedCallback((key) {
             unawaited(_tokenStorage.save(tokenKey, key));
+          });
+        }
+        if (certKey != null) {
+          lg.setOnCertificatePinnedCallback((fingerprint) {
+            unawaited(_tokenStorage.save(certKey, fingerprint));
           });
         }
         tv = lg;
@@ -185,7 +194,9 @@ class TvRepository {
       final identifier = _identifierFor(device);
       if (identifier != null) {
         for (final brand in TvBrand.values) {
-          await _tokenStorage.clear(_tokenKeyFor(brand, identifier));
+          final key = _tokenKeyFor(brand, identifier);
+          await _tokenStorage.clear(key);
+          await _tokenStorage.clear('cert:$key');
         }
       }
       await _knownTvsStorage.remove(device);

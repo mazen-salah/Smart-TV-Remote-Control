@@ -8,6 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Changed
+- **LG webOS client rewritten against the current protocol.** Connects to
+  `wss://<ip>:3001` first (required by firmware since January 2023) and
+  falls back to `ws://<ip>:3000` for older sets; registers with LG's signed
+  sample manifest and retries unsigned if rejected; drives navigation,
+  colour, digit, mute, volume and channel keys through the pointer input
+  socket and transport keys through `media.controls`. Mute now toggles.
+  The TV's self-signed certificate is pinned on first pairing and the saved
+  client key is only ever sent over that pinned TLS connection; the
+  plaintext fallback for pre-2018 sets asks the TV to pair again instead.
+  Still untested on hardware (#9).
 - **Discovery rebuilt on the platform service browsers.** mDNS now uses
   `bonsoir` (Bonjour on iOS, NSD on Android) instead of raw multicast
   sockets, which never worked on a real iPhone without Apple's restricted

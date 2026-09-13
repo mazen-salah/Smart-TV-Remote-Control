@@ -45,7 +45,7 @@
 
 ### Brands
 - **Samsung Tizen** — WebSocket v2 (`wss://`) client in `lib/services/samsung/samsung_tv_service.dart`, tested on real hardware
-- **LG WebOS** — WebSocket client in `lib/services/lg/lg_tv_service.dart` with client-key pairing. Written against the WebOS protocol but **not yet verified on a real LG set**. If you own one, [we would love your test report](https://github.com/mazen-salah/Smart-TV-Remote-Control/issues?q=is%3Aissue+label%3A%22help+wanted%22).
+- **LG webOS** — WebSocket client in `lib/services/lg/lg_tv_service.dart` using the secure port newer firmware requires (2023+), LG's signed pairing manifest, the pointer-input socket for navigation, colour and digit keys, and `media.controls` for transport. **Not yet verified on a real LG set**. If you own one, [we would love your test report](https://github.com/mazen-salah/Smart-TV-Remote-Control/issues?q=is%3Aissue+label%3A%22help+wanted%22).
 - **Manual IP entry** — add a Samsung or LG TV by address when discovery misses it
 
 ### UX
@@ -61,7 +61,7 @@
 | Brand | Models | Protocol | Notes |
 | --- | --- | --- | --- |
 | Samsung | 2016+ Tizen | WebSocket v2 (`wss://<ip>:8002`) | Token saved after first "Allow". Tested. |
-| LG | WebOS 3.0+ | WebSocket (`ws://<ip>:3000`) | Client-key pairing persisted. Needs hardware testing. |
+| LG | webOS 3.0+ | WebSocket (`wss://<ip>:3001`, falls back to `ws://<ip>:3000`) | Client-key pairing persisted. Needs hardware testing. Not mapped yet: input source, tools, guide, more, record. |
 
 Sony Bravia, Roku, Android TV and others are not supported yet. See the
 [roadmap](#roadmap--known-limitations).
