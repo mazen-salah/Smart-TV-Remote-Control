@@ -66,9 +66,8 @@ class LgTvService {
   Uri get _secureUri => Uri(scheme: 'wss', host: host, port: 3001);
   Uri get _plainUri => Uri(scheme: 'ws', host: host, port: 3000);
 
-  static HttpClient _insecureClient() => HttpClient()
-    ..badCertificateCallback =
-        (X509Certificate cert, String host, int port) => true;
+  static HttpClient _insecureClient() =>
+      HttpClient()..badCertificateCallback = (cert, host, port) => true;
 
   Future<void> connect() async {
     if (_isConnected) return;
