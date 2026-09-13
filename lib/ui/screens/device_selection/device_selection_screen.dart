@@ -87,8 +87,8 @@ class _DeviceSelectionView extends StatelessWidget {
                   Expanded(
                     child:
                         BlocBuilder<DeviceDiscoveryBloc, DeviceDiscoveryState>(
-                      builder: (_, state) => _DeviceList(state: state),
-                    ),
+                          builder: (_, state) => _DeviceList(state: state),
+                        ),
                   ),
                   const SizedBox(height: 16),
                   BlocBuilder<DeviceDiscoveryBloc, DeviceDiscoveryState>(
@@ -97,9 +97,9 @@ class _DeviceSelectionView extends StatelessWidget {
                       return ElevatedButton.icon(
                         onPressed: scanning
                             ? null
-                            : () => context
-                                .read<DeviceDiscoveryBloc>()
-                                .add(const DiscoveryRefreshRequested()),
+                            : () => context.read<DeviceDiscoveryBloc>().add(
+                                const DiscoveryRefreshRequested(),
+                              ),
                         icon: const Icon(Icons.refresh),
                         label: Text(l.scanAgain),
                         style: ElevatedButton.styleFrom(
@@ -127,12 +127,12 @@ class _DeviceSelectionView extends StatelessWidget {
     if (result == null) return;
     if (!context.mounted) return;
     context.read<DeviceDiscoveryBloc>().add(
-          ManualDeviceAdded(
-            host: result.host,
-            name: result.name,
-            brand: result.brand,
-          ),
-        );
+      ManualDeviceAdded(
+        host: result.host,
+        name: result.name,
+        brand: result.brand,
+      ),
+    );
   }
 }
 

@@ -32,12 +32,11 @@ class RemoteApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (_) => ConnectivityCubit()),
+        BlocProvider(create: (_) => TvConnectionBloc(repository: repository)),
         BlocProvider(
-          create: (_) => TvConnectionBloc(repository: repository),
-        ),
-        BlocProvider(
-          create: (_) => DeviceDiscoveryBloc(repository: repository)
-            ..add(const DiscoveryStarted()),
+          create: (_) =>
+              DeviceDiscoveryBloc(repository: repository)
+                ..add(const DiscoveryStarted()),
         ),
       ],
       child: MaterialApp(

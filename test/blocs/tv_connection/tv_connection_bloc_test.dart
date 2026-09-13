@@ -18,18 +18,23 @@ void main() {
   });
 
   late _MockTvRepository repository;
-  final device =
-      TVDevice(host: '10.0.0.5', mac: 'AA:BB:CC', deviceName: 'Living Room');
+  final device = TVDevice(
+    host: '10.0.0.5',
+    mac: 'AA:BB:CC',
+    deviceName: 'Living Room',
+  );
 
   setUp(() {
     repository = _MockTvRepository();
     // Sensible defaults for void-returning methods so unrelated calls
     // don't blow up with "Null is not a subtype of Future<void>".
     when(() => repository.disconnect()).thenAnswer((_) => Future<void>.value());
-    when(() => repository.forgetCurrent())
-        .thenAnswer((_) => Future<void>.value());
-    when(() => repository.sendKey(any()))
-        .thenAnswer((_) => Future<void>.value());
+    when(
+      () => repository.forgetCurrent(),
+    ).thenAnswer((_) => Future<void>.value());
+    when(
+      () => repository.sendKey(any()),
+    ).thenAnswer((_) => Future<void>.value());
     when(
       () => repository.connect(
         any(),
@@ -47,8 +52,11 @@ void main() {
         isA<TvConnectionState>()
             .having((s) => s.status, 'status', TvConnectionStatus.connecting)
             .having((s) => s.device, 'device', device),
-        isA<TvConnectionState>()
-            .having((s) => s.status, 'status', TvConnectionStatus.connected),
+        isA<TvConnectionState>().having(
+          (s) => s.status,
+          'status',
+          TvConnectionStatus.connected,
+        ),
       ],
     );
 
@@ -65,8 +73,11 @@ void main() {
       },
       act: (bloc) => bloc.add(TvConnectRequested(device)),
       expect: () => [
-        isA<TvConnectionState>()
-            .having((s) => s.status, 'status', TvConnectionStatus.connecting),
+        isA<TvConnectionState>().having(
+          (s) => s.status,
+          'status',
+          TvConnectionStatus.connecting,
+        ),
         isA<TvConnectionState>()
             .having((s) => s.status, 'status', TvConnectionStatus.error)
             .having((s) => s.errorMessage, 'errorMessage', contains('boom')),

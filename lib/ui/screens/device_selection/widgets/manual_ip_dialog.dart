@@ -48,9 +48,9 @@ class _ManualIpDialogState extends State<ManualIpDialog> {
     if (!_formKey.currentState!.validate()) return;
     final host = _ipController.text.trim();
     final name = _nameController.text.trim();
-    Navigator.of(context).pop(
-      (host: host, name: name.isEmpty ? null : name, brand: _brand),
-    );
+    Navigator.of(
+      context,
+    ).pop((host: host, name: name.isEmpty ? null : name, brand: _brand));
   }
 
   @override

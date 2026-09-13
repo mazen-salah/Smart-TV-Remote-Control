@@ -3,11 +3,7 @@ import 'package:remote/core/models/tv_device.dart';
 import 'package:remote/l10n/app_localizations.dart';
 
 class DeviceListItem extends StatelessWidget {
-  const DeviceListItem({
-    required this.device,
-    required this.onTap,
-    super.key,
-  });
+  const DeviceListItem({required this.device, required this.onTap, super.key});
 
   final TVDevice device;
   final VoidCallback onTap;

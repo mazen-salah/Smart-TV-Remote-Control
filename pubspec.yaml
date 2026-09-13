@@ -4,7 +4,7 @@ publish_to: 'none'
 version: 0.3.0+2
 
 environment:
-  sdk: '>=3.5.0 <4.0.0'
+  sdk: '>=3.8.0 <4.0.0'
   flutter: '>=3.47.0'
 
 dependencies:
@@ -18,7 +18,7 @@ dependencies:
   http: ^1.2.1
   upnp2: ^3.0.12
   web_socket_channel: ^3.0.3
-  multicast_dns: ^0.3.2+6
+  bonsoir: ^7.1.5
   wake_on_lan: ^4.0.0
   connectivity_plus: ^7.3.1
 

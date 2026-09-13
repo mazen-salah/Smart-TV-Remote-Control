@@ -1,10 +1,6 @@
 /// Excepción base para errores de conexión con TV
 abstract class TVConnectionException implements Exception {
-  const TVConnectionException(
-    this.message, {
-    this.deviceHost,
-    this.deviceName,
-  });
+  const TVConnectionException(this.message, {this.deviceHost, this.deviceName});
   final String message;
   final String? deviceHost;
   final String? deviceName;
@@ -28,11 +24,7 @@ class TVConnectionFailedException extends TVConnectionException {
 
 /// Error al enviar comando al TV
 class TVCommandException extends TVConnectionException {
-  const TVCommandException(
-    super.message, {
-    super.deviceHost,
-    super.deviceName,
-  });
+  const TVCommandException(super.message, {super.deviceHost, super.deviceName});
 }
 
 /// Error de autenticación con el TV
@@ -46,9 +38,5 @@ class TVAuthenticationException extends TVConnectionException {
 
 /// Error de timeout en operaciones con TV
 class TVTimeoutException extends TVConnectionException {
-  const TVTimeoutException(
-    super.message, {
-    super.deviceHost,
-    super.deviceName,
-  });
+  const TVTimeoutException(super.message, {super.deviceHost, super.deviceName});
 }

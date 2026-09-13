@@ -13,11 +13,11 @@ class LGTV implements TVInterface {
     String? deviceName,
     String? modelName,
     String? clientKey,
-  })  : _service = LgTvService(host: host, clientKey: clientKey),
-        _host = host,
-        _mac = mac,
-        _deviceName = deviceName,
-        _modelName = modelName;
+  }) : _service = LgTvService(host: host, clientKey: clientKey),
+       _host = host,
+       _mac = mac,
+       _deviceName = deviceName,
+       _modelName = modelName;
 
   final LgTvService _service;
   final String _host;
