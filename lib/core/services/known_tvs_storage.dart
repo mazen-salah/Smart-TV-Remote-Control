@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:remote/core/models/tv_device.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// Remembers TVs the user has previously paired with, so the app can
 /// show them instantly on launch even before discovery completes.

@@ -10,10 +10,13 @@
   "add": "Add",
   "scanning": "Scanning network…",
   "devicesFound": "Devices found",
-  "lookingForSamsung": "Looking for Samsung TVs…",
   "foundCount": "Found {count} device(s)",
   "@foundCount": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
   "noDevicesFound": "No devices found",
   "noDevicesHint": "Make sure your TV is powered on\nand on the same Wi-Fi network",
@@ -35,7 +38,11 @@
   "idle": "Idle",
   "disconnectedReason": "Disconnected: {reason}",
   "@disconnectedReason": {
-    "placeholders": { "reason": { "type": "String" } }
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
   },
   "ok": "OK",
   "back": "Back",
@@ -64,5 +71,30 @@
   "yellowButton": "Yellow button",
   "blueButton": "Blue button",
   "invalidIpv4": "Invalid IPv4 address",
-  "enterIpAddress": "Enter an IP address"
+  "enterIpAddress": "Enter an IP address",
+  "lookingForTvs": "Looking for TVs…",
+  "brand": "Brand",
+  "brandSamsung": "Samsung",
+  "brandLg": "LG",
+  "ipLabel": "IP: {host}",
+  "macLabel": "MAC: {mac}",
+  "smartHub": "Smart hub",
+  "inputSource": "Input source",
+  "unknown": "unknown",
+  "manualIpHint": "192.168.1.42",
+  "manualNameHint": "Living-room TV",
+  "@ipLabel": {
+    "placeholders": {
+      "host": {
+        "type": "String"
+      }
+    }
+  },
+  "@macLabel": {
+    "placeholders": {
+      "mac": {
+        "type": "String"
+      }
+    }
+  }
 }

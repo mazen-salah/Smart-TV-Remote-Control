@@ -39,9 +39,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get devicesFound => 'Devices found';
 
   @override
-  String get lookingForSamsung => 'Looking for Samsung TVs…';
-
-  @override
   String foundCount(int count) {
     return 'Found $count device(s)';
   }
@@ -190,4 +187,41 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get enterIpAddress => 'Enter an IP address';
+
+  @override
+  String get lookingForTvs => 'Looking for TVs…';
+
+  @override
+  String get brand => 'Brand';
+
+  @override
+  String get brandSamsung => 'Samsung';
+
+  @override
+  String get brandLg => 'LG';
+
+  @override
+  String ipLabel(String host) {
+    return 'IP: $host';
+  }
+
+  @override
+  String macLabel(String mac) {
+    return 'MAC: $mac';
+  }
+
+  @override
+  String get smartHub => 'Smart hub';
+
+  @override
+  String get inputSource => 'Input source';
+
+  @override
+  String get unknown => 'unknown';
+
+  @override
+  String get manualIpHint => '192.168.1.42';
+
+  @override
+  String get manualNameHint => 'Living-room TV';
 }

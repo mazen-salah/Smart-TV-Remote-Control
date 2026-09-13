@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:remote/core/models/tv_brand.dart';
+import 'package:remote/l10n/app_localizations.dart';
+
+typedef ManualIpResult = ({String host, String? name, TvBrand brand});
 
 class ManualIpDialog extends StatefulWidget {
   const ManualIpDialog({super.key});
 
-  static Future<({String host, String? name})?> show(
-    BuildContext context,
-  ) {
-    return showDialog<({String host, String? name})>(
+  static Future<ManualIpResult?> show(BuildContext context) {
+    return showDialog<ManualIpResult>(
       context: context,
       builder: (_) => const ManualIpDialog(),
     );
@@ -20,6 +22,7 @@ class _ManualIpDialogState extends State<ManualIpDialog> {
   final _formKey = GlobalKey<FormState>();
   final _ipController = TextEditingController();
   final _nameController = TextEditingController();
+  TvBrand _brand = TvBrand.samsung;
 
   @override
   void dispose() {
@@ -29,42 +32,66 @@ class _ManualIpDialogState extends State<ManualIpDialog> {
   }
 
   String? _validateIp(String? value) {
+    final l = AppLocalizations.of(context);
     final v = (value ?? '').trim();
-    if (v.isEmpty) return 'Enter an IP address';
+    if (v.isEmpty) return l.enterIpAddress;
     final parts = v.split('.');
-    if (parts.length != 4) return 'Invalid IPv4 address';
+    if (parts.length != 4) return l.invalidIpv4;
     for (final p in parts) {
       final n = int.tryParse(p);
-      if (n == null || n < 0 || n > 255) return 'Invalid IPv4 address';
+      if (n == null || n < 0 || n > 255) return l.invalidIpv4;
     }
     return null;
   }
 
+  void _submit() {
+    if (!_formKey.currentState!.validate()) return;
+    final host = _ipController.text.trim();
+    final name = _nameController.text.trim();
+    Navigator.of(context).pop(
+      (host: host, name: name.isEmpty ? null : name, brand: _brand),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return AlertDialog(
-      title: const Text('Add TV manually'),
+      title: Text(l.addTvManually),
       content: Form(
         key: _formKey,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            SegmentedButton<TvBrand>(
+              segments: [
+                ButtonSegment(
+                  value: TvBrand.samsung,
+                  label: Text(l.brandSamsung),
+                ),
+                ButtonSegment(value: TvBrand.lg, label: Text(l.brandLg)),
+              ],
+              selected: {_brand},
+              onSelectionChanged: (selection) =>
+                  setState(() => _brand = selection.first),
+            ),
+            const SizedBox(height: 16),
             TextFormField(
               controller: _ipController,
               keyboardType: TextInputType.number,
               autofocus: true,
-              decoration: const InputDecoration(
-                labelText: 'TV IP address',
-                hintText: '192.168.1.42',
+              decoration: InputDecoration(
+                labelText: l.tvIpAddress,
+                hintText: l.manualIpHint,
               ),
               validator: _validateIp,
             ),
             const SizedBox(height: 12),
             TextFormField(
               controller: _nameController,
-              decoration: const InputDecoration(
-                labelText: 'Name (optional)',
-                hintText: 'Living-room Samsung',
+              decoration: InputDecoration(
+                labelText: l.nameOptional,
+                hintText: l.manualNameHint,
               ),
             ),
           ],
@@ -73,20 +100,9 @@ class _ManualIpDialogState extends State<ManualIpDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
+          child: Text(l.cancel),
         ),
-        FilledButton(
-          onPressed: () {
-            if (!_formKey.currentState!.validate()) return;
-            final host = _ipController.text.trim();
-            final name = _nameController.text.trim();
-            Navigator.of(context).pop((
-              host: host,
-              name: name.isEmpty ? null : name,
-            ));
-          },
-          child: const Text('Add'),
-        ),
+        FilledButton(onPressed: _submit, child: Text(l.add)),
       ],
     );
   }

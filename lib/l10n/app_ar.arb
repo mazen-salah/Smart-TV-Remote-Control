@@ -10,7 +10,6 @@
   "add": "إضافة",
   "scanning": "جارٍ فحص الشبكة…",
   "devicesFound": "الأجهزة المكتشفة",
-  "lookingForSamsung": "جارٍ البحث عن تلفزيونات Samsung…",
   "foundCount": "تم العثور على {count} جهاز",
   "noDevicesFound": "لم يتم العثور على أجهزة",
   "noDevicesHint": "تأكد من تشغيل التلفزيون\nووجوده على نفس شبكة Wi-Fi",
@@ -58,5 +57,16 @@
   "yellowButton": "الزر الأصفر",
   "blueButton": "الزر الأزرق",
   "invalidIpv4": "عنوان IPv4 غير صالح",
-  "enterIpAddress": "أدخل عنوان IP"
+  "enterIpAddress": "أدخل عنوان IP",
+  "lookingForTvs": "جارٍ البحث عن التلفزيونات…",
+  "brand": "العلامة التجارية",
+  "brandSamsung": "Samsung",
+  "brandLg": "LG",
+  "ipLabel": "IP: {host}",
+  "macLabel": "MAC: {mac}",
+  "smartHub": "Smart Hub",
+  "inputSource": "مصدر الإدخال",
+  "unknown": "غير معروف",
+  "manualIpHint": "192.168.1.42",
+  "manualNameHint": "تلفزيون غرفة المعيشة"
 }

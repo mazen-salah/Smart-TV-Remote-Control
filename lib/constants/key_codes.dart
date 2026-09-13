@@ -1,3 +1,5 @@
+// Key names mirror the Samsung/LG protocol identifiers (KEY_VOLUP, ...)
+// so they can be grepped against the vendor docs.
 // ignore_for_file: constant_identifier_names
 
 enum KeyCodes {

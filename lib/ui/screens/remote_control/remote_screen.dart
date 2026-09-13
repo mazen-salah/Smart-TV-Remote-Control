@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:remote/blocs/tv_connection/tv_connection_bloc.dart';
 import 'package:remote/constants/key_codes.dart';
 import 'package:remote/core/models/disconnection_type.dart';
+import 'package:remote/l10n/app_localizations.dart';
 import 'package:remote/ui/widgets/remote_controls/components/components.dart';
 import 'package:remote/ui/widgets/remote_controls/tv_actions.dart';
 
@@ -31,12 +32,13 @@ class _RemoteScreenState extends State<RemoteScreen> {
     return BlocListener<TvConnectionBloc, TvConnectionState>(
       listenWhen: (p, n) => p.status != n.status,
       listener: (context, state) {
+        final l = AppLocalizations.of(context);
         final messenger = ScaffoldMessenger.of(context);
         switch (state.status) {
           case TvConnectionStatus.error:
             messenger.showSnackBar(
               SnackBar(
-                content: Text(state.errorMessage ?? 'Connection error'),
+                content: Text(state.errorMessage ?? l.connectionError),
                 backgroundColor: Colors.red,
               ),
             );
@@ -45,7 +47,9 @@ class _RemoteScreenState extends State<RemoteScreen> {
               messenger.showSnackBar(
                 SnackBar(
                   content: Text(
-                    'Disconnected: ${state.disconnectionType?.displayName ?? "unknown"}',
+                    l.disconnectedReason(
+                      state.disconnectionType?.displayName ?? l.unknown,
+                    ),
                   ),
                   backgroundColor: Colors.orange,
                 ),
@@ -61,18 +65,17 @@ class _RemoteScreenState extends State<RemoteScreen> {
       child: Scaffold(
         appBar: AppBar(
           title: BlocBuilder<TvConnectionBloc, TvConnectionState>(
-            builder: (_, state) => Text(
-              state.device?.displayName ?? 'Remote',
+            builder: (context, state) => Text(
+              state.device?.displayName ?? AppLocalizations.of(context).remote,
               overflow: TextOverflow.ellipsis,
             ),
           ),
           actions: [
             IconButton(
               icon: const Icon(Icons.refresh),
-              tooltip: 'Reconnect',
+              tooltip: AppLocalizations.of(context).reconnect,
               onPressed: () {
-                final device =
-                    context.read<TvConnectionBloc>().state.device;
+                final device = context.read<TvConnectionBloc>().state.device;
                 if (device != null) {
                   context
                       .read<TvConnectionBloc>()
@@ -94,10 +97,7 @@ class _RemoteScreenState extends State<RemoteScreen> {
                   keypadShown: _keypadShown,
                 ),
                 const SizedBox(height: 50),
-                if (_keypadShown)
-                  const NumPad()
-                else
-                  const DirectionKeys(),
+                if (_keypadShown) const NumPad() else const DirectionKeys(),
                 const SizedBox(height: 50),
                 const ColorKeys(),
                 const SizedBox(height: 50),

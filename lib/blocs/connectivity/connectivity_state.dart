@@ -7,8 +7,7 @@ class ConnectivityStateView extends Equatable {
 
   final List<ConnectivityResult> results;
 
-  bool get hasNetwork =>
-      results.any((r) => r != ConnectivityResult.none);
+  bool get hasNetwork => results.any((r) => r != ConnectivityResult.none);
 
   bool get hasLan =>
       results.contains(ConnectivityResult.wifi) ||

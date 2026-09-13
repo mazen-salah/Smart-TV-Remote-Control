@@ -42,13 +42,13 @@ class TvConnectionState extends Equatable {
     return TvConnectionState(
       status: status ?? this.status,
       device: device ?? this.device,
-      disconnectionType:
-          clearDisconnection ? null : disconnectionType ?? this.disconnectionType,
+      disconnectionType: clearDisconnection
+          ? null
+          : disconnectionType ?? this.disconnectionType,
       errorMessage: clearError ? null : errorMessage ?? this.errorMessage,
     );
   }
 
   @override
-  List<Object?> get props =>
-      [status, device, disconnectionType, errorMessage];
+  List<Object?> get props => [status, device, disconnectionType, errorMessage];
 }

@@ -24,12 +24,14 @@ class TvConnectionBloc extends Bloc<TvConnectionEvent, TvConnectionState> {
     TvConnectRequested event,
     Emitter<TvConnectionState> emit,
   ) async {
-    emit(state.copyWith(
-      status: TvConnectionStatus.connecting,
-      device: event.device,
-      clearError: true,
-      clearDisconnection: true,
-    ));
+    emit(
+      state.copyWith(
+        status: TvConnectionStatus.connecting,
+        device: event.device,
+        clearError: true,
+        clearDisconnection: true,
+      ),
+    );
 
     try {
       await _repository.connect(
@@ -41,10 +43,12 @@ class TvConnectionBloc extends Bloc<TvConnectionEvent, TvConnectionState> {
       );
       emit(state.copyWith(status: TvConnectionStatus.connected));
     } catch (e) {
-      emit(state.copyWith(
-        status: TvConnectionStatus.error,
-        errorMessage: e.toString(),
-      ));
+      emit(
+        state.copyWith(
+          status: TvConnectionStatus.error,
+          errorMessage: e.toString(),
+        ),
+      );
     }
   }
 
@@ -53,10 +57,12 @@ class TvConnectionBloc extends Bloc<TvConnectionEvent, TvConnectionState> {
     Emitter<TvConnectionState> emit,
   ) async {
     await _repository.disconnect();
-    emit(state.copyWith(
-      status: TvConnectionStatus.disconnected,
-      disconnectionType: DisconnectionType.userInitiated,
-    ));
+    emit(
+      state.copyWith(
+        status: TvConnectionStatus.disconnected,
+        disconnectionType: DisconnectionType.userInitiated,
+      ),
+    );
   }
 
   Future<void> _onSendKeyRequested(
@@ -67,10 +73,12 @@ class TvConnectionBloc extends Bloc<TvConnectionEvent, TvConnectionState> {
     try {
       await _repository.sendKey(event.key);
     } catch (e) {
-      emit(state.copyWith(
-        status: TvConnectionStatus.error,
-        errorMessage: e.toString(),
-      ));
+      emit(
+        state.copyWith(
+          status: TvConnectionStatus.error,
+          errorMessage: e.toString(),
+        ),
+      );
     }
   }
 
@@ -90,9 +98,11 @@ class TvConnectionBloc extends Bloc<TvConnectionEvent, TvConnectionState> {
       (t) => t.name == event.reason,
       orElse: () => DisconnectionType.unknown,
     );
-    emit(state.copyWith(
-      status: TvConnectionStatus.disconnected,
-      disconnectionType: type,
-    ));
+    emit(
+      state.copyWith(
+        status: TvConnectionStatus.disconnected,
+        disconnectionType: type,
+      ),
+    );
   }
 }

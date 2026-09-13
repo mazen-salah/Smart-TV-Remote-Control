@@ -89,8 +89,10 @@ class LGTV implements TVInterface {
       case KeyCodes.KEY_CHDOWN:
         await _service.channelDown();
       case KeyCodes.KEY_HOME:
-        await _service.sendUri('ssap://system.launcher/launch',
-            payload: {'id': 'com.webos.app.home'});
+        await _service.sendUri(
+          'ssap://system.launcher/launch',
+          payload: {'id': 'com.webos.app.home'},
+        );
       case _:
         // Unsupported key for LG path right now; ignored silently.
         break;

@@ -10,7 +10,6 @@
   "add": "Agregar",
   "scanning": "Escaneando red…",
   "devicesFound": "Dispositivos encontrados",
-  "lookingForSamsung": "Buscando TVs Samsung…",
   "foundCount": "Se encontraron {count} dispositivo(s)",
   "noDevicesFound": "No se encontraron dispositivos",
   "noDevicesHint": "Verifica que tu TV esté encendida\ny conectada a la misma red Wi-Fi",
@@ -58,5 +57,16 @@
   "yellowButton": "Botón amarillo",
   "blueButton": "Botón azul",
   "invalidIpv4": "Dirección IPv4 inválida",
-  "enterIpAddress": "Ingresa una dirección IP"
+  "enterIpAddress": "Ingresa una dirección IP",
+  "lookingForTvs": "Buscando TVs…",
+  "brand": "Marca",
+  "brandSamsung": "Samsung",
+  "brandLg": "LG",
+  "ipLabel": "IP: {host}",
+  "macLabel": "MAC: {mac}",
+  "smartHub": "Smart Hub",
+  "inputSource": "Fuente de entrada",
+  "unknown": "desconocido",
+  "manualIpHint": "192.168.1.42",
+  "manualNameHint": "TV de la sala"
 }

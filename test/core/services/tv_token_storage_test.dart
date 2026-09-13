@@ -8,7 +8,8 @@ void main() {
   });
 
   group('TvTokenStorage', () {
-    test('save then load returns the same token under the prefixed key', () async {
+    test('save then load returns the same token under the prefixed key',
+        () async {
       final prefs = await SharedPreferences.getInstance();
       final storage = TvTokenStorage(prefs);
 
@@ -18,7 +19,8 @@ void main() {
       expect(prefs.getString('tv_token::AA:BB:CC'), 'tok-123');
     });
 
-    test('load returns null for empty identifier and for missing keys', () async {
+    test('load returns null for empty identifier and for missing keys',
+        () async {
       final prefs = await SharedPreferences.getInstance();
       final storage = TvTokenStorage(prefs);
 

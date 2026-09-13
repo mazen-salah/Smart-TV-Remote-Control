@@ -160,12 +160,6 @@ abstract class AppLocalizations {
   /// **'Devices found'**
   String get devicesFound;
 
-  /// No description provided for @lookingForSamsung.
-  ///
-  /// In en, this message translates to:
-  /// **'Looking for Samsung TVs…'**
-  String get lookingForSamsung;
-
   /// No description provided for @foundCount.
   ///
   /// In en, this message translates to:
@@ -453,6 +447,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Enter an IP address'**
   String get enterIpAddress;
+
+  /// No description provided for @lookingForTvs.
+  ///
+  /// In en, this message translates to:
+  /// **'Looking for TVs…'**
+  String get lookingForTvs;
+
+  /// No description provided for @brand.
+  ///
+  /// In en, this message translates to:
+  /// **'Brand'**
+  String get brand;
+
+  /// No description provided for @brandSamsung.
+  ///
+  /// In en, this message translates to:
+  /// **'Samsung'**
+  String get brandSamsung;
+
+  /// No description provided for @brandLg.
+  ///
+  /// In en, this message translates to:
+  /// **'LG'**
+  String get brandLg;
+
+  /// No description provided for @ipLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'IP: {host}'**
+  String ipLabel(String host);
+
+  /// No description provided for @macLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'MAC: {mac}'**
+  String macLabel(String mac);
+
+  /// No description provided for @smartHub.
+  ///
+  /// In en, this message translates to:
+  /// **'Smart hub'**
+  String get smartHub;
+
+  /// No description provided for @inputSource.
+  ///
+  /// In en, this message translates to:
+  /// **'Input source'**
+  String get inputSource;
+
+  /// No description provided for @unknown.
+  ///
+  /// In en, this message translates to:
+  /// **'unknown'**
+  String get unknown;
+
+  /// No description provided for @manualIpHint.
+  ///
+  /// In en, this message translates to:
+  /// **'192.168.1.42'**
+  String get manualIpHint;
+
+  /// No description provided for @manualNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Living-room TV'**
+  String get manualNameHint;
 }
 
 class _AppLocalizationsDelegate
