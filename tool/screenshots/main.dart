@@ -1,11 +1,7 @@
-// Screenshot harness for README images.
-//
-// Renders the real screens with the network layer stubbed so the app can be
-// captured on a simulator without a TV. Not part of the shipped app.
+// Screenshot harness for the README images. Not part of the shipped app.
 //
 // Run tool/screenshots/capture.sh with a booted iOS simulator. The screen is
-// chosen at compile time with --dart-define=SCREEN=picker|remote|dialog
-// (process environment variables do not reach Dart on iOS).
+// chosen at compile time with --dart-define=SCREEN=picker|remote|dialog.
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -42,14 +38,14 @@ final _bedroom = TVDevice(
   manufacturer: 'LG',
 );
 
-class _FakeRepository extends TvRepository {
-  _FakeRepository({required this.autoConnect})
-      : super(
-          tokenStorage: sl(),
-          knownTvsStorage: sl(),
-          wakeOnLanService: sl(),
-          mdnsDiscoveryService: sl(),
-        );
+class _ScreenshotRepository extends TvRepository {
+  _ScreenshotRepository({required this.autoConnect})
+    : super(
+        tokenStorage: sl(),
+        knownTvsStorage: sl(),
+        wakeOnLanService: sl(),
+        mdnsDiscoveryService: sl(),
+      );
 
   final bool autoConnect;
 
@@ -78,10 +74,11 @@ class _FakeRepository extends TvRepository {
   TVDevice? lastUsed() => autoConnect ? _livingRoom : null;
 }
 
-class _FakeConnectivity implements Connectivity {
+class _ScreenshotConnectivity implements Connectivity {
   @override
-  Future<List<ConnectivityResult>> checkConnectivity() async =>
-      [ConnectivityResult.wifi];
+  Future<List<ConnectivityResult>> checkConnectivity() async => [
+    ConnectivityResult.wifi,
+  ];
 
   @override
   Stream<List<ConnectivityResult>> get onConnectivityChanged =>
@@ -100,18 +97,20 @@ Future<void> main() async {
 
   const screen = _screen;
   debugPrint('screenshot harness: SCREEN=$screen');
-  final repository = _FakeRepository(autoConnect: screen == 'remote');
+  final repository = _ScreenshotRepository(autoConnect: screen == 'remote');
 
   runApp(
     MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (_) => ConnectivityCubit(connectivity: _FakeConnectivity()),
+          create: (_) =>
+              ConnectivityCubit(connectivity: _ScreenshotConnectivity()),
         ),
         BlocProvider(create: (_) => TvConnectionBloc(repository: repository)),
         BlocProvider(
-          create: (_) => DeviceDiscoveryBloc(repository: repository)
-            ..add(const DiscoveryStarted()),
+          create: (_) =>
+              DeviceDiscoveryBloc(repository: repository)
+                ..add(const DiscoveryStarted()),
         ),
       ],
       child: MaterialApp(
