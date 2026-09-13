@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:remote/blocs/tv_connection/tv_connection_bloc.dart';
+import 'package:remote/l10n/app_localizations.dart';
 
 class PrimaryKeys extends StatelessWidget {
   const PrimaryKeys({
-    super.key,
     required this.onPower,
     required this.onToggleKeypad,
     required this.keypadShown,
+    super.key,
   });
 
   final VoidCallback onPower;
@@ -16,6 +17,7 @@ class PrimaryKeys extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final state = context.watch<TvConnectionBloc>().state;
     final color = _statusColor(state);
     final icon = _statusIcon(state);
@@ -46,7 +48,7 @@ class PrimaryKeys extends StatelessWidget {
                 Icon(icon, size: 16, color: color),
               const SizedBox(width: 8),
               Text(
-                _statusLabel(state),
+                _statusLabel(l, state),
                 style: TextStyle(color: color, fontWeight: FontWeight.w500),
               ),
             ],
@@ -62,13 +64,16 @@ class PrimaryKeys extends StatelessWidget {
                 color: keypadShown ? Colors.blue : Colors.white70,
               ),
               onPressed: onToggleKeypad,
-              tooltip: 'Numeric keypad',
+              tooltip: l.numericKeypad,
             ),
             IconButton(
-              icon: const Icon(Icons.power_settings_new,
-                  color: Colors.red, size: 30),
+              icon: const Icon(
+                Icons.power_settings_new,
+                color: Colors.red,
+                size: 30,
+              ),
               onPressed: onPower,
-              tooltip: 'Power',
+              tooltip: l.power,
             ),
           ],
         ),
@@ -108,20 +113,20 @@ class PrimaryKeys extends StatelessWidget {
     }
   }
 
-  String _statusLabel(TvConnectionState state) {
+  String _statusLabel(AppLocalizations l, TvConnectionState state) {
     switch (state.status) {
       case TvConnectionStatus.connecting:
-        return 'Connecting…';
+        return l.connecting;
       case TvConnectionStatus.reconnecting:
-        return 'Reconnecting…';
+        return l.reconnecting;
       case TvConnectionStatus.connected:
-        return 'Connected';
+        return l.connected;
       case TvConnectionStatus.error:
-        return 'Connection error';
+        return l.connectionError;
       case TvConnectionStatus.disconnected:
-        return 'Disconnected';
+        return l.disconnected;
       case TvConnectionStatus.idle:
-        return 'Idle';
+        return l.idle;
     }
   }
 }

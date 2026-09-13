@@ -25,26 +25,33 @@ class DeviceDiscoveryBloc
   ) async {
     final known = _repository.knownTvs();
     final lastUsed = _repository.lastUsed();
-    emit(state.copyWith(
-      status: DiscoveryStatus.scanning,
-      knownTvs: known,
-      lastUsed: lastUsed,
-      clearError: true,
-    ));
+    emit(
+      state.copyWith(
+        status: DiscoveryStatus.scanning,
+        knownTvs: known,
+        lastUsed: lastUsed,
+        clearError: true,
+      ),
+    );
 
     try {
       final discovered = await _repository.discoverAll();
       // Merge known + discovered, dedupe by (host, mac) via TVDevice.==.
       final merged = <TVDevice>{...known, ...discovered}.toList();
-      emit(state.copyWith(
-        status: merged.isEmpty ? DiscoveryStatus.empty : DiscoveryStatus.success,
-        devices: merged,
-      ));
+      emit(
+        state.copyWith(
+          status:
+              merged.isEmpty ? DiscoveryStatus.empty : DiscoveryStatus.success,
+          devices: merged,
+        ),
+      );
     } catch (e) {
-      emit(state.copyWith(
-        status: DiscoveryStatus.error,
-        errorMessage: e.toString(),
-      ));
+      emit(
+        state.copyWith(
+          status: DiscoveryStatus.error,
+          errorMessage: e.toString(),
+        ),
+      );
     }
   }
 
@@ -55,12 +62,14 @@ class DeviceDiscoveryBloc
     final device = TVDevice(
       host: event.host,
       deviceName: event.name ?? event.host,
-      manufacturer: 'Manual',
+      manufacturer: event.brand.manufacturer,
     );
     final next = [...state.devices.where((d) => d.host != device.host), device];
-    emit(state.copyWith(
-      status: DiscoveryStatus.success,
-      devices: next,
-    ));
+    emit(
+      state.copyWith(
+        status: DiscoveryStatus.success,
+        devices: next,
+      ),
+    );
   }
 }

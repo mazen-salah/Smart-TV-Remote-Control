@@ -1,11 +1,6 @@
 import 'package:flutter/material.dart';
 
 class ControllerButton extends StatelessWidget {
-  final Widget? child;
-  final VoidCallback? onPressed;
-  final double borderRadius;
-  final Color color;
-
   const ControllerButton({
     super.key,
     this.child,
@@ -13,6 +8,10 @@ class ControllerButton extends StatelessWidget {
     this.borderRadius = 50,
     this.color = Colors.transparent,
   });
+  final Widget? child;
+  final VoidCallback? onPressed;
+  final double borderRadius;
+  final Color color;
 
   @override
   Widget build(BuildContext context) {
@@ -27,13 +26,13 @@ class ControllerButton extends StatelessWidget {
         boxShadow: const [
           BoxShadow(
             color: Color(0XFF1c1c1c),
-            offset: Offset(5.0, 5.0),
-            blurRadius: 10.0,
+            offset: Offset(5, 5),
+            blurRadius: 10,
           ),
           BoxShadow(
             color: Color(0XFF404040),
-            offset: Offset(-5.0, -5.0),
-            blurRadius: 10.0,
+            offset: Offset(-5, -5),
+            blurRadius: 10,
           ),
         ],
       ),
@@ -44,8 +43,9 @@ class ControllerButton extends StatelessWidget {
             // shape: BoxShape.circle,
             borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
             gradient: const LinearGradient(
-                begin: Alignment.topLeft,
-                colors: [Color(0XFF303030), Color(0XFF1a1a1a)]),
+              begin: Alignment.topLeft,
+              colors: [Color(0XFF303030), Color(0XFF1a1a1a)],
+            ),
           ),
           child: onPressed == null
               ? child

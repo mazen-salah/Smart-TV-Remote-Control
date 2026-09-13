@@ -18,17 +18,24 @@ void main() {
   });
 
   late _MockTvRepository repository;
-  final device = TVDevice(host: '10.0.0.5', mac: 'AA:BB:CC', deviceName: 'Living Room');
+  final device =
+      TVDevice(host: '10.0.0.5', mac: 'AA:BB:CC', deviceName: 'Living Room');
 
   setUp(() {
     repository = _MockTvRepository();
     // Sensible defaults for void-returning methods so unrelated calls
     // don't blow up with "Null is not a subtype of Future<void>".
     when(() => repository.disconnect()).thenAnswer((_) => Future<void>.value());
-    when(() => repository.forgetCurrent()).thenAnswer((_) => Future<void>.value());
-    when(() => repository.sendKey(any())).thenAnswer((_) => Future<void>.value());
-    when(() => repository.connect(any(), onDisconnected: any(named: 'onDisconnected')))
+    when(() => repository.forgetCurrent())
         .thenAnswer((_) => Future<void>.value());
+    when(() => repository.sendKey(any()))
+        .thenAnswer((_) => Future<void>.value());
+    when(
+      () => repository.connect(
+        any(),
+        onDisconnected: any(named: 'onDisconnected'),
+      ),
+    ).thenAnswer((_) => Future<void>.value());
   });
 
   group('TvConnectionBloc', () {
@@ -48,8 +55,12 @@ void main() {
     blocTest<TvConnectionBloc, TvConnectionState>(
       'connect: emits connecting -> error when repository throws',
       build: () {
-        when(() => repository.connect(any(), onDisconnected: any(named: 'onDisconnected')))
-            .thenThrow(Exception('boom'));
+        when(
+          () => repository.connect(
+            any(),
+            onDisconnected: any(named: 'onDisconnected'),
+          ),
+        ).thenThrow(Exception('boom'));
         return TvConnectionBloc(repository: repository);
       },
       act: (bloc) => bloc.add(TvConnectRequested(device)),
@@ -91,14 +102,21 @@ void main() {
       expect: () => [
         isA<TvConnectionState>()
             .having((s) => s.status, 'status', TvConnectionStatus.disconnected)
-            .having((s) => s.disconnectionType, 'reason', DisconnectionType.userInitiated),
+            .having(
+              (s) => s.disconnectionType,
+              'reason',
+              DisconnectionType.userInitiated,
+            ),
       ],
     );
 
     blocTest<TvConnectionBloc, TvConnectionState>(
       'forget: clears repository and resets state to idle',
       build: () => TvConnectionBloc(repository: repository),
-      seed: () => TvConnectionState(status: TvConnectionStatus.connected, device: device),
+      seed: () => TvConnectionState(
+        status: TvConnectionStatus.connected,
+        device: device,
+      ),
       act: (bloc) => bloc.add(const TvForgetRequested()),
       expect: () => [const TvConnectionState.idle()],
       verify: (_) {

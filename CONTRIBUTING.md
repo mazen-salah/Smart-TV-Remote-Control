@@ -11,10 +11,17 @@ Prerequisites:
 - A real Android or iOS device on the same Wi-Fi as a supported TV
   (emulators rarely work — UPnP / mDNS need real local-network access)
 
+Looking for something to pick up? Issues labelled
+[`good first issue`](https://github.com/mazen-salah/Smart-TV-Remote-Control/labels/good%20first%20issue)
+are scoped for newcomers, and
+[`help wanted`](https://github.com/mazen-salah/Smart-TV-Remote-Control/labels/help%20wanted)
+marks work where a maintainer needs hardware or expertise they do not have.
+Please read the [Code of Conduct](CODE_OF_CONDUCT.md) before participating.
+
 Clone and bootstrap:
 
 ```bash
-git clone https://github.com/<your-org>/Smart-TV-Remote-Control.git
+git clone https://github.com/mazen-salah/Smart-TV-Remote-Control.git
 cd Smart-TV-Remote-Control
 flutter pub get
 flutter run
@@ -39,8 +46,9 @@ test file under `test/blocs/` with the same shape as the existing ones.
 
 ## Code style
 
-- **Lints**: `very_good_analysis` is enforced via `analysis_options.yaml`.
-  Treat warnings as errors.
+- **Lints**: `very_good_analysis` is enforced via `analysis_options.yaml`
+  (a few rules are relaxed there, each with a comment saying why). CI fails
+  on any reported issue, including infos.
 - **Format**: run `dart format .` before committing. CI will reject
   unformatted code.
 - **Static analysis**: `flutter analyze` must pass with zero issues.

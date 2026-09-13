@@ -2,11 +2,11 @@
 
 > Universal Flutter remote for Samsung Tizen and LG WebOS TVs — discovery, control, and reconnect without the original remote.
 
-<!-- Status badges -->
-![CI](https://img.shields.io/badge/CI-pending-lightgrey)
-![License](https://img.shields.io/badge/license-MIT-blue)
+[![CI](https://github.com/mazen-salah/Smart-TV-Remote-Control/actions/workflows/ci.yml/badge.svg)](https://github.com/mazen-salah/Smart-TV-Remote-Control/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/mazen-salah/Smart-TV-Remote-Control?label=release)](https://github.com/mazen-salah/Smart-TV-Remote-Control/releases/latest)
+[![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 ![Flutter](https://img.shields.io/badge/Flutter-%3E%3D3.24-02569B?logo=flutter)
-![Version](https://img.shields.io/badge/version-0.2.0-brightgreen)
+[![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen)](CONTRIBUTING.md)
 
 ---
 
@@ -15,6 +15,16 @@
 | Device picker | Remote | Manual IP dialog |
 | :---: | :---: | :---: |
 | <img src="docs/screenshots/picker.png" width="260" alt="Device picker listing two discovered TVs"> | <img src="docs/screenshots/remote.png" width="260" alt="Remote control screen"> | <img src="docs/screenshots/dialog.png" width="260" alt="Add TV manually dialog"> |
+
+---
+
+## Download
+
+- **Android:** grab the signed APK from the
+  [latest release](https://github.com/mazen-salah/Smart-TV-Remote-Control/releases/latest).
+  Your phone will ask you to allow installs from this source the first time.
+- **iOS:** not on TestFlight yet. Build from source with the
+  [Quickstart](#quickstart) below.
 
 ---
 
@@ -32,9 +42,9 @@
 - Samsung pairing token persisted locally — the on-TV "Allow" popup only appears the first time
 
 ### Brands
-- **Samsung Tizen** — real WebSocket v2 (`wss://`) implementation in `lib/services/samsung/samsung_tv_service.dart`
-- **LG WebOS** — full client in `lib/services/lg/lg_tv_service.dart` (replaces the previous stub)
-- **Other brands** — manual IP + generic key codes
+- **Samsung Tizen** — WebSocket v2 (`wss://`) client in `lib/services/samsung/samsung_tv_service.dart`, tested on real hardware
+- **LG WebOS** — WebSocket client in `lib/services/lg/lg_tv_service.dart` with client-key pairing. Written against the WebOS protocol but **not yet verified on a real LG set**. If you own one, [we would love your test report](https://github.com/mazen-salah/Smart-TV-Remote-Control/issues?q=is%3Aissue+label%3A%22help+wanted%22).
+- **Manual IP entry** — add a Samsung or LG TV by address when discovery misses it
 
 ### UX
 - Material 3 dark theme
@@ -48,16 +58,18 @@
 
 | Brand | Models | Protocol | Notes |
 | --- | --- | --- | --- |
-| Samsung | 2016+ Tizen | WebSocket v2 (`wss://<ip>:8002`) | Token saved after first "Allow" |
-| LG | WebOS 3.0+ | WebSocket (`ws://<ip>:3000`) | Client-key pairing persisted |
-| Other | Any networked TV | Manual IP + generic codes | Best-effort, no discovery |
+| Samsung | 2016+ Tizen | WebSocket v2 (`wss://<ip>:8002`) | Token saved after first "Allow". Tested. |
+| LG | WebOS 3.0+ | WebSocket (`ws://<ip>:3000`) | Client-key pairing persisted. Needs hardware testing. |
+
+Sony Bravia, Roku, Android TV and others are not supported yet. See the
+[roadmap](#roadmap--known-limitations).
 
 ---
 
 ## Quickstart
 
 ```bash
-git clone https://github.com/<your-org>/Smart-TV-Remote-Control.git
+git clone https://github.com/mazen-salah/Smart-TV-Remote-Control.git
 cd Smart-TV-Remote-Control
 flutter pub get
 flutter run
@@ -89,19 +101,18 @@ Requirements:
 └───────────────▲─────────────────────────────────────┘
                 │ calls
 ┌───────────────┴─────────────────────────────────────┐
-│  Repository layer                                   │
-│   - TvRepository       (brand-agnostic facade)      │
-│   - DiscoveryRepository                             │
+│  Repository layer  (lib/core/repositories/)         │
+│   - TvRepository   (picks SamsungTV or LGTV by      │
+│                     manufacturer, owns the session) │
 │   - KnownTvsStorage / TvTokenStorage                │
+│   - WakeOnLanService  (lib/core/services/)          │
 └───────────────▲─────────────────────────────────────┘
                 │ delegates to
 ┌───────────────┴─────────────────────────────────────┐
-│  Service layer  (lib/services/)                     │
-│   - samsung/samsung_tv_service.dart   (WSS v2)      │
-│   - lg/lg_tv_service.dart             (WebOS)       │
+│  Service layer  (lib/services/, lib/implementations)│
+│   - samsung/samsung_tv_service.dart (UPnP + WSS v2) │
+│   - lg/lg_tv_service.dart           (WebOS ws)      │
 │   - mdns/mdns_discovery_service.dart                │
-│   - upnp/upnp_discovery_service.dart                │
-│   - wol/wake_on_lan_service.dart                    │
 └───────────────▲─────────────────────────────────────┘
                 │ TCP / UDP / WebSocket
 ┌───────────────┴─────────────────────────────────────┐
@@ -132,17 +143,23 @@ DI is wired with `get_it` in `lib/di/service_locator.dart`. Blocs depend on repo
 
 ## Roadmap / Known limitations
 
+Each item is tracked as a GitHub issue; pick one up if it interests you.
+
+- LG WebOS verification on real hardware — help wanted
 - Hardware volume-button capture (Android `MediaSession` / iOS `MPRemoteCommandCenter`) — not yet wired
 - App launcher (Netflix, YouTube, Disney+ deep links) — protocol supports it, UI pending
 - Swipe trackpad for cursor-style WebOS navigation — planned
 - Sony Bravia (IRCC-IP) and Roku (ECP) — not implemented
+- iOS TestFlight distribution — not yet set up
 - iOS background reconnect is best-effort; system may suspend the socket
 
 ---
 
 ## Contributing
 
-Pull requests welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, code style, and the commit convention.
+Pull requests welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, code style, and the commit convention, and [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) for community expectations. Security issues go through [SECURITY.md](SECURITY.md).
+
+If you have a TV the app does not handle yet, an issue with the brand, model and firmware year is the most useful thing you can send.
 
 ## License
 

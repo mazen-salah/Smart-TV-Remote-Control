@@ -134,7 +134,7 @@ Future<void> main() async {
   if (screen == 'dialog') {
     await Future<void>.delayed(const Duration(milliseconds: 1200));
     final context = _navigatorKey.currentContext;
-    if (context != null) {
+    if (context != null && context.mounted) {
       await ManualIpDialog.show(context);
     }
   }

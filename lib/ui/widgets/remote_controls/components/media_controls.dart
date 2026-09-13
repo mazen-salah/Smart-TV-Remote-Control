@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:remote/constants/key_codes.dart';
+import 'package:remote/l10n/app_localizations.dart';
 import 'package:remote/ui/widgets/remote_controls/components/controller_button.dart';
 import 'package:remote/ui/widgets/remote_controls/tv_actions.dart';
 
@@ -8,38 +9,39 @@ class MediaControls extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         _MediaButton(
           icon: Icons.fast_rewind,
-          label: 'Rewind',
+          label: l.rewind,
           keyCode: KeyCodes.KEY_REWIND,
         ),
         _MediaButton(
           icon: Icons.fiber_manual_record,
           color: Colors.red,
-          label: 'Record',
+          label: l.record,
           keyCode: KeyCodes.KEY_REC,
         ),
         _MediaButton(
           icon: Icons.play_arrow,
-          label: 'Play',
+          label: l.play,
           keyCode: KeyCodes.KEY_PLAY,
         ),
         _MediaButton(
           icon: Icons.stop,
-          label: 'Stop',
+          label: l.stop,
           keyCode: KeyCodes.KEY_STOP,
         ),
         _MediaButton(
           icon: Icons.pause,
-          label: 'Pause',
+          label: l.pause,
           keyCode: KeyCodes.KEY_PAUSE,
         ),
         _MediaButton(
           icon: Icons.fast_forward,
-          label: 'Fast forward',
+          label: l.fastForward,
           keyCode: KeyCodes.KEY_FF,
         ),
       ],

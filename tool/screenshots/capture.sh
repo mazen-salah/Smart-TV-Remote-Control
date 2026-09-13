@@ -8,7 +8,7 @@ set -euo pipefail
 
 cd "$(dirname "$0")/../.."
 UDID="${1:-$(xcrun simctl list devices booted | grep -oE '[0-9A-F-]{36}' | head -1)}"
-BUNDLE_ID=com.example.remote
+BUNDLE_ID=com.summationworks.smarttvremote
 APP=build/ios/iphonesimulator/Runner.app
 OUT=docs/screenshots
 

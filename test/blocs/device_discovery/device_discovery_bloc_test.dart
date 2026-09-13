@@ -2,6 +2,7 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:remote/blocs/device_discovery/device_discovery_bloc.dart';
+import 'package:remote/core/models/tv_brand.dart';
 import 'package:remote/core/models/tv_device.dart';
 import 'package:remote/core/repositories/tv_repository.dart';
 
@@ -18,11 +19,16 @@ void main() {
     blocTest<DeviceDiscoveryBloc, DeviceDiscoveryState>(
       'DiscoveryStarted: scanning -> success with merged devices',
       build: () {
-        final known = [TVDevice(host: '10.0.0.5', mac: 'AA', deviceName: 'Known')];
-        final discovered = [TVDevice(host: '10.0.0.6', mac: 'BB', deviceName: 'New')];
+        final known = [
+          TVDevice(host: '10.0.0.5', mac: 'AA', deviceName: 'Known'),
+        ];
+        final discovered = [
+          TVDevice(host: '10.0.0.6', mac: 'BB', deviceName: 'New'),
+        ];
         when(() => repository.knownTvs()).thenReturn(known);
         when(() => repository.lastUsed()).thenReturn(known.first);
-        when(() => repository.discoverAll()).thenAnswer((_) async => discovered);
+        when(() => repository.discoverAll())
+            .thenAnswer((_) async => discovered);
         return DeviceDiscoveryBloc(repository: repository);
       },
       act: (bloc) => bloc.add(const DiscoveryStarted()),
@@ -60,7 +66,8 @@ void main() {
       build: () {
         when(() => repository.knownTvs()).thenReturn(const []);
         when(() => repository.lastUsed()).thenReturn(null);
-        when(() => repository.discoverAll()).thenThrow(Exception('mDNS failed'));
+        when(() => repository.discoverAll())
+            .thenThrow(Exception('mDNS failed'));
         return DeviceDiscoveryBloc(repository: repository);
       },
       act: (bloc) => bloc.add(const DiscoveryRefreshRequested()),
@@ -69,25 +76,49 @@ void main() {
             .having((s) => s.status, 'status', DiscoveryStatus.scanning),
         isA<DeviceDiscoveryState>()
             .having((s) => s.status, 'status', DiscoveryStatus.error)
-            .having((s) => s.errorMessage, 'errorMessage', contains('mDNS failed')),
+            .having(
+              (s) => s.errorMessage,
+              'errorMessage',
+              contains('mDNS failed'),
+            ),
       ],
     );
 
     blocTest<DeviceDiscoveryBloc, DeviceDiscoveryState>(
       'ManualDeviceAdded: appends a manual device without touching repository',
       build: () => DeviceDiscoveryBloc(repository: repository),
-      act: (bloc) =>
-          bloc.add(const ManualDeviceAdded(host: '192.168.1.99', name: 'Office TV')),
+      act: (bloc) => bloc.add(
+        const ManualDeviceAdded(host: '192.168.1.99', name: 'Office TV'),
+      ),
       expect: () => [
         isA<DeviceDiscoveryState>()
             .having((s) => s.status, 'status', DiscoveryStatus.success)
             .having((s) => s.devices.length, 'devices count', 1)
             .having((s) => s.devices.first.host, 'host', '192.168.1.99')
-            .having((s) => s.devices.first.deviceName, 'deviceName', 'Office TV'),
+            .having(
+              (s) => s.devices.first.deviceName,
+              'deviceName',
+              'Office TV',
+            ),
       ],
       verify: (_) {
         verifyNever(() => repository.discoverAll());
       },
+    );
+
+    blocTest<DeviceDiscoveryBloc, DeviceDiscoveryState>(
+      'ManualDeviceAdded: tags the device with the chosen brand',
+      build: () => DeviceDiscoveryBloc(repository: repository),
+      act: (bloc) => bloc.add(
+        const ManualDeviceAdded(host: '192.168.1.57', brand: TvBrand.lg),
+      ),
+      expect: () => [
+        isA<DeviceDiscoveryState>().having(
+          (s) => s.devices.single.manufacturer,
+          'manufacturer',
+          'LG',
+        ),
+      ],
     );
   });
 }

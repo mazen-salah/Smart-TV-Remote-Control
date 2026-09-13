@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:remote/core/models/tv_device.dart';
+import 'package:remote/l10n/app_localizations.dart';
 
 class DeviceListItem extends StatelessWidget {
   const DeviceListItem({
-    super.key,
     required this.device,
     required this.onTap,
+    super.key,
   });
 
   final TVDevice device;
@@ -13,6 +14,8 @@ class DeviceListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final mac = device.mac;
     return Card(
       color: Colors.grey[900],
       margin: const EdgeInsets.only(bottom: 12),
@@ -41,18 +44,21 @@ class DeviceListItem extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'IP: ${device.host ?? '—'}',
+              l.ipLabel(device.host ?? '—'),
               style: TextStyle(color: Colors.grey[400], fontSize: 14),
             ),
-            if (device.mac != null && device.mac!.isNotEmpty)
+            if (mac != null && mac.isNotEmpty)
               Text(
-                'MAC: ${device.mac}',
+                l.macLabel(mac),
                 style: TextStyle(color: Colors.grey[400], fontSize: 12),
               ),
           ],
         ),
-        trailing: const Icon(Icons.arrow_forward_ios,
-            color: Colors.grey, size: 16),
+        trailing: const Icon(
+          Icons.arrow_forward_ios,
+          color: Colors.grey,
+          size: 16,
+        ),
         onTap: onTap,
       ),
     );

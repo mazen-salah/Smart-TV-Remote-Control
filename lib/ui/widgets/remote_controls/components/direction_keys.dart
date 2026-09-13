@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:remote/constants/key_codes.dart';
+import 'package:remote/l10n/app_localizations.dart';
 import 'package:remote/ui/widgets/remote_controls/components/controller_button.dart';
 import 'package:remote/ui/widgets/remote_controls/tv_actions.dart';
 
@@ -8,13 +9,14 @@ class DirectionKeys extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Expanded(
       child: Stack(
         children: [
           Align(
             alignment: Alignment.topLeft,
             child: Semantics(
-              label: 'Smart hub',
+              label: l.smartHub,
               button: true,
               child: ControllerButton(
                 onPressed: () => context.sendTvKey(KeyCodes.KEY_HOME),
@@ -25,7 +27,7 @@ class DirectionKeys extends StatelessWidget {
           Align(
             alignment: Alignment.topRight,
             child: Semantics(
-              label: 'Input source',
+              label: l.inputSource,
               button: true,
               child: ControllerButton(
                 onPressed: () => context.sendTvKey(KeyCodes.KEY_SOURCE),
@@ -36,7 +38,7 @@ class DirectionKeys extends StatelessWidget {
           Align(
             alignment: Alignment.bottomLeft,
             child: Semantics(
-              label: 'Back',
+              label: l.back,
               button: true,
               child: ControllerButton(
                 onPressed: () => context.sendTvKey(KeyCodes.KEY_RETURN),
@@ -47,7 +49,7 @@ class DirectionKeys extends StatelessWidget {
           Align(
             alignment: Alignment.bottomRight,
             child: Semantics(
-              label: 'Exit',
+              label: l.exit,
               button: true,
               child: ControllerButton(
                 onPressed: () => context.sendTvKey(KeyCodes.KEY_EXT41),
@@ -57,7 +59,7 @@ class DirectionKeys extends StatelessWidget {
           ),
           Align(
             child: Semantics(
-              label: 'OK',
+              label: l.ok,
               button: true,
               child: ControllerButton(
                 onPressed: () => context.sendTvKey(KeyCodes.KEY_ENTER),
@@ -75,52 +77,64 @@ class DirectionKeys extends StatelessWidget {
           Align(
             alignment: const Alignment(0, -0.6),
             child: Semantics(
-              label: 'Up',
+              label: l.up,
               button: true,
               child: ControllerButton(
                 borderRadius: 10,
                 onPressed: () => context.sendTvKey(KeyCodes.KEY_UP),
-                child: const Icon(Icons.arrow_drop_up,
-                    size: 30, color: Colors.white),
+                child: const Icon(
+                  Icons.arrow_drop_up,
+                  size: 30,
+                  color: Colors.white,
+                ),
               ),
             ),
           ),
           Align(
             alignment: const Alignment(0, 0.6),
             child: Semantics(
-              label: 'Down',
+              label: l.down,
               button: true,
               child: ControllerButton(
                 borderRadius: 10,
                 onPressed: () => context.sendTvKey(KeyCodes.KEY_DOWN),
-                child: const Icon(Icons.arrow_drop_down,
-                    size: 30, color: Colors.white),
+                child: const Icon(
+                  Icons.arrow_drop_down,
+                  size: 30,
+                  color: Colors.white,
+                ),
               ),
             ),
           ),
           Align(
             alignment: const Alignment(0.6, 0),
             child: Semantics(
-              label: 'Right',
+              label: l.right,
               button: true,
               child: ControllerButton(
                 borderRadius: 10,
                 onPressed: () => context.sendTvKey(KeyCodes.KEY_RIGHT),
-                child: const Icon(Icons.arrow_right,
-                    size: 30, color: Colors.white),
+                child: const Icon(
+                  Icons.arrow_right,
+                  size: 30,
+                  color: Colors.white,
+                ),
               ),
             ),
           ),
           Align(
             alignment: const Alignment(-0.7, 0),
             child: Semantics(
-              label: 'Left',
+              label: l.left,
               button: true,
               child: ControllerButton(
                 borderRadius: 10,
                 onPressed: () => context.sendTvKey(KeyCodes.KEY_LEFT),
-                child: const Icon(Icons.arrow_left,
-                    size: 30, color: Colors.white),
+                child: const Icon(
+                  Icons.arrow_left,
+                  size: 30,
+                  color: Colors.white,
+                ),
               ),
             ),
           ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:remote/constants/key_codes.dart';
+import 'package:remote/l10n/app_localizations.dart';
 import 'package:remote/ui/widgets/remote_controls/components/controller_button.dart';
 import 'package:remote/ui/widgets/remote_controls/tv_actions.dart';
 
@@ -8,6 +9,7 @@ class VolumeChannelControls extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
@@ -17,18 +19,18 @@ class VolumeChannelControls extends StatelessWidget {
             children: [
               _CircleAction(
                 icon: Icons.keyboard_arrow_up,
-                label: 'Volume up',
+                label: l.volumeUp,
                 keyCode: KeyCodes.KEY_VOLUP,
               ),
               _CircleAction(
                 icon: Icons.volume_off,
-                label: 'Mute',
+                label: l.mute,
                 keyCode: KeyCodes.KEY_MUTE,
                 width: 80,
               ),
               _CircleAction(
                 icon: Icons.keyboard_arrow_down,
-                label: 'Volume down',
+                label: l.volumeDown,
                 keyCode: KeyCodes.KEY_VOLDOWN,
               ),
             ],
@@ -69,19 +71,21 @@ class VolumeChannelControls extends StatelessWidget {
             children: [
               _CircleAction(
                 icon: Icons.keyboard_arrow_up,
-                label: 'Channel up',
+                label: l.channelUp,
                 keyCode: KeyCodes.KEY_CHUP,
                 height: 40,
                 width: 40,
               ),
               const Padding(
                 padding: EdgeInsets.symmetric(vertical: 14),
-                child: Text('P',
-                    style: TextStyle(fontSize: 15, color: Colors.white70)),
+                child: Text(
+                  'P',
+                  style: TextStyle(fontSize: 15, color: Colors.white70),
+                ),
               ),
               _CircleAction(
                 icon: Icons.keyboard_arrow_down,
-                label: 'Channel down',
+                label: l.channelDown,
                 keyCode: KeyCodes.KEY_CHDOWN,
                 width: 80,
               ),

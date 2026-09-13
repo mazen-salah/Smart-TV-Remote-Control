@@ -7,9 +7,21 @@ class NumPad extends StatelessWidget {
   const NumPad({super.key});
 
   static const _digits = <_DigitRow>[
-    _DigitRow([_Digit('1', KeyCodes.KEY_1), _Digit('2', KeyCodes.KEY_2), _Digit('3', KeyCodes.KEY_3)]),
-    _DigitRow([_Digit('4', KeyCodes.KEY_4), _Digit('5', KeyCodes.KEY_5), _Digit('6', KeyCodes.KEY_6)]),
-    _DigitRow([_Digit('7', KeyCodes.KEY_7), _Digit('8', KeyCodes.KEY_8), _Digit('9', KeyCodes.KEY_9)]),
+    _DigitRow([
+      _Digit('1', KeyCodes.KEY_1),
+      _Digit('2', KeyCodes.KEY_2),
+      _Digit('3', KeyCodes.KEY_3),
+    ]),
+    _DigitRow([
+      _Digit('4', KeyCodes.KEY_4),
+      _Digit('5', KeyCodes.KEY_5),
+      _Digit('6', KeyCodes.KEY_6),
+    ]),
+    _DigitRow([
+      _Digit('7', KeyCodes.KEY_7),
+      _Digit('8', KeyCodes.KEY_8),
+      _Digit('9', KeyCodes.KEY_9),
+    ]),
     _DigitRow([
       _Digit('TOOLS', KeyCodes.KEY_TOOLS, small: true),
       _Digit('0', KeyCodes.KEY_0),
@@ -23,10 +35,12 @@ class NumPad extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: _digits
-            .map((row) => Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: row.digits.map((d) => _NumButton(digit: d)).toList(),
-                ))
+            .map(
+              (row) => Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: row.digits.map((d) => _NumButton(digit: d)).toList(),
+              ),
+            )
             .toList(),
       ),
     );

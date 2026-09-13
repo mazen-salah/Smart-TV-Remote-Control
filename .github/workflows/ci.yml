@@ -34,7 +34,7 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.44.0'
+          flutter-version: '3.47.0'
           channel: stable
           cache: true
 
@@ -47,9 +47,8 @@ jobs:
       - name: Analyze project source
         run: flutter analyze
 
-      # TODO: remove `|| true` once tests are added to the project
       - name: Run tests with coverage
-        run: flutter test --coverage || true
+        run: flutter test --coverage
 
       - name: Build debug APK (verification)
         run: flutter build apk --debug

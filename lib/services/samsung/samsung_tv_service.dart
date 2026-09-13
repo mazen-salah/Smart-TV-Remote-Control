@@ -70,7 +70,8 @@ class SamsungTVService {
       _extractMacFromInfo();
 
       final appNameBase64 = base64.encode(utf8.encode(appName));
-      var channel = '${wsapi}channels/samsung.remote.control?name=$appNameBase64';
+      var channel =
+          '${wsapi}channels/samsung.remote.control?name=$appNameBase64';
       if (_token != null) {
         channel += '&token=$_token';
         log('Using stored token');
@@ -136,7 +137,8 @@ class SamsungTVService {
         onDone: () {
           log('WebSocket closed (code=${_ws?.closeCode})');
           if (!completer.isCompleted) {
-            completer.completeError(Exception('WebSocket closed before connect'));
+            completer
+                .completeError(Exception('WebSocket closed before connect'));
           }
           _handleDisconnection(DisconnectionType.tvPowerOff);
         },
@@ -243,7 +245,7 @@ class SamsungTVService {
         'DataOfCmd': keyName,
         'Option': false,
         'TypeOfRemote': 'SendRemoteKey',
-      }
+      },
     });
 
     final ws = _ws;
@@ -294,11 +296,13 @@ class SamsungTVService {
           final alreadyKnown = tvs.any((tv) => tv.host == location.host);
           if (!alreadyKnown) {
             log('Found ${device?.friendlyName} on IP ${location.host}');
-            tvs.add(SamsungTVService(
-              host: location.host,
-              deviceName: device?.friendlyName,
-              modelName: device?.modelName,
-            ));
+            tvs.add(
+              SamsungTVService(
+                host: location.host,
+                deviceName: device?.friendlyName,
+                modelName: device?.modelName,
+              ),
+            );
           }
         } catch (e, stack) {
           log('Discovery error: $e\n$stack');

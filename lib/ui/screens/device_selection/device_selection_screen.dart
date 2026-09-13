@@ -4,6 +4,7 @@ import 'package:remote/blocs/connectivity/connectivity_bloc.dart';
 import 'package:remote/blocs/device_discovery/device_discovery_bloc.dart';
 import 'package:remote/blocs/tv_connection/tv_connection_bloc.dart';
 import 'package:remote/core/models/tv_device.dart';
+import 'package:remote/l10n/app_localizations.dart';
 import 'package:remote/ui/screens/device_selection/widgets/device_list_item.dart';
 import 'package:remote/ui/screens/device_selection/widgets/manual_ip_dialog.dart';
 import 'package:remote/ui/screens/remote_control/remote_screen.dart';
@@ -58,12 +59,13 @@ class _DeviceSelectionView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Select Device'),
+        title: Text(l.selectDevice),
         actions: [
           IconButton(
-            tooltip: 'Add manually',
+            tooltip: l.addManually,
             icon: const Icon(Icons.add),
             onPressed: () => _onAddManually(context),
           ),
@@ -83,16 +85,15 @@ class _DeviceSelectionView extends StatelessWidget {
                   const _StatusHeader(),
                   const SizedBox(height: 24),
                   Expanded(
-                    child: BlocBuilder<DeviceDiscoveryBloc,
-                        DeviceDiscoveryState>(
+                    child:
+                        BlocBuilder<DeviceDiscoveryBloc, DeviceDiscoveryState>(
                       builder: (_, state) => _DeviceList(state: state),
                     ),
                   ),
                   const SizedBox(height: 16),
                   BlocBuilder<DeviceDiscoveryBloc, DeviceDiscoveryState>(
                     builder: (context, state) {
-                      final scanning =
-                          state.status == DiscoveryStatus.scanning;
+                      final scanning = state.status == DiscoveryStatus.scanning;
                       return ElevatedButton.icon(
                         onPressed: scanning
                             ? null
@@ -100,7 +101,7 @@ class _DeviceSelectionView extends StatelessWidget {
                                 .read<DeviceDiscoveryBloc>()
                                 .add(const DiscoveryRefreshRequested()),
                         icon: const Icon(Icons.refresh),
-                        label: const Text('Scan again'),
+                        label: Text(l.scanAgain),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.blue,
                           foregroundColor: Colors.white,
@@ -125,9 +126,13 @@ class _DeviceSelectionView extends StatelessWidget {
     final result = await ManualIpDialog.show(context);
     if (result == null) return;
     if (!context.mounted) return;
-    context
-        .read<DeviceDiscoveryBloc>()
-        .add(ManualDeviceAdded(host: result.host, name: result.name));
+    context.read<DeviceDiscoveryBloc>().add(
+          ManualDeviceAdded(
+            host: result.host,
+            name: result.name,
+            brand: result.brand,
+          ),
+        );
   }
 }
 
@@ -136,6 +141,7 @@ class _StatusHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final state = context.watch<DeviceDiscoveryBloc>().state;
     final scanning = state.status == DiscoveryStatus.scanning;
 
@@ -159,7 +165,7 @@ class _StatusHeader extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  scanning ? 'Scanning network…' : 'Devices found',
+                  scanning ? l.scanning : l.devicesFound,
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 16,
@@ -168,7 +174,7 @@ class _StatusHeader extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  _subtitle(state),
+                  _subtitle(l, state),
                   style: TextStyle(color: Colors.grey[400], fontSize: 14),
                 ),
               ],
@@ -188,16 +194,16 @@ class _StatusHeader extends StatelessWidget {
     );
   }
 
-  String _subtitle(DeviceDiscoveryState state) {
+  String _subtitle(AppLocalizations l, DeviceDiscoveryState state) {
     switch (state.status) {
       case DiscoveryStatus.scanning:
-        return 'Looking for Samsung TVs…';
+        return l.lookingForTvs;
       case DiscoveryStatus.success:
-        return 'Found ${state.devices.length} device(s)';
+        return l.foundCount(state.devices.length);
       case DiscoveryStatus.empty:
-        return 'No devices found';
+        return l.noDevicesFound;
       case DiscoveryStatus.error:
-        return state.errorMessage ?? 'Discovery failed';
+        return state.errorMessage ?? l.discoveryFailed;
       case DiscoveryStatus.idle:
         return '';
     }
@@ -211,17 +217,17 @@ class _DeviceList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (state.status == DiscoveryStatus.scanning && state.devices.isEmpty) {
-      return const Center(
+      return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CircularProgressIndicator(
+            const CircularProgressIndicator(
               valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Text(
-              'Looking for Samsung TVs…',
-              style: TextStyle(color: Colors.white70),
+              AppLocalizations.of(context).lookingForTvs,
+              style: const TextStyle(color: Colors.white70),
             ),
           ],
         ),
@@ -254,6 +260,7 @@ class _EmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -261,7 +268,7 @@ class _EmptyState extends StatelessWidget {
           Icon(Icons.tv_off, size: 64, color: Colors.grey[600]),
           const SizedBox(height: 16),
           Text(
-            'No devices found',
+            l.noDevicesFound,
             style: TextStyle(
               color: Colors.grey[400],
               fontSize: 18,
@@ -270,7 +277,7 @@ class _EmptyState extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            'Make sure your TV is powered on\nand on the same Wi-Fi network',
+            l.noDevicesHint,
             textAlign: TextAlign.center,
             style: TextStyle(color: Colors.grey[600], fontSize: 14),
           ),
@@ -285,27 +292,28 @@ class _WifiOffState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
+    final l = AppLocalizations.of(context);
+    return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.wifi_off, size: 80, color: Colors.red),
-          SizedBox(height: 24),
+          const Icon(Icons.wifi_off, size: 80, color: Colors.red),
+          const SizedBox(height: 24),
           Text(
-            'No Wi-Fi connection',
-            style: TextStyle(
+            l.noWifi,
+            style: const TextStyle(
               color: Colors.white,
               fontSize: 24,
               fontWeight: FontWeight.bold,
             ),
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 32),
+            padding: const EdgeInsets.symmetric(horizontal: 32),
             child: Text(
-              'Connect to a Wi-Fi network so the app can talk to your TV.',
+              l.noWifiHint,
               textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.white70, fontSize: 16),
+              style: const TextStyle(color: Colors.white70, fontSize: 16),
             ),
           ),
         ],
