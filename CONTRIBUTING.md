@@ -7,7 +7,7 @@ covers local setup, tests, code style, commits, and the PR process.
 
 Prerequisites:
 
-- Flutter `>= 3.24.0`, Dart `>= 3.5.0`
+- Flutter `>= 3.47.0`
 - A real Android or iOS device on the same Wi-Fi as a supported TV
   (emulators rarely work — UPnP / mDNS need real local-network access)
 
