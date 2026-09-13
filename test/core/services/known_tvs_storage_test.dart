@@ -19,8 +19,11 @@ void main() {
     test('save persists a device and round-trips through loadAll', () async {
       final prefs = await SharedPreferences.getInstance();
       final storage = KnownTvsStorage(prefs);
-      final device =
-          TVDevice(host: '10.0.0.5', mac: 'AA', deviceName: 'Living Room');
+      final device = TVDevice(
+        host: '10.0.0.5',
+        mac: 'AA',
+        deviceName: 'Living Room',
+      );
 
       await storage.save(device);
       final loaded = storage.loadAll();
@@ -30,20 +33,24 @@ void main() {
       expect(loaded.first.deviceName, 'Living Room');
     });
 
-    test('save replaces a device with same host + mac instead of duplicating',
-        () async {
-      final prefs = await SharedPreferences.getInstance();
-      final storage = KnownTvsStorage(prefs);
+    test(
+      'save replaces a device with same host + mac instead of duplicating',
+      () async {
+        final prefs = await SharedPreferences.getInstance();
+        final storage = KnownTvsStorage(prefs);
 
-      await storage
-          .save(TVDevice(host: '10.0.0.5', mac: 'AA', deviceName: 'Old'));
-      await storage
-          .save(TVDevice(host: '10.0.0.5', mac: 'AA', deviceName: 'New'));
+        await storage.save(
+          TVDevice(host: '10.0.0.5', mac: 'AA', deviceName: 'Old'),
+        );
+        await storage.save(
+          TVDevice(host: '10.0.0.5', mac: 'AA', deviceName: 'New'),
+        );
 
-      final loaded = storage.loadAll();
-      expect(loaded, hasLength(1));
-      expect(loaded.first.deviceName, 'New');
-    });
+        final loaded = storage.loadAll();
+        expect(loaded, hasLength(1));
+        expect(loaded.first.deviceName, 'New');
+      },
+    );
 
     test('remove deletes the matching device', () async {
       final prefs = await SharedPreferences.getInstance();
@@ -61,8 +68,11 @@ void main() {
     test('last-used save/load/clear lifecycle', () async {
       final prefs = await SharedPreferences.getInstance();
       final storage = KnownTvsStorage(prefs);
-      final device =
-          TVDevice(host: '10.0.0.5', mac: 'AA', deviceName: 'Bedroom');
+      final device = TVDevice(
+        host: '10.0.0.5',
+        mac: 'AA',
+        deviceName: 'Bedroom',
+      );
 
       expect(storage.loadLastUsed(), isNull);
 

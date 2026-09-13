@@ -24,10 +24,7 @@ class AppTheme {
       snackBarTheme: const SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
       ),
-      cardTheme: const CardThemeData(
-        color: Color(0xFF1F1F1F),
-        elevation: 0,
-      ),
+      cardTheme: const CardThemeData(color: Color(0xFF1F1F1F), elevation: 0),
     );
   }
 }

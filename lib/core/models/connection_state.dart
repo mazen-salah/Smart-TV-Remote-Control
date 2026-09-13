@@ -3,7 +3,7 @@ enum ConnectionState {
   connecting,
   connected,
   disconnecting,
-  error
+  error,
 }
 
 extension ConnectionStateExtension on ConnectionState {

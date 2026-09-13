@@ -244,5 +244,5 @@ enum KeyCodes {
   KEY_EXT38,
   KEY_EXT39,
   KEY_EXT40,
-  KEY_EXT41
+  KEY_EXT41,
 }

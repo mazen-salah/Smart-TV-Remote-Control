@@ -27,8 +27,9 @@ void main() {
         ];
         when(() => repository.knownTvs()).thenReturn(known);
         when(() => repository.lastUsed()).thenReturn(known.first);
-        when(() => repository.discoverAll())
-            .thenAnswer((_) async => discovered);
+        when(
+          () => repository.discoverAll(),
+        ).thenAnswer((_) async => discovered);
         return DeviceDiscoveryBloc(repository: repository);
       },
       act: (bloc) => bloc.add(const DiscoveryStarted()),
@@ -53,8 +54,11 @@ void main() {
       },
       act: (bloc) => bloc.add(const DiscoveryStarted()),
       expect: () => [
-        isA<DeviceDiscoveryState>()
-            .having((s) => s.status, 'status', DiscoveryStatus.scanning),
+        isA<DeviceDiscoveryState>().having(
+          (s) => s.status,
+          'status',
+          DiscoveryStatus.scanning,
+        ),
         isA<DeviceDiscoveryState>()
             .having((s) => s.status, 'status', DiscoveryStatus.empty)
             .having((s) => s.devices, 'devices', isEmpty),
@@ -66,14 +70,18 @@ void main() {
       build: () {
         when(() => repository.knownTvs()).thenReturn(const []);
         when(() => repository.lastUsed()).thenReturn(null);
-        when(() => repository.discoverAll())
-            .thenThrow(Exception('mDNS failed'));
+        when(
+          () => repository.discoverAll(),
+        ).thenThrow(Exception('mDNS failed'));
         return DeviceDiscoveryBloc(repository: repository);
       },
       act: (bloc) => bloc.add(const DiscoveryRefreshRequested()),
       expect: () => [
-        isA<DeviceDiscoveryState>()
-            .having((s) => s.status, 'status', DiscoveryStatus.scanning),
+        isA<DeviceDiscoveryState>().having(
+          (s) => s.status,
+          'status',
+          DiscoveryStatus.scanning,
+        ),
         isA<DeviceDiscoveryState>()
             .having((s) => s.status, 'status', DiscoveryStatus.error)
             .having(

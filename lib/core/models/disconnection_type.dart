@@ -4,7 +4,7 @@ enum DisconnectionType {
   unknown,
   userInitiated,
   networkError,
-  authenticationFailed
+  authenticationFailed,
 }
 
 extension DisconnectionTypeExtension on DisconnectionType {

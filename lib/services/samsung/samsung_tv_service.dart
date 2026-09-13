@@ -6,13 +6,11 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:remote/constants/key_codes.dart';
 import 'package:remote/core/models/disconnection_type.dart';
-import 'package:upnp2/upnp.dart';
 import 'package:web_socket_channel/io.dart';
 
 const Duration kConnectionTimeout = Duration(seconds: 10);
 const Duration kKeyDelay = Duration(milliseconds: 200);
 const Duration kPingInterval = Duration(seconds: 10);
-const Duration kDiscoveryTimeout = Duration(seconds: 10);
 
 class SamsungTVService {
   SamsungTVService({
@@ -21,10 +19,10 @@ class SamsungTVService {
     this.deviceName,
     this.modelName,
     String? token,
-  })  : api = 'http://$host:8001/api/v2/',
-        wsapi = 'wss://$host:8002/api/v2/',
-        _mac = mac,
-        _token = token;
+  }) : api = 'http://$host:8001/api/v2/',
+       wsapi = 'wss://$host:8002/api/v2/',
+       _mac = mac,
+       _token = token;
 
   final String? host;
   String? _mac;
@@ -136,8 +134,9 @@ class SamsungTVService {
         onDone: () {
           log('WebSocket closed (code=${_ws?.closeCode})');
           if (!completer.isCompleted) {
-            completer
-                .completeError(Exception('WebSocket closed before connect'));
+            completer.completeError(
+              Exception('WebSocket closed before connect'),
+            );
           }
           _handleDisconnection(DisconnectionType.tvPowerOff);
         },
@@ -262,56 +261,5 @@ class SamsungTVService {
     }
 
     await Future<void>.delayed(kKeyDelay);
-  }
-
-  static Future<SamsungTVService> discover() async {
-    final devices = await discoverAll();
-    if (devices.isEmpty) {
-      throw Exception('No Samsung TVs found on the network');
-    }
-    return devices.first;
-  }
-
-  static Future<List<SamsungTVService>> discoverAll() async {
-    final completer = Completer<List<SamsungTVService>>();
-    final tvs = <SamsungTVService>[];
-    final samsungRegex = RegExp(r'^.*?Samsung.+UPnP.+SDK\/1\.0$');
-
-    final client = DeviceDiscoverer();
-    await client.start(ipv6: false);
-
-    Timer(kDiscoveryTimeout, () {
-      if (!completer.isCompleted) completer.complete(tvs);
-    });
-
-    client.quickDiscoverClients().listen(
-      (client) async {
-        if (client.server == null || !samsungRegex.hasMatch(client.server!)) {
-          return;
-        }
-        try {
-          final device = await client.getDevice();
-          final location = Uri.parse(client.location!);
-          final alreadyKnown = tvs.any((tv) => tv.host == location.host);
-          if (!alreadyKnown) {
-            log('Found ${device?.friendlyName} on IP ${location.host}');
-            tvs.add(
-              SamsungTVService(
-                host: location.host,
-                deviceName: device?.friendlyName,
-                modelName: device?.modelName,
-              ),
-            );
-          }
-        } catch (e, stack) {
-          log('Discovery error: $e\n$stack');
-        }
-      },
-      onDone: () {
-        if (!completer.isCompleted) completer.complete(tvs);
-      },
-    );
-
-    return await completer.future;
   }
 }

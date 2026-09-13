@@ -29,10 +29,11 @@ class KnownTvsStorage {
   Future<void> save(TVDevice device) async {
     if (device.host == null) return;
     final existing = loadAll();
-    final filtered = existing
-        .where((d) => d.host != device.host || d.mac != device.mac)
-        .toList()
-      ..add(device);
+    final filtered =
+        existing
+            .where((d) => d.host != device.host || d.mac != device.mac)
+            .toList()
+          ..add(device);
     final payload = json.encode(filtered.map(_toJson).toList());
     await _prefs.setString(_knownTvsKey, payload);
   }
@@ -63,20 +64,20 @@ class KnownTvsStorage {
   Future<void> clearLastUsed() => _prefs.remove(_lastTvKey);
 
   Map<String, dynamic> _toJson(TVDevice d) => <String, dynamic>{
-        'host': d.host,
-        'mac': d.mac,
-        'deviceName': d.deviceName,
-        'modelName': d.modelName,
-        'manufacturer': d.manufacturer,
-        'serialNumber': d.serialNumber,
-      };
+    'host': d.host,
+    'mac': d.mac,
+    'deviceName': d.deviceName,
+    'modelName': d.modelName,
+    'manufacturer': d.manufacturer,
+    'serialNumber': d.serialNumber,
+  };
 
   TVDevice _fromJson(Map<String, dynamic> m) => TVDevice(
-        host: m['host'] as String?,
-        mac: m['mac'] as String?,
-        deviceName: m['deviceName'] as String?,
-        modelName: m['modelName'] as String?,
-        manufacturer: m['manufacturer'] as String?,
-        serialNumber: m['serialNumber'] as String?,
-      );
+    host: m['host'] as String?,
+    mac: m['mac'] as String?,
+    deviceName: m['deviceName'] as String?,
+    modelName: m['modelName'] as String?,
+    manufacturer: m['manufacturer'] as String?,
+    serialNumber: m['serialNumber'] as String?,
+  );
 }

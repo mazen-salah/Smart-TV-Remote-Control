@@ -37,6 +37,11 @@ class DeviceDiscoveryState extends Equatable {
   }
 
   @override
-  List<Object?> get props =>
-      [status, devices, knownTvs, lastUsed, errorMessage];
+  List<Object?> get props => [
+    status,
+    devices,
+    knownTvs,
+    lastUsed,
+    errorMessage,
+  ];
 }

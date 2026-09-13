@@ -5,10 +5,7 @@ import 'package:remote/core/models/tv_device.dart';
 void main() {
   group('TvBrand.fromDevice', () {
     test('resolves LG from manufacturer regardless of case', () {
-      expect(
-        TvBrand.fromDevice(TVDevice(manufacturer: 'lg')),
-        TvBrand.lg,
-      );
+      expect(TvBrand.fromDevice(TVDevice(manufacturer: 'lg')), TvBrand.lg);
       expect(
         TvBrand.fromDevice(TVDevice(manufacturer: 'LG Electronics')),
         TvBrand.lg,
