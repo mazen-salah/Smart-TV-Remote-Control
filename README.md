@@ -14,7 +14,9 @@
 
 | Device picker | Remote | Manual IP dialog |
 | :---: | :---: | :---: |
-| _screenshot coming soon_ | _screenshot coming soon_ | _screenshot coming soon_ |
+| <img src="docs/screenshots/picker.png" width="260" alt="Device picker listing two discovered TVs"> | <img src="docs/screenshots/remote.png" width="260" alt="Remote control screen"> | <img src="docs/screenshots/dialog.png" width="260" alt="Add TV manually dialog"> |
+
+<sub>Captured on an iPhone 17 Pro simulator with sample devices and a stubbed TV connection (`tool/screenshots/capture.sh`).</sub>
 
 ---
 
