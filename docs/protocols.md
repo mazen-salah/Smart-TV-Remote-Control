@@ -95,10 +95,22 @@ heartbeat is needed.
 **Transport** — `wss://<ip>:3001` (self-signed certificate; required by
 firmware released since January 2023, including webOS 23+) with a fallback to
 `ws://<ip>:3000` for sets from before 2018. The scheme that worked is
-remembered for the session.
+remembered for the session. Only a failed TCP/TLS handshake triggers the
+fallback; a registration that is refused or times out does not.
 
-**Pairing** — the first message is a `register` request whose payload is LG's
-signed sample manifest (`lg_pairing.dart`, copied verbatim; the `signed` block
+**Certificate pinning** — the TV's certificate cannot be validated against a
+CA, so it is pinned on first use: the SHA-256 of the certificate presented
+during the connection in which the user approved pairing is stored next to
+the client key (`TvTokenStorage`, key `cert:lg:<identifier>`). Later TLS
+connections reject any other certificate and do **not** fall back to
+plaintext; the app reports that the certificate changed and asks the user to
+forget the TV and pair again. The saved client key is only ever sent over a
+pinned TLS connection. On the plaintext fallback the `register` message omits
+it, so pre-2018 sets show the pairing prompt on every session, and the key
+they hand back is not stored.
+
+**Pairing** — the first message is a `register` request (given up to 60 s for
+the on-screen prompt) whose payload is LG's signed sample manifest (`lg_pairing.dart`, copied verbatim; the `signed` block
 is covered by the signature and must not be edited). With a stored
 `client-key` the TV replies `registered` immediately; without one it shows an
 on-screen prompt and returns a new `client-key` in the `registered` payload,
