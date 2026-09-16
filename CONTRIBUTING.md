@@ -44,6 +44,24 @@ flutter test
 Bloc tests use `bloc_test` and `mocktail`. When adding a new bloc, add a
 test file under `test/blocs/` with the same shape as the existing ones.
 
+The suite mirrors `lib/`:
+
+| Directory | What it covers |
+| --- | --- |
+| `test/blocs/` | bloc transitions with a mocked repository |
+| `test/core/` | models, storages, and the repository (real storages, mocked services) |
+| `test/services/` | protocol and classification logic |
+| `test/ui/` | widget tests for the picker and dialogs |
+
+`test/services/lg/` drives the real webOS client against `FakeWebOsTv`, a
+local stand-in TV that speaks the protocol over a genuine WebSocket. Use it
+when changing pairing, transport, or key handling — it covers the paths that
+are otherwise only reachable with hardware. Its TLS mode needs `openssl` on
+the PATH.
+
+Coverage is reported to Codecov on every push; new code should come with
+tests.
+
 ## Code style
 
 - **Lints**: `very_good_analysis` is enforced via `analysis_options.yaml`

@@ -50,10 +50,23 @@ class TvRepository {
   /// host, so a set seen by both shows up once with the richer record.
   Future<List<TVDevice>> discoverAll() async {
     final results = await Future.wait<List<TVDevice>>([
-      _ssdp.discoverAll().catchError((Object _) => <TVDevice>[]),
-      _bonjour.discoverAll().catchError((Object _) => <TVDevice>[]),
+      _sweep('SSDP', _ssdp.discoverAll),
+      _sweep('Bonjour', _bonjour.discoverAll),
     ]);
     return TVDevice.mergeByHost([for (final list in results) ...list]);
+  }
+
+  /// One discovery sweep; a failure costs its results, never the scan.
+  Future<List<TVDevice>> _sweep(
+    String name,
+    Future<List<TVDevice>> Function() run,
+  ) async {
+    try {
+      return await run();
+    } catch (e) {
+      log('$name discovery failed: $e');
+      return const [];
+    }
   }
 
   /// Connect to [device]. If the TV refuses the connection and we have

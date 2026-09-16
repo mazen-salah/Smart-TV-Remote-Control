@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Test suite grown from 44 to 73 cases; line coverage from 28% to 64%.
+  `FakeWebOsTv` drives the real LG client over a genuine WebSocket
+  (plaintext and TLS), covering registration, the unsigned-manifest retry,
+  a denied prompt, certificate pinning and mismatch, the client-key policy
+  and the pointer input socket — paths that previously needed hardware.
+  Repository tests cover discovery merging, credential cleanup across host
+  and MAC aliases, and the Wake-on-LAN retry; widget tests cover the
+  picker, the forget flow and the manual-IP dialog.
+- Coverage is reported to Codecov on every push, with a badge in the README.
+
 ## [0.4.1] - 2026-09-14
 
 ### Fixed
