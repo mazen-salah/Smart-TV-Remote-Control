@@ -10,6 +10,10 @@ jobs:
   build:
     name: Format, Analyze, Test & Build
     runs-on: ubuntu-latest
+    # Job level so the Codecov step's `if` can see it; a step cannot read
+    # an env var it defines itself.
+    env:
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
     steps:
       - name: Checkout repository
@@ -50,13 +54,18 @@ jobs:
       - name: Run tests with coverage
         run: flutter test --coverage
 
+      - name: Report coverage
+        if: always()
+        run: python3 tool/coverage_summary.py >> "$GITHUB_STEP_SUMMARY"
+
+      # Skipped unless a CODECOV_TOKEN secret exists. The job summary above
+      # always carries the figure, so CI never depends on this.
       - name: Upload coverage to Codecov
+        if: env.CODECOV_TOKEN != ''
         uses: codecov/codecov-action@v5
         continue-on-error: true
         with:
           files: coverage/lcov.info
-          # Public repositories upload from Actions without a token; a hiccup
-          # here must never fail the build.
           fail_ci_if_error: false
           token: ${{ secrets.CODECOV_TOKEN }}
 

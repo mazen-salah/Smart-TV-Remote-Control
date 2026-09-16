@@ -4,7 +4,6 @@
 
 [![CI](https://github.com/mazen-salah/Smart-TV-Remote-Control/actions/workflows/ci.yml/badge.svg)](https://github.com/mazen-salah/Smart-TV-Remote-Control/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/mazen-salah/Smart-TV-Remote-Control?label=release)](https://github.com/mazen-salah/Smart-TV-Remote-Control/releases/latest)
-[![codecov](https://codecov.io/gh/mazen-salah/Smart-TV-Remote-Control/branch/main/graph/badge.svg)](https://codecov.io/gh/mazen-salah/Smart-TV-Remote-Control)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 ![Flutter](https://img.shields.io/badge/Flutter-%3E%3D3.47-02569B?logo=flutter)
 [![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen)](CONTRIBUTING.md)
