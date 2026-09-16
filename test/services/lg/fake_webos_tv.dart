@@ -19,32 +19,58 @@ class FakeWebOsTv {
     return tv;
   }
 
+  /// Why [startSecure] cannot run here, or null when it can.
+  ///
+  /// Checked synchronously so a group can be skipped with a reason rather
+  /// than failing for a toolchain reason unrelated to the code under test.
+  static String? get tlsUnavailableReason {
+    try {
+      final result = Process.runSync('openssl', ['version']);
+      if (result.exitCode != 0) {
+        return 'openssl exited ${result.exitCode}';
+      }
+      return null;
+    } on ProcessException catch (e) {
+      return 'openssl not usable: ${e.message}';
+    }
+  }
+
   /// A TV reachable over TLS with a self-signed certificate, like the real
   /// thing. The certificate is generated per call, so a second instance
   /// presents a different one - which is how a certificate change is
   /// simulated.
+  ///
+  /// The certificate deliberately carries no subject alternative name: it
+  /// cannot validate either way, and every client we test reaches it
+  /// through `badCertificateCallback`. That also keeps the arguments to
+  /// ones LibreSSL accepts.
   static Future<FakeWebOsTv> startSecure() async {
     final dir = await Directory.systemTemp.createTemp('fake_webos_tv');
     final certPath = '${dir.path}/cert.pem';
     final keyPath = '${dir.path}/key.pem';
-    final result = await Process.run('openssl', [
-      'req',
-      '-x509',
-      '-newkey',
-      'rsa:2048',
-      '-keyout',
-      keyPath,
-      '-out',
-      certPath,
-      '-days',
-      '1',
-      '-nodes',
-      '-subj',
-      '/CN=127.0.0.1',
-      '-addext',
-      'subjectAltName=IP:127.0.0.1',
-    ]);
+    final ProcessResult result;
+    try {
+      result = await Process.run('openssl', [
+        'req',
+        '-x509',
+        '-newkey',
+        'rsa:2048',
+        '-keyout',
+        keyPath,
+        '-out',
+        certPath,
+        '-days',
+        '1',
+        '-nodes',
+        '-subj',
+        '/CN=127.0.0.1',
+      ]);
+    } on ProcessException catch (e) {
+      await dir.delete(recursive: true);
+      throw StateError('openssl is required for TLS tests: ${e.message}');
+    }
     if (result.exitCode != 0) {
+      await dir.delete(recursive: true);
       throw StateError('openssl failed: ${result.stderr}');
     }
     final context = SecurityContext()

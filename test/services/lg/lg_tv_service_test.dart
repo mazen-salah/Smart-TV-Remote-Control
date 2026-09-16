@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:remote/services/lg/lg_tv_service.dart';
 
@@ -12,9 +14,11 @@ void main() {
 
   setUp(() async {
     tv = await FakeWebOsTv.start();
-    // A port nothing listens on: the TV's port plus one is free because the
-    // fake bound an ephemeral port, but prove it by using a reserved-high one.
-    deadPort = tv.port == 65535 ? 65534 : tv.port + 1;
+    // Reserve an ephemeral port and release it: nothing listens there, so
+    // the TLS attempt fails fast and the fallback path is exercised.
+    final reserved = await ServerSocket.bind(InternetAddress.loopbackIPv4, 0);
+    deadPort = reserved.port;
+    await reserved.close();
   });
 
   tearDown(() => tv.close());
@@ -167,7 +171,7 @@ void main() {
         expect(tv.registerPayloads, isEmpty);
       },
     );
-  });
+  }, skip: FakeWebOsTv.tlsUnavailableReason);
 
   group('commands', () {
     test('sends ssap requests on the main socket', () async {
