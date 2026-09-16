@@ -1,0 +1,20 @@
+# Generated localizations and the screenshot harness are not hand-written
+# code, so they do not belong in the coverage figure.
+ignore:
+  - "lib/l10n/**"
+  - "tool/**"
+
+coverage:
+  status:
+    project:
+      default:
+        target: auto
+        threshold: 2%
+    patch:
+      default:
+        target: 60%
+        threshold: 10%
+
+comment:
+  layout: "reach, diff, files"
+  require_changes: true

@@ -44,11 +44,18 @@ class LgTvService {
     String? clientKey,
     String? pinnedCertificateSha256,
     bool preferSecure = true,
+    this.securePort = 3001,
+    this.plainPort = 3000,
   }) : _clientKey = clientKey,
        _pinnedCert = pinnedCertificateSha256,
        _secure = preferSecure;
 
   final String host;
+
+  /// webOS listens on 3001 (TLS) and 3000 (plaintext). Overridable so tests
+  /// can point the client at a local stand-in TV.
+  final int securePort;
+  final int plainPort;
 
   String? _clientKey;
   String? get clientKey => _clientKey;
@@ -82,8 +89,8 @@ class LgTvService {
   /// fingerprint to remember for that TV.
   void Function(String sha256)? onCertificatePinned;
 
-  Uri get _secureUri => Uri(scheme: 'wss', host: host, port: 3001);
-  Uri get _plainUri => Uri(scheme: 'ws', host: host, port: 3000);
+  Uri get _secureUri => Uri(scheme: 'wss', host: host, port: securePort);
+  Uri get _plainUri => Uri(scheme: 'ws', host: host, port: plainPort);
 
   HttpClient _pinningClient() => HttpClient()
     ..badCertificateCallback = (cert, host, port) {

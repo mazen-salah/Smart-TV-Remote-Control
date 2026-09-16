@@ -50,6 +50,16 @@ jobs:
       - name: Run tests with coverage
         run: flutter test --coverage
 
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v5
+        continue-on-error: true
+        with:
+          files: coverage/lcov.info
+          # Public repositories upload from Actions without a token; a hiccup
+          # here must never fail the build.
+          fail_ci_if_error: false
+          token: ${{ secrets.CODECOV_TOKEN }}
+
       - name: Build debug APK (verification)
         run: flutter build apk --debug
 
