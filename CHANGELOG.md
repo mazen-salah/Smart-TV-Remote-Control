@@ -16,7 +16,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Repository tests cover discovery merging, credential cleanup across host
   and MAC aliases, and the Wake-on-LAN retry; widget tests cover the
   picker, the forget flow and the manual-IP dialog.
-- Coverage is reported to Codecov on every push, with a badge in the README.
+- Every CI run prints a coverage summary, with the least-covered files, in
+  its GitHub Actions job summary. No external service or token needed;
+  `tool/coverage_summary.py` produces the same report locally.
 
 ## [0.4.1] - 2026-09-14
 

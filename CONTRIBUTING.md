@@ -59,8 +59,12 @@ when changing pairing, transport, or key handling — it covers the paths that
 are otherwise only reachable with hardware. Its TLS mode needs `openssl` on
 the PATH.
 
-Coverage is reported to Codecov on every push; new code should come with
-tests.
+Every CI run prints a coverage summary in its job summary on the Actions
+tab, with the least-covered files listed. New code should come with tests;
+`flutter test --coverage` writes `coverage/lcov.info` locally.
+
+Coverage is also uploaded to Codecov when a `CODECOV_TOKEN` secret is
+configured; without it that step is skipped and CI is unaffected.
 
 ## Code style
 
