@@ -62,7 +62,7 @@ jobs:
       # always carries the figure, so CI never depends on this.
       - name: Upload coverage to Codecov
         if: env.CODECOV_TOKEN != ''
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v7
         continue-on-error: true
         with:
           files: coverage/lcov.info
