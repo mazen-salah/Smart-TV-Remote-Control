@@ -26,10 +26,10 @@ dependencies:
   # State management & DI
   flutter_bloc: ^9.0.0
   equatable: ^3.0.0
-  get_it: ^9.2.1
+  get_it: ^9.3.0
 
   # Persistence
-  shared_preferences: ^2.3.5
+  shared_preferences: ^2.5.6
 
   # UX
   flutter_svg: ^2.0.16
