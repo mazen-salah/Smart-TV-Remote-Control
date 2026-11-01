@@ -18,10 +18,10 @@ dependencies:
   http: ^1.2.1
   upnp2: ^3.0.12
   web_socket_channel: ^3.0.3
-  bonsoir: ^7.1.5
+  bonsoir: ^7.1.6
   wake_on_lan: ^4.0.0
   connectivity_plus: ^7.3.1
-  crypto: ^3.0.6
+  crypto: ^3.0.8
 
   # State management & DI
   flutter_bloc: ^9.0.0
@@ -32,7 +32,7 @@ dependencies:
   shared_preferences: ^2.5.6
 
   # UX
-  flutter_svg: ^2.0.16
+  flutter_svg: ^2.3.2
 
 dev_dependencies:
   flutter_test:
