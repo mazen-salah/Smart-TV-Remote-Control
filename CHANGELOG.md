@@ -8,6 +8,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Full Russian localization: `lib/l10n/app_ru.arb` (all 79 strings, with
+  proper Russian plural forms for the device count), the generated
+  `app_localizations_ru.dart`, and a Russian launcher name for Android
+  (`values-ru/strings.xml`). Docs in Russian: [README.ru.md](README.ru.md),
+  a step-by-step [setup guide](docs/ru/setup.md) and a
+  [privacy summary](docs/ru/privacy.md).
+- In-app language switcher (globe icon on the picker) with the choice
+  persisted in `shared_preferences`; "System default" follows the device
+  again. `LocaleCubit` / `LocaleStorage`, covered by cubit and widget tests.
 - Test suite grown from 44 to 73 cases; line coverage from 28% to 64%.
   `FakeWebOsTv` drives the real LG client over a genuine WebSocket
   (plaintext and TLS), covering registration, the unsigned-manifest retry,
