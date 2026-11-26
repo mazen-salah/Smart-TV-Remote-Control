@@ -239,4 +239,22 @@ class AppLocalizationsEs extends AppLocalizations {
   String connectionFailed(String reason) {
     return 'No se pudo conectar: $reason';
   }
+
+  @override
+  String get language => 'Idioma';
+
+  @override
+  String get languageSystem => 'Como en el sistema';
+
+  @override
+  String get languageEnglish => 'Inglés';
+
+  @override
+  String get languageRussian => 'Ruso';
+
+  @override
+  String get languageSpanish => 'Español';
+
+  @override
+  String get languageArabic => 'Árabe';
 }
