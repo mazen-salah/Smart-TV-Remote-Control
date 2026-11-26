@@ -13,9 +13,11 @@
 
 ## Скриншоты
 
-| Выбор устройства | Пульт | Ручное добавление по IP |
+| Выбор устройства | Меню языка | Ручное добавление по IP |
 | :---: | :---: | :---: |
-| <img src="docs/screenshots/picker.png" width="260" alt="Список найденных телевизоров"> | <img src="docs/screenshots/remote.png" width="260" alt="Экран пульта"> | <img src="docs/screenshots/dialog.png" width="260" alt="Диалог добавления телевизора по IP"> |
+| <img src="docs/ru/screenshots/picker.png" width="240" alt="Список найденных телевизоров на русском"> | <img src="docs/ru/screenshots/language-menu.png" width="240" alt="Меню выбора языка"> | <img src="docs/ru/screenshots/manual-ip.png" width="240" alt="Диалог добавления по IP на русском"> |
+
+_Снимки сделаны с web-сборки того же кода: экран пульта требует настоящего телевизора._
 
 ---
 
