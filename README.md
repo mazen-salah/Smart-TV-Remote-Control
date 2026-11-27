@@ -150,11 +150,13 @@ The wire protocols themselves (Samsung WebSocket v2 pairing, LG webOS registrati
 
 Each planned item is tracked as a GitHub issue; pick one up if it interests you.
 
-- LG WebOS verification on real hardware — help wanted
+- LG WebOS verification on real hardware — help wanted, see
+  [docs/testing.md](docs/testing.md)
 - Hardware volume-button capture (Android `MediaSession` / iOS `MPRemoteCommandCenter`) — not yet wired
 - App launcher (Netflix, YouTube, Disney+ deep links) — protocol supports it, UI pending
 - Swipe trackpad for cursor-style WebOS navigation — planned
-- Sony Bravia (IRCC-IP) and Roku (ECP) — not implemented
+- Sony Bravia (IRCC-IP) and Roku (ECP) — in review in #48, see
+  [docs/testing.md](docs/testing.md)
 - iOS TestFlight distribution — not yet set up
 
 Known limitation: iOS background reconnect is best-effort, the system may suspend the socket.
@@ -165,7 +167,7 @@ Known limitation: iOS background reconnect is best-effort, the system may suspen
 
 Pull requests welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, code style, and the commit convention, and [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) for community expectations. Security issues go through [SECURITY.md](SECURITY.md). The app collects no data; see [PRIVACY.md](PRIVACY.md).
 
-If you have a TV the app does not handle yet, an issue with the brand, model and firmware year is the most useful thing you can send.
+If you have a TV the app does not handle yet, an issue with the brand, model and firmware year is the most useful thing you can send. If you have one of the sets listed under [Roadmap](#roadmap--known-limitations), [docs/testing.md](docs/testing.md) says what to check and what to report.
 
 ## License
 
