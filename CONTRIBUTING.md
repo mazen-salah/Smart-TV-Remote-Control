@@ -61,7 +61,8 @@ the PATH.
 
 Every CI run prints a coverage summary in its job summary on the Actions
 tab, with the least-covered files listed. New code should come with tests;
-`flutter test --coverage` writes `coverage/lcov.info` locally.
+`flutter test --coverage` writes `coverage/lcov.info` locally. That file is
+gitignored, so leave it out of pull requests; CI generates its own.
 
 Coverage is also uploaded to Codecov when a `CODECOV_TOKEN` secret is
 configured; without it that step is skipped and CI is unaffected.
