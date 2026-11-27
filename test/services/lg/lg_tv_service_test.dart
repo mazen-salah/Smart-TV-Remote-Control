@@ -199,6 +199,27 @@ void main() {
       service.disconnect();
     });
 
+    test('moves the cursor and clicks on the pointer socket', () async {
+      final service = serviceFor();
+      await service.connect();
+      await service.sendPointerMove(dx: 3, dy: -2);
+      await service.sendPointerClick();
+      await tv.pointerSocketOpened;
+      await Future<void>.delayed(const Duration(milliseconds: 100));
+      expect(tv.pointerFrames, [
+        'type:move\ndx:3\ndy:-2\n\n',
+        'type:click\n\n',
+      ]);
+      service.disconnect();
+    });
+
+    test('refuses pointer moves once disconnected', () async {
+      final service = serviceFor();
+      await service.connect();
+      service.disconnect();
+      expect(service.sendPointerMove(dx: 1, dy: 1), throwsA(isA<StateError>()));
+    });
+
     test('reuses one pointer socket for repeated presses', () async {
       final service = serviceFor();
       await service.connect();

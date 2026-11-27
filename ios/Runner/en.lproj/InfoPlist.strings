@@ -1,0 +1,5 @@
+/* Localized display name and permission prompt. English is the development
+   language, so these values match Info.plist; the file exists so the app name
+   is not silently left untranslated for locales that have a translation. */
+"CFBundleDisplayName" = "Smart TV Remote";
+"NSLocalNetworkUsageDescription" = "This app discovers and controls Smart TVs on your local network.";

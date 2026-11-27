@@ -78,6 +78,13 @@ class AppLocalizationsEs extends AppLocalizations {
   String get numericKeypad => 'Teclado numérico';
 
   @override
+  String get touchpad => 'Panel táctil';
+
+  @override
+  String get touchpadHint =>
+      'Desliza para mover el cursor,\ntoca para seleccionar';
+
+  @override
   String get power => 'Encendido';
 
   @override
@@ -239,4 +246,22 @@ class AppLocalizationsEs extends AppLocalizations {
   String connectionFailed(String reason) {
     return 'No se pudo conectar: $reason';
   }
+
+  @override
+  String get language => 'Idioma';
+
+  @override
+  String get languageSystem => 'Como en el sistema';
+
+  @override
+  String get languageEnglish => 'Inglés';
+
+  @override
+  String get languageRussian => 'Ruso';
+
+  @override
+  String get languageSpanish => 'Español';
+
+  @override
+  String get languageArabic => 'Árabe';
 }

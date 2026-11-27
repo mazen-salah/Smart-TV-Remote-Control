@@ -14,6 +14,8 @@ class TvConnectionBloc extends Bloc<TvConnectionEvent, TvConnectionState> {
     on<TvConnectRequested>(_onConnectRequested);
     on<TvDisconnectRequested>(_onDisconnectRequested);
     on<TvSendKeyRequested>(_onSendKeyRequested);
+    on<TvPointerMoved>(_onPointerMoved);
+    on<TvPointerClicked>(_onPointerClicked);
     on<TvForgetRequested>(_onForgetRequested);
     on<TvDisconnectionDetected>(_onDisconnectionDetected);
   }
@@ -83,13 +85,30 @@ class TvConnectionBloc extends Bloc<TvConnectionEvent, TvConnectionState> {
   Future<void> _onSendKeyRequested(
     TvSendKeyRequested event,
     Emitter<TvConnectionState> emit,
+  ) => _send(() => _repository.sendKey(event.key), emit);
+
+  Future<void> _onPointerMoved(
+    TvPointerMoved event,
+    Emitter<TvConnectionState> emit,
+  ) => _send(() => _repository.pointerMove(dx: event.dx, dy: event.dy), emit);
+
+  Future<void> _onPointerClicked(
+    TvPointerClicked event,
+    Emitter<TvConnectionState> emit,
+  ) => _send(_repository.pointerClick, emit);
+
+  /// Runs one key press or pointer move.
+  ///
+  /// A failing command (e.g. the LG pointer socket being slow) must not take
+  /// the session down while the main connection is still alive.
+  Future<void> _send(
+    Future<void> Function() command,
+    Emitter<TvConnectionState> emit,
   ) async {
     if (state.status != TvConnectionStatus.connected) return;
     try {
-      await _repository.sendKey(event.key);
+      await command();
     } catch (e) {
-      // One key failing (e.g. the LG pointer socket being slow) must not
-      // take the session down while the main connection is still alive.
       if (_repository.current?.isConnected ?? false) {
         emit(state.copyWith(errorMessage: e.toString()));
         return;

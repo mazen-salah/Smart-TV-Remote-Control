@@ -69,6 +69,21 @@ class SamsungTV implements TVInterface {
   @override
   void disconnect() => _service.disconnect();
 
+  /// Tizen's control channel only carries key presses: there is no pointer
+  /// socket to move a cursor on, and the pad is hidden for these sets.
+  @override
+  bool get supportsPointer => false;
+
+  @override
+  Future<void> pointerMove({required int dx, required int dy}) async {
+    throw UnsupportedError('Samsung TVs have no pointer input');
+  }
+
+  @override
+  Future<void> pointerClick() async {
+    throw UnsupportedError('Samsung TVs have no pointer input');
+  }
+
   @override
   Future<void> sendKey(KeyCodes key) => _service.sendKey(key);
 

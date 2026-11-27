@@ -1,6 +1,7 @@
 import 'package:get_it/get_it.dart';
 import 'package:remote/core/repositories/tv_repository.dart';
 import 'package:remote/core/services/known_tvs_storage.dart';
+import 'package:remote/core/services/locale_storage.dart';
 import 'package:remote/core/services/multicast_lock.dart';
 import 'package:remote/core/services/tv_token_storage.dart';
 import 'package:remote/core/services/wake_on_lan_service.dart';
@@ -17,6 +18,7 @@ Future<void> configureDependencies() async {
     ..registerSingleton<SharedPreferences>(prefs)
     ..registerLazySingleton<TvTokenStorage>(() => TvTokenStorage(sl()))
     ..registerLazySingleton<KnownTvsStorage>(() => KnownTvsStorage(sl()))
+    ..registerLazySingleton<LocaleStorage>(() => LocaleStorage(sl()))
     ..registerLazySingleton<WakeOnLanService>(WakeOnLanService.new)
     ..registerLazySingleton<MulticastLock>(MulticastLock.new)
     ..registerLazySingleton<SsdpDiscoveryService>(

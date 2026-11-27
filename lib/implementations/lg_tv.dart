@@ -105,4 +105,19 @@ class LGTV implements TVInterface {
   }
 
   Future<void> launchApp(String appId) => _service.launchApp(appId);
+
+  @override
+  bool get supportsPointer => true;
+
+  @override
+  Future<void> pointerMove({required int dx, required int dy}) async {
+    await ensureConnection();
+    await _service.sendPointerMove(dx: dx, dy: dy);
+  }
+
+  @override
+  Future<void> pointerClick() async {
+    await ensureConnection();
+    await _service.sendPointerClick();
+  }
 }

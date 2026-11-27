@@ -6,14 +6,18 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:remote/blocs/connectivity/connectivity_bloc.dart';
 import 'package:remote/blocs/device_discovery/device_discovery_bloc.dart';
+import 'package:remote/blocs/locale/locale_cubit.dart';
 import 'package:remote/blocs/tv_connection/tv_connection_bloc.dart';
 import 'package:remote/core/models/tv_device.dart';
 import 'package:remote/core/repositories/tv_repository.dart';
+import 'package:remote/core/services/locale_storage.dart';
 import 'package:remote/l10n/app_localizations.dart';
 import 'package:remote/ui/screens/device_selection/device_selection_screen.dart';
 import 'package:remote/ui/theme/app_theme.dart';
 
 class _MockTvRepository extends Mock implements TvRepository {}
+
+class _MockLocaleStorage extends Mock implements LocaleStorage {}
 
 class _FakeTvDevice extends Fake implements TVDevice {}
 
@@ -72,6 +76,7 @@ void main() {
             ),
           ),
           BlocProvider(create: (_) => TvConnectionBloc(repository: repository)),
+          BlocProvider(create: (_) => LocaleCubit(_MockLocaleStorage())),
           BlocProvider(
             create: (_) =>
                 DeviceDiscoveryBloc(repository: repository)

@@ -289,6 +289,19 @@ class LgTvService {
     socket.sink.add('type:button\nname:$name\n\n');
   }
 
+  /// Moves the webOS cursor by [dx] and [dy] pointer units through the same
+  /// socket that carries button presses.
+  Future<void> sendPointerMove({required int dx, required int dy}) async {
+    final socket = await _pointerSocket();
+    socket.sink.add('type:move\ndx:$dx\ndy:$dy\n\n');
+  }
+
+  /// Clicks wherever the cursor currently is.
+  Future<void> sendPointerClick() async {
+    final socket = await _pointerSocket();
+    socket.sink.add('type:click\n\n');
+  }
+
   Future<IOWebSocketChannel> _pointerSocket() async {
     final existing = _pointer;
     if (existing != null && existing.closeCode == null) return existing;

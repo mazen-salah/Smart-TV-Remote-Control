@@ -22,6 +22,8 @@
   "remote": "الريموت",
   "reconnect": "إعادة الاتصال",
   "numericKeypad": "لوحة الأرقام",
+  "touchpad": "لوحة اللمس",
+  "touchpadHint": "اسحب لتحريك المؤشر،\nانقر للاختيار",
   "power": "تشغيل",
   "connecting": "جارٍ الاتصال…",
   "reconnecting": "جارٍ إعادة الاتصال…",
@@ -72,5 +74,11 @@
   "forgetTv": "نسيان هذا التلفزيون",
   "forgetTvConfirm": "هل تريد إزالة {name} واقترانه؟ ستحتاج إلى السماح للتطبيق على التلفزيون مرة أخرى.",
   "forget": "نسيان",
-  "connectionFailed": "تعذر الاتصال: {reason}"
+  "connectionFailed": "تعذر الاتصال: {reason}",
+  "language": "اللغة",
+  "languageSystem": "حسب النظام",
+  "languageEnglish": "الإنجليزية",
+  "languageRussian": "الروسية",
+  "languageSpanish": "الإسبانية",
+  "languageArabic": "العربية"
 }

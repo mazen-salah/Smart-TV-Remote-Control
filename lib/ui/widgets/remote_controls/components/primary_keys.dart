@@ -8,12 +8,18 @@ class PrimaryKeys extends StatelessWidget {
     required this.onPower,
     required this.onToggleKeypad,
     required this.keypadShown,
+    this.onToggleTouchpad,
+    this.touchpadShown = false,
     super.key,
   });
 
   final VoidCallback onPower;
   final VoidCallback onToggleKeypad;
   final bool keypadShown;
+
+  /// Shown only for TVs with pointer input; null hides the button.
+  final VoidCallback? onToggleTouchpad;
+  final bool touchpadShown;
 
   @override
   Widget build(BuildContext context) {
@@ -57,6 +63,16 @@ class PrimaryKeys extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
+            if (onToggleTouchpad != null)
+              IconButton(
+                icon: Icon(
+                  Icons.touch_app,
+                  size: 30,
+                  color: touchpadShown ? Colors.blue : Colors.white70,
+                ),
+                onPressed: onToggleTouchpad,
+                tooltip: l.touchpad,
+              ),
             IconButton(
               icon: Icon(
                 Icons.dialpad,

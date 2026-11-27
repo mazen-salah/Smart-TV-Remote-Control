@@ -18,6 +18,22 @@ abstract class TVInterface {
 
   Future<void> sendKey(KeyCodes key);
 
+  /// Whether the TV moves an on-screen cursor from relative pointer motion.
+  ///
+  /// LG webOS exposes a pointer input socket for it; Samsung's control channel
+  /// only carries key presses, so the pad is hidden for those sets.
+  bool get supportsPointer;
+
+  /// Moves the on-screen cursor by [dx] and [dy] pointer units.
+  ///
+  /// Only called when [supportsPointer] is true.
+  Future<void> pointerMove({required int dx, required int dy});
+
+  /// Clicks at the current cursor position.
+  ///
+  /// Only called when [supportsPointer] is true.
+  Future<void> pointerClick();
+
   void setOnDisconnectedCallback(void Function(DisconnectionType) callback);
   void setOnConnectionStateChangedCallback(
     void Function(ConnectionState) callback,

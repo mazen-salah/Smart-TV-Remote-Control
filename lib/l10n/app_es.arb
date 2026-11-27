@@ -22,6 +22,8 @@
   "remote": "Control Remoto",
   "reconnect": "Reconectar",
   "numericKeypad": "Teclado numérico",
+  "touchpad": "Panel táctil",
+  "touchpadHint": "Desliza para mover el cursor,\ntoca para seleccionar",
   "power": "Encendido",
   "connecting": "Conectando…",
   "reconnecting": "Reconectando…",
@@ -72,5 +74,11 @@
   "forgetTv": "Olvidar este TV",
   "forgetTvConfirm": "¿Quitar {name} y su emparejamiento? Tendrás que permitir la app en el TV de nuevo.",
   "forget": "Olvidar",
-  "connectionFailed": "No se pudo conectar: {reason}"
+  "connectionFailed": "No se pudo conectar: {reason}",
+  "language": "Idioma",
+  "languageSystem": "Como en el sistema",
+  "languageEnglish": "Inglés",
+  "languageRussian": "Ruso",
+  "languageSpanish": "Español",
+  "languageArabic": "Árabe"
 }

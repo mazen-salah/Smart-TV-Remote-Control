@@ -79,6 +79,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get numericKeypad => 'لوحة الأرقام';
 
   @override
+  String get touchpad => 'لوحة اللمس';
+
+  @override
+  String get touchpadHint => 'اسحب لتحريك المؤشر،\nانقر للاختيار';
+
+  @override
   String get power => 'تشغيل';
 
   @override
@@ -240,4 +246,22 @@ class AppLocalizationsAr extends AppLocalizations {
   String connectionFailed(String reason) {
     return 'تعذر الاتصال: $reason';
   }
+
+  @override
+  String get language => 'اللغة';
+
+  @override
+  String get languageSystem => 'حسب النظام';
+
+  @override
+  String get languageEnglish => 'الإنجليزية';
+
+  @override
+  String get languageRussian => 'الروسية';
+
+  @override
+  String get languageSpanish => 'الإسبانية';
+
+  @override
+  String get languageArabic => 'العربية';
 }

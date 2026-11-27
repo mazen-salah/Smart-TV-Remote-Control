@@ -8,6 +8,10 @@
 ![Flutter](https://img.shields.io/badge/Flutter-%3E%3D3.47-02569B?logo=flutter)
 [![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen)](CONTRIBUTING.md)
 
+> **По-русски:** [README.ru.md](README.ru.md) — описание приложения,
+> [гайд по настройке](docs/ru/setup.md) — установка, сопряжение, ручное добавление по IP
+> и разбор частых проблем.
+
 ---
 
 ## Screenshots
@@ -52,7 +56,11 @@
 - Material 3 dark theme
 - Haptic feedback on every key press
 - `Semantics` labels on every button (screen-reader friendly)
-- Localized: English, Spanish, Arabic (ARB files under `lib/l10n/`)
+- Swipe pad for pointer navigation on LG webOS: drag to move the cursor, tap
+  to click. Hidden on Samsung, whose control channel has no pointer input
+- Localized: English, Russian, Spanish, Arabic (ARB files under `lib/l10n/`). The
+  language follows the device, and the menu in the picker's app bar overrides it —
+  the choice is remembered across launches
 
 ---
 
