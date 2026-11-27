@@ -40,6 +40,9 @@
 ### Connectivity
 - Real network state via `connectivity_plus` (no DNS polling)
 - Native WebSocket `pingInterval`-based heartbeat (no manual 500 ms / 5 s timer loops)
+- Hardware volume keys: while the remote is open and connected, the phone's
+  rocker changes the TV's volume instead of the phone's (Android; see the
+  limitation below)
 - Wake-on-LAN: when a known TV refuses the connection, the app sends a magic packet and retries once
 - Samsung pairing token persisted locally — the on-TV "Allow" popup only appears the first time
 
@@ -151,7 +154,7 @@ The wire protocols themselves (Samsung WebSocket v2 pairing, LG webOS registrati
 Each planned item is tracked as a GitHub issue; pick one up if it interests you.
 
 - LG WebOS verification on real hardware — help wanted
-- Hardware volume-button capture (Android `MediaSession` / iOS `MPRemoteCommandCenter`) — not yet wired
+- Volume keys on iOS — the only routes App Store rules allow are unreliable, so they still change the phone's volume
 - App launcher (Netflix, YouTube, Disney+ deep links) — protocol supports it, UI pending
 - Swipe trackpad for cursor-style WebOS navigation — planned
 - Sony Bravia (IRCC-IP) and Roku (ECP) — not implemented

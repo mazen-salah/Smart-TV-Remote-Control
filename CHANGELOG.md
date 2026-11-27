@@ -19,6 +19,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Every CI run prints a coverage summary, with the least-covered files, in
   its GitHub Actions job summary. No external service or token needed;
   `tool/coverage_summary.py` produces the same report locally.
+- The phone's hardware volume keys control the TV while the remote is open and
+  connected. Android takes the keys over with a playing media session whose
+  volume is remote-controlled, so the phone's own volume neither changes nor
+  shows its panel; leaving the screen or losing the connection hands the keys
+  back. Covered by `test/core/services/hardware_volume_keys_test.dart` and
+  `test/ui/volume_keys_test.dart`. iOS has no comparable route, so there the
+  keys still change the phone's volume.
 
 ## [0.4.1] - 2026-09-14
 
