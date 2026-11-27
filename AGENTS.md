@@ -12,6 +12,8 @@
   (`shared_preferences`), «Как в системе» сбрасывает выбор. Тесты:
   `test/blocs/locale/`, `test/ui/language_menu_button_test.dart`.
 - Название приложения на Android: `res/values-ru/strings.xml` (`@string/app_name` в манифесте).
+- Название и текст разрешения на локальную сеть на iOS: `ios/Runner/{en,ru}.lproj/InfoPlist.strings`,
+  подключены вариант-группой в `project.pbxproj`; связность проверяет `tool/check_ios_localization.py`.
 - Документация: `README.ru.md`, `docs/ru/setup.md` (гайд по настройке), `docs/ru/privacy.md`.
 
 ## Команды
@@ -51,4 +53,19 @@ PY
 ## Git
 
 - `origin` — `DNikulshin/Smart-TV-Remote-Control` (форк), `upstream` — апстрим.
-- iPhone/iOS-локализация названия не сделана (нужны правки Xcode-проекта, а не только `Info.plist`).
+
+## iOS: локализация названия
+
+`Info.plist` правится только в одном языке, поэтому название и текст разрешения на локальную сеть
+переведены через `ios/Runner/{en,ru}.lproj/InfoPlist.strings`; в проекте они подключены
+вариант-группой `InfoPlist.strings` (`PBXVariantGroup`), в `knownRegions` добавлен `ru`.
+Xcode на этой машине нет, CI собирает только Android, поэтому связность проверяется скриптом:
+
+```bash
+python3 tool/check_ios_localization.py          # ожидает en и ru
+```
+
+Он парсит `project.pbxproj` как OpenStep-plist, проверяет, что все ссылки разрешаются,
+файлы `.lproj` существуют и содержат `CFBundleDisplayName` и `NSLocalNetworkUsageDescription`,
+а build-файл лежит в фазе Resources таргета Runner. Новый язык — `--languages en,ru,de`
+и такая же ветка в `values-<lang>/strings.xml` для Android.

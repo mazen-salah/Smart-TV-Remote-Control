@@ -14,6 +14,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (`values-ru/strings.xml`). Docs in Russian: [README.ru.md](README.ru.md),
   a step-by-step [setup guide](docs/ru/setup.md) and a
   [privacy summary](docs/ru/privacy.md).
+- Localized iOS app name and local-network prompt: `ios/Runner/en.lproj/`
+  and `ios/Runner/ru.lproj/InfoPlist.strings` are wired into the Runner
+  target as an `InfoPlist.strings` variant group (`ru` added to the
+  project's known regions), so the launcher name matches the Android one
+  on both platforms. `tool/check_ios_localization.py` checks that wiring
+  without Xcode. 80 test cases now.
 - In-app language switcher (globe icon on the picker) with the choice
   persisted in `shared_preferences`; "System default" follows the device
   again. `LocaleCubit` / `LocaleStorage`, covered by cubit and widget tests.
