@@ -79,6 +79,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get numericKeypad => 'لوحة الأرقام';
 
   @override
+  String get touchpad => 'لوحة اللمس';
+
+  @override
+  String get touchpadHint => 'اسحب لتحريك المؤشر،\nانقر للاختيار';
+
+  @override
   String get power => 'تشغيل';
 
   @override

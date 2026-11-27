@@ -29,6 +29,11 @@
   "remote": "Remote",
   "reconnect": "Reconnect",
   "numericKeypad": "Numeric keypad",
+  "touchpad": "Touchpad",
+  "touchpadHint": "Swipe to move the cursor,\ntap to select",
+  "@touchpadHint": {
+    "description": "Hint printed on the webOS swipe pad"
+  },
   "power": "Power",
   "connecting": "Connecting…",
   "reconnecting": "Reconnecting…",

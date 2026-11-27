@@ -145,9 +145,25 @@ name:UP
 
 (key:value lines terminated by a blank line). Names used: `UP DOWN LEFT
 RIGHT ENTER BACK EXIT HOME MENU INFO RED GREEN YELLOW BLUE MUTE VOLUMEUP
-VOLUMEDOWN CHANNELUP CHANNELDOWN 0-9`. The same socket accepts
-`type:move` / `type:click` for pointer control, which the app does not use
-yet.
+VOLUMEDOWN CHANNELUP CHANNELDOWN 0-9`.
+
+The same socket carries pointer motion, which drives the swipe pad
+(`lib/ui/widgets/remote_controls/components/touchpad.dart`):
+
+```
+type:move
+dx:3
+dy:-2
+
+```
+
+`dx`/`dy` are relative pointer units, positive right and down. One unit is
+roughly one pixel of the TV screen and the set applies its own acceleration,
+so the pad turns four logical pixels of finger travel into one unit and
+carries the leftover fraction between drag updates. A tap sends
+`type:click`, which presses wherever the cursor is. There is no absolute
+positioning: the app never learns the cursor coordinates, so the TV screen
+cannot be mirrored or drawn over.
 
 **Power on** — a TV that is off does not listen on either port; Wake-on-LAN
 is the only way to turn it on (enable *Mobile TV On* on the set).

@@ -78,6 +78,13 @@ class AppLocalizationsEs extends AppLocalizations {
   String get numericKeypad => 'Teclado numérico';
 
   @override
+  String get touchpad => 'Panel táctil';
+
+  @override
+  String get touchpadHint =>
+      'Desliza para mover el cursor,\ntoca para seleccionar';
+
+  @override
   String get power => 'Encendido';
 
   @override

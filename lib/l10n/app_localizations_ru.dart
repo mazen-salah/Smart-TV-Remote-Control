@@ -88,6 +88,12 @@ class AppLocalizationsRu extends AppLocalizations {
   String get numericKeypad => 'Цифровая клавиатура';
 
   @override
+  String get touchpad => 'Тачпад';
+
+  @override
+  String get touchpadHint => 'Свайп — курсор,\nкасание — выбор';
+
+  @override
   String get power => 'Питание';
 
   @override

@@ -22,6 +22,8 @@
   "remote": "Пульт",
   "reconnect": "Переподключиться",
   "numericKeypad": "Цифровая клавиатура",
+  "touchpad": "Тачпад",
+  "touchpadHint": "Свайп — курсор,\nкасание — выбор",
   "power": "Питание",
   "connecting": "Подключение…",
   "reconnecting": "Переподключение…",

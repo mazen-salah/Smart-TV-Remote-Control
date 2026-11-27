@@ -29,6 +29,21 @@ final class TvSendKeyRequested extends TvConnectionEvent {
   List<Object?> get props => [key];
 }
 
+/// Moves the cursor of a TV that has pointer input, in pointer units.
+final class TvPointerMoved extends TvConnectionEvent {
+  const TvPointerMoved({required this.dx, required this.dy});
+  final int dx;
+  final int dy;
+
+  @override
+  List<Object?> get props => [dx, dy];
+}
+
+/// Clicks at the current cursor position.
+final class TvPointerClicked extends TvConnectionEvent {
+  const TvPointerClicked();
+}
+
 /// Forget [device], or the currently connected TV when null.
 final class TvForgetRequested extends TvConnectionEvent {
   const TvForgetRequested({this.device});

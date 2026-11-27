@@ -149,4 +149,18 @@ void main() {
       verifyNever(() => wol.wake(mac: any(named: 'mac')));
     }, timeout: const Timeout(Duration(seconds: 60)));
   });
+
+  group('pointer input', () {
+    test('is not reported before a TV is connected', () {
+      expect(repository.supportsPointer, isFalse);
+    });
+
+    test('pointerMove without a connection throws StateError', () {
+      expect(repository.pointerMove(dx: 1, dy: 1), throwsA(isA<StateError>()));
+    });
+
+    test('pointerClick without a connection throws StateError', () {
+      expect(repository.pointerClick(), throwsA(isA<StateError>()));
+    });
+  });
 }

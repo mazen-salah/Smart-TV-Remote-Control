@@ -22,6 +22,8 @@
   "remote": "الريموت",
   "reconnect": "إعادة الاتصال",
   "numericKeypad": "لوحة الأرقام",
+  "touchpad": "لوحة اللمس",
+  "touchpadHint": "اسحب لتحريك المؤشر،\nانقر للاختيار",
   "power": "تشغيل",
   "connecting": "جارٍ الاتصال…",
   "reconnecting": "جارٍ إعادة الاتصال…",

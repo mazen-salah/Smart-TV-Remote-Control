@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:remote/blocs/tv_connection/tv_connection_bloc.dart';
 import 'package:remote/constants/key_codes.dart';
 import 'package:remote/core/models/disconnection_type.dart';
+import 'package:remote/core/models/tv_brand.dart';
 import 'package:remote/l10n/app_localizations.dart';
 import 'package:remote/ui/widgets/remote_controls/components/components.dart';
 import 'package:remote/ui/widgets/remote_controls/tv_actions.dart';
@@ -17,7 +18,19 @@ class RemoteScreen extends StatefulWidget {
 class _RemoteScreenState extends State<RemoteScreen> {
   bool _keypadShown = false;
 
-  void _toggleKeypad() => setState(() => _keypadShown = !_keypadShown);
+  /// The touchpad replaces the arrow cluster while it is on; webOS sets keep
+  /// both, but the middle of the screen only fits one at a time.
+  bool _touchpadShown = false;
+
+  void _toggleKeypad() => setState(() {
+    _keypadShown = !_keypadShown;
+    if (_keypadShown) _touchpadShown = false;
+  });
+
+  void _toggleTouchpad() => setState(() {
+    _touchpadShown = !_touchpadShown;
+    if (_touchpadShown) _keypadShown = false;
+  });
 
   Future<void> _handlePower(BuildContext context) async {
     context.sendTvKey(KeyCodes.KEY_POWER);
@@ -86,26 +99,50 @@ class _RemoteScreenState extends State<RemoteScreen> {
           ],
         ),
         body: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                PrimaryKeys(
-                  onPower: () => _handlePower(context),
-                  onToggleKeypad: _toggleKeypad,
-                  keypadShown: _keypadShown,
+          child: BlocBuilder<TvConnectionBloc, TvConnectionState>(
+            builder: (context, state) {
+              final device = state.device;
+              final hasPointer =
+                  device != null && TvBrand.fromDevice(device).hasPointer;
+              final touchpadShown = hasPointer && _touchpadShown;
+              return Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 20,
                 ),
-                const SizedBox(height: 50),
-                if (_keypadShown) const NumPad() else const DirectionKeys(),
-                const SizedBox(height: 50),
-                const ColorKeys(),
-                const SizedBox(height: 50),
-                const VolumeChannelControls(),
-                const SizedBox(height: 50),
-                const MediaControls(),
-              ],
-            ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    PrimaryKeys(
+                      onPower: () => _handlePower(context),
+                      onToggleKeypad: _toggleKeypad,
+                      keypadShown: _keypadShown,
+                      onToggleTouchpad: hasPointer ? _toggleTouchpad : null,
+                      touchpadShown: touchpadShown,
+                    ),
+                    const SizedBox(height: 50),
+                    if (_keypadShown)
+                      const NumPad()
+                    else if (touchpadShown)
+                      Expanded(
+                        child: Touchpad(
+                          onMove: (dx, dy) =>
+                              context.moveTvPointer(dx: dx, dy: dy),
+                          onClick: context.clickTvPointer,
+                        ),
+                      )
+                    else
+                      const DirectionKeys(),
+                    const SizedBox(height: 50),
+                    const ColorKeys(),
+                    const SizedBox(height: 50),
+                    const VolumeChannelControls(),
+                    const SizedBox(height: 50),
+                    const MediaControls(),
+                  ],
+                ),
+              );
+            },
           ),
         ),
       ),

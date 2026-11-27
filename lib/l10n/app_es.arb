@@ -22,6 +22,8 @@
   "remote": "Control Remoto",
   "reconnect": "Reconectar",
   "numericKeypad": "Teclado numérico",
+  "touchpad": "Panel táctil",
+  "touchpadHint": "Desliza para mover el cursor,\ntoca para seleccionar",
   "power": "Encendido",
   "connecting": "Conectando…",
   "reconnecting": "Reconectando…",

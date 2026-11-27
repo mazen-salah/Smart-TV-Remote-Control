@@ -56,6 +56,8 @@
 - Material 3 dark theme
 - Haptic feedback on every key press
 - `Semantics` labels on every button (screen-reader friendly)
+- Swipe pad for pointer navigation on LG webOS: drag to move the cursor, tap
+  to click. Hidden on Samsung, whose control channel has no pointer input
 - Localized: English, Russian, Spanish, Arabic (ARB files under `lib/l10n/`). The
   language follows the device, and the menu in the picker's app bar overrides it —
   the choice is remembered across launches

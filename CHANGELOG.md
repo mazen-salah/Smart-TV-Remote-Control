@@ -36,6 +36,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   its GitHub Actions job summary. No external service or token needed;
   `tool/coverage_summary.py` produces the same report locally.
 
+- Swipe pad for webOS pointer navigation (LG only): dragging on the pad
+  moves the on-screen cursor through the pointer input socket
+  (`type:move`); a tap clicks (`type:click`). A touchpad button in the
+  remote's toolbar swaps the pad in for the arrow cluster, so the layout
+  keeps the same height, and the button is hidden for Samsung sets, whose
+  channel carries key presses only. Covered by service, bloc, pad gesture
+  and screen tests.
+
 ### Fixed
 - The Russian device counter rendered a literal `#` (`Найдено # устройства`):
   the ARB used the ICU `#` placeholder, which `flutter gen-l10n` keeps as

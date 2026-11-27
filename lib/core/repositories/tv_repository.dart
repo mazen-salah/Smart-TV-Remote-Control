@@ -191,11 +191,26 @@ class TvRepository {
   }
 
   Future<void> sendKey(KeyCodes key) async {
+    await _requireCurrent().sendKey(key);
+  }
+
+  /// Whether the active TV can move a cursor (see `TVInterface.supportsPointer`).
+  bool get supportsPointer => _current?.supportsPointer ?? false;
+
+  Future<void> pointerMove({required int dx, required int dy}) async {
+    await _requireCurrent().pointerMove(dx: dx, dy: dy);
+  }
+
+  Future<void> pointerClick() async {
+    await _requireCurrent().pointerClick();
+  }
+
+  TVInterface _requireCurrent() {
     final tv = _current;
     if (tv == null) {
       throw StateError('No active TV connection');
     }
-    await tv.sendKey(key);
+    return tv;
   }
 
   Future<void> disconnect() async {

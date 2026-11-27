@@ -3,11 +3,14 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:remote/blocs/tv_connection/tv_connection_bloc.dart';
 import 'package:remote/constants/key_codes.dart';
+import 'package:remote/core/interfaces/tv_interface.dart';
 import 'package:remote/core/models/disconnection_type.dart';
 import 'package:remote/core/models/tv_device.dart';
 import 'package:remote/core/repositories/tv_repository.dart';
 
 class _MockTvRepository extends Mock implements TvRepository {}
+
+class _MockTVInterface extends Mock implements TVInterface {}
 
 class _FakeTvDevice extends Fake implements TVDevice {}
 
@@ -34,6 +37,15 @@ void main() {
     ).thenAnswer((_) => Future<void>.value());
     when(
       () => repository.sendKey(any()),
+    ).thenAnswer((_) => Future<void>.value());
+    when(
+      () => repository.pointerMove(
+        dx: any(named: 'dx'),
+        dy: any(named: 'dy'),
+      ),
+    ).thenAnswer((_) => Future<void>.value());
+    when(
+      () => repository.pointerClick(),
     ).thenAnswer((_) => Future<void>.value());
     when(
       () => repository.connect(
@@ -93,6 +105,67 @@ void main() {
       verify: (_) {
         verify(() => repository.sendKey(KeyCodes.KEY_VOLUP)).called(1);
       },
+    );
+
+    blocTest<TvConnectionBloc, TvConnectionState>(
+      'pointer move: delegates the delta to the repository',
+      build: () => TvConnectionBloc(repository: repository),
+      seed: () => const TvConnectionState(status: TvConnectionStatus.connected),
+      act: (bloc) => bloc.add(const TvPointerMoved(dx: 4, dy: -3)),
+      expect: () => const <TvConnectionState>[],
+      verify: (_) {
+        verify(() => repository.pointerMove(dx: 4, dy: -3)).called(1);
+      },
+    );
+
+    blocTest<TvConnectionBloc, TvConnectionState>(
+      'pointer click: delegates to the repository',
+      build: () => TvConnectionBloc(repository: repository),
+      seed: () => const TvConnectionState(status: TvConnectionStatus.connected),
+      act: (bloc) => bloc.add(const TvPointerClicked()),
+      expect: () => const <TvConnectionState>[],
+      verify: (_) {
+        verify(() => repository.pointerClick()).called(1);
+      },
+    );
+
+    blocTest<TvConnectionBloc, TvConnectionState>(
+      'pointer: is a no-op when not connected',
+      build: () => TvConnectionBloc(repository: repository),
+      act: (bloc) => bloc.add(const TvPointerMoved(dx: 1, dy: 1)),
+      expect: () => const <TvConnectionState>[],
+      verify: (_) {
+        verifyNever(
+          () => repository.pointerMove(
+            dx: any(named: 'dx'),
+            dy: any(named: 'dy'),
+          ),
+        );
+        verifyNever(() => repository.pointerClick());
+      },
+    );
+
+    blocTest<TvConnectionBloc, TvConnectionState>(
+      'pointer: a failed move keeps the session and reports the error',
+      build: () {
+        when(
+          () => repository.pointerMove(
+            dx: any(named: 'dx'),
+            dy: any(named: 'dy'),
+          ),
+        ).thenThrow(Exception('pointer socket is slow'));
+        final tv = _MockTVInterface();
+        when(() => tv.isConnected).thenReturn(true);
+        when(() => repository.current).thenReturn(tv);
+        return TvConnectionBloc(repository: repository);
+      },
+      seed: () => const TvConnectionState(status: TvConnectionStatus.connected),
+      act: (bloc) => bloc.add(const TvPointerMoved(dx: 1, dy: 0)),
+      expect: () => [
+        isA<TvConnectionState>()
+            .having((s) => s.status, 'status', TvConnectionStatus.connected)
+            .having((s) => s.errorMessage, 'error', contains('pointer socket')),
+      ],
     );
 
     blocTest<TvConnectionBloc, TvConnectionState>(

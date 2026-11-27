@@ -234,6 +234,18 @@ abstract class AppLocalizations {
   /// **'Numeric keypad'**
   String get numericKeypad;
 
+  /// No description provided for @touchpad.
+  ///
+  /// In en, this message translates to:
+  /// **'Touchpad'**
+  String get touchpad;
+
+  /// Hint printed on the webOS swipe pad
+  ///
+  /// In en, this message translates to:
+  /// **'Swipe to move the cursor,\ntap to select'**
+  String get touchpadHint;
+
   /// No description provided for @power.
   ///
   /// In en, this message translates to:

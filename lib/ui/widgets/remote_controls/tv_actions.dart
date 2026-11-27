@@ -11,4 +11,15 @@ extension TvActions on BuildContext {
     unawaited(HapticFeedback.lightImpact());
     read<TvConnectionBloc>().add(TvSendKeyRequested(key));
   }
+
+  /// Moves the webOS cursor. No haptic: swipes come in bursts and the pad
+  /// would buzz non-stop.
+  void moveTvPointer({required int dx, required int dy}) {
+    read<TvConnectionBloc>().add(TvPointerMoved(dx: dx, dy: dy));
+  }
+
+  void clickTvPointer() {
+    unawaited(HapticFeedback.selectionClick());
+    read<TvConnectionBloc>().add(const TvPointerClicked());
+  }
 }
