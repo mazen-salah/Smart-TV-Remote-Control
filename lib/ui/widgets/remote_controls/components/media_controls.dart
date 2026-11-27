@@ -10,40 +10,50 @@ class MediaControls extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
+    // Six buttons do not fit side by side on a 360 dp phone at their natural
+    // size, so each one takes an equal share and scales down rather than
+    // pushing the row past the screen edge.
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        _MediaButton(
-          icon: Icons.fast_rewind,
-          label: l.rewind,
-          keyCode: KeyCodes.KEY_REWIND,
-        ),
-        _MediaButton(
-          icon: Icons.fiber_manual_record,
-          color: Colors.red,
-          label: l.record,
-          keyCode: KeyCodes.KEY_REC,
-        ),
-        _MediaButton(
-          icon: Icons.play_arrow,
-          label: l.play,
-          keyCode: KeyCodes.KEY_PLAY,
-        ),
-        _MediaButton(
-          icon: Icons.stop,
-          label: l.stop,
-          keyCode: KeyCodes.KEY_STOP,
-        ),
-        _MediaButton(
-          icon: Icons.pause,
-          label: l.pause,
-          keyCode: KeyCodes.KEY_PAUSE,
-        ),
-        _MediaButton(
-          icon: Icons.fast_forward,
-          label: l.fastForward,
-          keyCode: KeyCodes.KEY_FF,
-        ),
+        for (final button in [
+          _MediaButton(
+            icon: Icons.fast_rewind,
+            label: l.rewind,
+            keyCode: KeyCodes.KEY_REWIND,
+          ),
+          _MediaButton(
+            icon: Icons.fiber_manual_record,
+            color: Colors.red,
+            label: l.record,
+            keyCode: KeyCodes.KEY_REC,
+          ),
+          _MediaButton(
+            icon: Icons.play_arrow,
+            label: l.play,
+            keyCode: KeyCodes.KEY_PLAY,
+          ),
+          _MediaButton(
+            icon: Icons.stop,
+            label: l.stop,
+            keyCode: KeyCodes.KEY_STOP,
+          ),
+          _MediaButton(
+            icon: Icons.pause,
+            label: l.pause,
+            keyCode: KeyCodes.KEY_PAUSE,
+          ),
+          _MediaButton(
+            icon: Icons.fast_forward,
+            label: l.fastForward,
+            keyCode: KeyCodes.KEY_FF,
+          ),
+        ])
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 2),
+              child: FittedBox(fit: BoxFit.scaleDown, child: button),
+            ),
+          ),
       ],
     );
   }
