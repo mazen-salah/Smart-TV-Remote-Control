@@ -15,6 +15,8 @@ classified from their headers before any HTTP fetch:
 | --- | --- |
 | Samsung | `SERVER` header matching `Samsung … UPnP … SDK` |
 | LG | `ST` / `USN` containing `urn:lge-com:service:webos-second-screen:1` |
+| Roku | `ST` / `USN` containing `roku:ecp`, or `Roku` in the `SERVER` header |
+| Sony | `ST` / `USN` containing `urn:schemas-sony-com:service:ScalarWebAPI:1` |
 
 The `LOCATION` URL then yields the device description XML, from which
 `friendlyName` and `modelName` are read. Android only delivers multicast
@@ -151,6 +153,69 @@ yet.
 
 **Power on** — a TV that is off does not listen on either port; Wake-on-LAN
 is the only way to turn it on (enable *Mobile TV On* on the set).
+
+## Roku (ECP)
+
+`lib/services/roku/roku_tv_service.dart`
+
+Roku's External Control Protocol is plain HTTP on port 8060 — no pairing, no
+session, no token:
+
+| Request | Purpose |
+| --- | --- |
+| `GET /query/device-info` | XML description: `user-device-name`, `model-name`, `wifi-mac` (or `ethernet-mac` on a wired set), `serial-number` |
+| `POST /keypress/<Key>` | one button press |
+| `POST /launch/<appId>` | start an installed channel |
+
+Key names in use: `Up Down Left Right Select Back Home Info VolumeUp
+VolumeDown VolumeMute ChannelUp ChannelDown Play Rev Fwd Lit_0…Lit_9`. Roku
+has no separate pause (`Play` toggles), no stop, no colour keys and no numeric
+prefix, so those keys are dropped rather than guessed at. Power is `PowerOff`;
+a Roku that is off answers nothing until Wake-on-LAN brings it back, and only
+Roku TVs have an Ethernet or Wi-Fi MAC to send the magic packet to.
+
+The device answers only while *Settings → System → Advanced system settings →
+Control by mobile apps → Network access* is "Enabled", which is the default on
+retail units but off on managed ones.
+
+## Sony BRAVIA (IP control)
+
+`lib/services/sony/sony_tv_service.dart`
+
+Two interfaces on port 80:
+
+- **JSON-RPC** at `/sony/<service>`: `POST /sony/system` with
+  `{"method": "getSystemInformation", "id": 1, "params": [], "version": "1.0"}`
+  returns `name`, `model`, `macAddr` and `serial`. The same service answers
+  `getRemoteControllerInfo`, which is the TV's own list of
+  `{name, value}` button codes.
+- **IRCC** at `/sony/IRCC`: a SOAP envelope asking for one button code.
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/" s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+  <s:Body>
+    <u:X_SendIRCC xmlns:u="urn:schemas-sony-com:service:IRCC:1">
+      <IRCCCode>AAAAAQAAAAEAAAASAw==</IRCCCode>
+    </u:X_SendIRCC>
+  </s:Body>
+</s:Envelope>
+```
+
+with `Content-Type: text/xml; charset=UTF-8` and
+`SOAPACTION: "urn:schemas-sony-com:service:IRCC:1#X_SendIRCC"`. Both
+interfaces require **IP control** to be switched on
+(*Settings → Network → Home network → IP control*), and with the "Normal and
+Pre-Shared Key" mode every request carries the key in `X-Auth-PSK`; without a
+matching key the TV answers 403, which the app reports as a wrong key rather
+than as an unreachable TV.
+
+The codes are taken from the TV's own `getRemoteControllerInfo` response when
+it sends one, and from Sony's documented table (`sony_ircc.dart`) otherwise.
+Only the documented buttons have a fallback: `Info`, `Exit`, `Rewind` and
+`Forward` are not in that table, so they work on a set that reports them and
+are dropped on one that does not — guessing would press something else. Power
+is `PowerOff` for the same reason as Roku: an off Bravia is not reachable.
 
 ## Wake-on-LAN
 

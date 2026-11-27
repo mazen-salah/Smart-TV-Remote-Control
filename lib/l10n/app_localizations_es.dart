@@ -200,6 +200,19 @@ class AppLocalizationsEs extends AppLocalizations {
   String get brandLg => 'LG';
 
   @override
+  String get brandRoku => 'Roku';
+
+  @override
+  String get brandSony => 'Sony';
+
+  @override
+  String get preSharedKey => 'Clave precompartida';
+
+  @override
+  String get preSharedKeyHint =>
+      'Se configura en el TV: Ajustes → Red → Control IP';
+
+  @override
   String ipLabel(String host) {
     return 'IP: $host';
   }

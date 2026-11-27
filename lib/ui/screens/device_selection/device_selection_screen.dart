@@ -149,6 +149,7 @@ class _DeviceSelectionView extends StatelessWidget {
         host: result.host,
         name: result.name,
         brand: result.brand,
+        preSharedKey: result.preSharedKey,
       ),
     );
   }

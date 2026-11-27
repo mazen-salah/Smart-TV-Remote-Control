@@ -71,10 +71,12 @@ class DeviceDiscoveryBloc
     ManualDeviceAdded event,
     Emitter<DeviceDiscoveryState> emit,
   ) async {
+    final preSharedKey = event.preSharedKey;
     final device = TVDevice(
       host: event.host,
       deviceName: event.name ?? event.host,
       manufacturer: event.brand.manufacturer,
+      additionalInfo: {'sonyPsk': ?preSharedKey},
     );
     final next = [...state.devices.where((d) => d.host != device.host), device];
     emit(state.copyWith(status: DiscoveryStatus.success, devices: next));

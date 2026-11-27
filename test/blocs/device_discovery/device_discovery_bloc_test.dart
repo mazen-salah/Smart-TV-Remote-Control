@@ -128,5 +128,30 @@ void main() {
         ),
       ],
     );
+
+    blocTest<DeviceDiscoveryBloc, DeviceDiscoveryState>(
+      'ManualDeviceAdded: keeps the Sony pre-shared key on the device',
+      build: () => DeviceDiscoveryBloc(repository: repository),
+      act: (bloc) => bloc.add(
+        const ManualDeviceAdded(
+          host: '192.168.1.90',
+          brand: TvBrand.sony,
+          preSharedKey: 'my-psk',
+        ),
+      ),
+      expect: () => [
+        isA<DeviceDiscoveryState>()
+            .having(
+              (s) => s.devices.single.manufacturer,
+              'manufacturer',
+              'Sony',
+            )
+            .having(
+              (s) => s.devices.single.additionalInfo['sonyPsk'],
+              'pre-shared key',
+              'my-psk',
+            ),
+      ],
+    );
   });
 }

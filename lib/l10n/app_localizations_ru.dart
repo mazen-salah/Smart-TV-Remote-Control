@@ -210,6 +210,19 @@ class AppLocalizationsRu extends AppLocalizations {
   String get brandLg => 'LG';
 
   @override
+  String get brandRoku => 'Roku';
+
+  @override
+  String get brandSony => 'Sony';
+
+  @override
+  String get preSharedKey => 'Ключ PSK';
+
+  @override
+  String get preSharedKeyHint =>
+      'Задаётся на телевизоре: Настройки → Сеть → IP-управление';
+
+  @override
   String ipLabel(String host) {
     return 'IP: $host';
   }

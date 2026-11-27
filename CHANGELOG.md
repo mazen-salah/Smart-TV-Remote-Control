@@ -35,6 +35,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Every CI run prints a coverage summary, with the least-covered files, in
   its GitHub Actions job summary. No external service or token needed;
   `tool/coverage_summary.py` produces the same report locally.
+- Two more brands, both over plain HTTP on the local network.
+  **Roku** (ECP: `POST /keypress/<Key>`, `/launch/<id>`, `/query/device-info`)
+  needs no pairing — only *Control by mobile apps → Network access* switched
+  on. **Sony BRAVIA** (JSON-RPC plus the SOAP `X_SendIRCC` endpoint) needs
+  *IP control* on and the pre-shared key, which the add-by-IP dialog now asks
+  for and the app stores like any other credential. Sony button codes come
+  from the set's own `getRemoteControllerInfo` when it answers, with Sony's
+  documented table (`sony_ircc.dart`) as the fallback — `Info`, `Exit`,
+  `Rewind` and `Forward` are not in that table, so they are dropped rather
+  than guessed at. Both brands are found by SSDP (`roku:ecp`,
+  `urn:schemas-sony-com:service:ScalarWebAPI:1`), both wake from standby
+  through the MAC the device reports, and neither has been tested on real
+  hardware yet. The tests run against fake devices speaking the real
+  protocols over `dart:io` `HttpServer`.
 
 ### Fixed
 - The Russian device counter rendered a literal `#` (`Найдено # устройства`):

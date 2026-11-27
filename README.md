@@ -50,7 +50,7 @@
 ### Brands
 - **Samsung Tizen** — WebSocket v2 (`wss://`) client in `lib/services/samsung/samsung_tv_service.dart`, tested on real hardware
 - **LG webOS** — WebSocket client in `lib/services/lg/lg_tv_service.dart` using the secure port newer firmware requires (2023+), LG's signed pairing manifest, the pointer-input socket for navigation, colour and digit keys, and `media.controls` for transport. **Not yet verified on a real LG set**. If you own one, [we would love your test report](https://github.com/mazen-salah/Smart-TV-Remote-Control/issues?q=is%3Aissue+label%3A%22help+wanted%22).
-- **Manual IP entry** — add a Samsung or LG TV by address when discovery misses it
+- **Manual IP entry** — add a Samsung, LG, Roku or Sony TV by address when discovery misses it
 
 ### UX
 - Material 3 dark theme
@@ -67,9 +67,11 @@
 | Brand | Models | Protocol | Notes |
 | --- | --- | --- | --- |
 | Samsung | 2016+ Tizen | WebSocket v2 (`wss://<ip>:8002`) | Token saved after first "Allow". Tested. |
+| Roku | Roku TV, Streaming Stick, Express | ECP over HTTP (`http://<ip>:8060`) | No pairing at all. Needs *Control by mobile apps → Network access* enabled on the device. Not tested on hardware yet. |
+| Sony | BRAVIA 2013+ | JSON-RPC + IRCC over HTTP (port 80) | Needs *IP control* switched on, and the pre-shared key entered in the app. Button codes come from the TV itself where it reports them. Not tested on hardware yet. |
 | LG | webOS 3.0+ | WebSocket (`wss://<ip>:3001`, falls back to `ws://<ip>:3000`) | Client key and TV certificate persisted over TLS; pre-2018 sets that only offer plaintext prompt on every connect. Needs hardware testing. Not mapped yet: input source, tools, guide, more, record. |
 
-Sony Bravia, Roku, Android TV and others are not supported yet. See the
+Android TV, Apple TV and others are not supported yet. See the
 [roadmap](#roadmap--known-limitations).
 
 ---
@@ -160,7 +162,7 @@ Each planned item is tracked as a GitHub issue; pick one up if it interests you.
 - Hardware volume-button capture (Android `MediaSession` / iOS `MPRemoteCommandCenter`) — not yet wired
 - App launcher (Netflix, YouTube, Disney+ deep links) — protocol supports it, UI pending
 - Swipe trackpad for cursor-style WebOS navigation — planned
-- Sony Bravia (IRCC-IP) and Roku (ECP) — not implemented
+- Sony Bravia and Roku on real hardware — both need a tester
 - iOS TestFlight distribution — not yet set up
 
 Known limitation: iOS background reconnect is best-effort, the system may suspend the socket.

@@ -474,6 +474,30 @@ abstract class AppLocalizations {
   /// **'LG'**
   String get brandLg;
 
+  /// No description provided for @brandRoku.
+  ///
+  /// In en, this message translates to:
+  /// **'Roku'**
+  String get brandRoku;
+
+  /// No description provided for @brandSony.
+  ///
+  /// In en, this message translates to:
+  /// **'Sony'**
+  String get brandSony;
+
+  /// No description provided for @preSharedKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Pre-shared key'**
+  String get preSharedKey;
+
+  /// No description provided for @preSharedKeyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Set on the TV: Settings → Network → IP control'**
+  String get preSharedKeyHint;
+
   /// No description provided for @ipLabel.
   ///
   /// In en, this message translates to:
