@@ -240,4 +240,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String connectionFailed(String reason) {
     return 'Could not connect: $reason';
   }
+
+  @override
+  String get language => 'Language';
+
+  @override
+  String get languageSystem => 'System default';
+
+  @override
+  String get languageEnglish => 'English';
+
+  @override
+  String get languageRussian => 'Russian';
+
+  @override
+  String get languageSpanish => 'Spanish';
+
+  @override
+  String get languageArabic => 'Arabic';
 }

@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:remote/blocs/connectivity/connectivity_bloc.dart';
 import 'package:remote/blocs/device_discovery/device_discovery_bloc.dart';
+import 'package:remote/blocs/locale/locale_cubit.dart';
 import 'package:remote/blocs/tv_connection/tv_connection_bloc.dart';
 import 'package:remote/core/repositories/tv_repository.dart';
 import 'package:remote/di/service_locator.dart';
@@ -32,6 +33,7 @@ class RemoteApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (_) => ConnectivityCubit()),
+        BlocProvider(create: (_) => LocaleCubit(sl())),
         BlocProvider(create: (_) => TvConnectionBloc(repository: repository)),
         BlocProvider(
           create: (_) =>
@@ -39,18 +41,21 @@ class RemoteApp extends StatelessWidget {
                 ..add(const DiscoveryStarted()),
         ),
       ],
-      child: MaterialApp(
-        title: 'Smart TV Remote',
-        debugShowCheckedModeBanner: false,
-        theme: AppTheme.dark(),
-        localizationsDelegates: const [
-          AppLocalizations.delegate,
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
-        supportedLocales: AppLocalizations.supportedLocales,
-        home: const DeviceSelectionScreen(),
+      child: BlocBuilder<LocaleCubit, Locale?>(
+        builder: (context, locale) => MaterialApp(
+          onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
+          locale: locale,
+          debugShowCheckedModeBanner: false,
+          theme: AppTheme.dark(),
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: const DeviceSelectionScreen(),
+        ),
       ),
     );
   }

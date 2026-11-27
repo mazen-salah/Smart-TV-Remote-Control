@@ -114,5 +114,11 @@
         "type": "String"
       }
     }
-  }
+  },
+  "language": "Language",
+  "languageSystem": "System default",
+  "languageEnglish": "English",
+  "languageRussian": "Russian",
+  "languageSpanish": "Spanish",
+  "languageArabic": "Arabic"
 }
