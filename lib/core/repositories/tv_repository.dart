@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
 
+import 'package:flutter/foundation.dart';
 import 'package:remote/constants/key_codes.dart';
 import 'package:remote/core/interfaces/tv_interface.dart';
 import 'package:remote/core/models/disconnection_type.dart';
@@ -41,6 +42,11 @@ class TvRepository {
   final WakeOnLanService _wol;
   final SsdpDiscoveryService _ssdp;
   final BonjourDiscoveryService _bonjour;
+
+  /// What is kept for a TV under its identifier: the pairing token, the
+  /// pinned certificate (LG) and the pre-shared key (Sony). They share the
+  /// identifier and its prefixes, so they move together.
+  static const List<String> _credentialPrefixes = ['', 'cert:', 'psk:'];
 
   TVInterface? _current;
   TVDevice? _currentDevice;
@@ -108,6 +114,10 @@ class TvRepository {
     void onDisconnect(DisconnectionType type) => onDisconnected?.call(type);
 
     final TVInterface tv;
+    // A Sony key is only worth keeping once the set has accepted it: a typo
+    // must not overwrite the key that used to work.
+    String? acceptedPskKey;
+    String? acceptedPsk;
     switch (brand) {
       case TvBrand.samsung:
         final samsung = SamsungTV(
@@ -169,7 +179,8 @@ class TvRepository {
           preSharedKey: psk,
         )..setOnDisconnectedCallback(onDisconnect);
         if (pskKey != null && psk != null && psk.isNotEmpty) {
-          unawaited(_tokenStorage.save(pskKey, psk));
+          acceptedPskKey = pskKey;
+          acceptedPsk = psk;
         }
         tv = sony;
       case TvBrand.roku:
@@ -188,6 +199,10 @@ class TvRepository {
 
     await tv.connect();
 
+    if (acceptedPskKey != null) {
+      await _tokenStorage.save(acceptedPskKey, acceptedPsk!);
+    }
+
     // The HTTP info response may have surfaced a MAC the user didn't have.
     final resolved = device.copyWith(
       mac: tv.mac ?? device.mac,
@@ -195,16 +210,13 @@ class TvRepository {
     );
 
     // The device is keyed by MAC once one is known. If we paired under the
-    // host-only key, carry the token over so the next connect doesn't prompt.
+    // host-only key, carry its credentials over so the next connect does not
+    // prompt again.
     final resolvedIdentifier = _identifierFor(resolved);
-    if (tokenKey != null &&
+    if (identifier != null &&
         resolvedIdentifier != null &&
         resolvedIdentifier != identifier) {
-      final token = _tokenStorage.load(tokenKey);
-      final resolvedKey = _tokenKeyFor(brand, resolvedIdentifier);
-      if (token != null && resolvedKey != null) {
-        await _tokenStorage.save(resolvedKey, token);
-      }
+      await carryCredentials(brand, identifier, resolvedIdentifier);
     }
 
     _current = tv;
@@ -253,8 +265,9 @@ class TvRepository {
         final key = _tokenKeyFor(brand, identifier);
         // Roku stores nothing, so there is nothing to clear for it.
         if (key == null) continue;
-        await _tokenStorage.clear(key);
-        await _tokenStorage.clear('cert:$key');
+        for (final prefix in _credentialPrefixes) {
+          await _tokenStorage.clear('$prefix$key');
+        }
       }
     }
     await _knownTvsStorage.remove(device);
@@ -288,6 +301,21 @@ class TvRepository {
     TvBrand.roku => null,
     TvBrand.sony => 'sony:$identifier',
   };
+
+  /// Moves everything stored for a TV from the identifier it was paired under
+  /// to the one it is known by now — a host-only entry gains a MAC as soon as
+  /// the TV answers, and the credentials have to move with it.
+  @visibleForTesting
+  Future<void> carryCredentials(TvBrand brand, String from, String to) async {
+    final oldKey = _tokenKeyFor(brand, from);
+    final newKey = _tokenKeyFor(brand, to);
+    if (oldKey == null || newKey == null || oldKey == newKey) return;
+    for (final prefix in _credentialPrefixes) {
+      final value = _tokenStorage.load('$prefix$oldKey');
+      if (value == null || value.isEmpty) continue;
+      await _tokenStorage.save('$prefix$newKey', value);
+    }
+  }
 
   String? _identifierFor(TVDevice device) {
     final mac = device.mac;
