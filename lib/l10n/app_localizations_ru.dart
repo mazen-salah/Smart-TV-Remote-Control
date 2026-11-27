@@ -43,10 +43,10 @@ class AppLocalizationsRu extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Найдено # устройства',
-      many: 'Найдено # устройств',
-      few: 'Найдено # устройства',
-      one: 'Найдено # устройство',
+      other: 'Найдено $count устройства',
+      many: 'Найдено $count устройств',
+      few: 'Найдено $count устройства',
+      one: 'Найдено $count устройство',
       zero: 'Устройства не найдены',
     );
     return '$_temp0';
