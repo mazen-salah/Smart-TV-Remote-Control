@@ -28,8 +28,27 @@ Flutter локально: `export PATH="$HOME/sdk/flutter/bin:$PATH"` (3.47.9 st
 | Анализ | `flutter analyze` (very_good_analysis, infos тоже валят CI) |
 | Тесты | `flutter test --coverage`, отчёт покрытия — `python3 tool/coverage_summary.py` |
 | Проверка UI без телефона | `flutter build web` → `python3 -m http.server` в `build/web` |
+| Проверка Android-сборки | `flutter build apk --debug` (см. окружение ниже) |
 
 Порядок после правок: `flutter gen-l10n` → `dart format .` → `flutter analyze` → `flutter test`.
+
+Android-сборка: в системе нет `java` и Android SDK из `apt` (sudo в контейнере запрещён),
+поэтому JDK 17 (Temurin) и SDK установлены в `~/sdk`. Перед `flutter build apk` нужны переменные:
+
+```bash
+export JAVA_HOME="$HOME/sdk/jdk/jdk-17.0.21.1+2"
+export ANDROID_HOME="$HOME/sdk/android-sdk"
+export ANDROID_SDK_ROOT="$ANDROID_HOME"
+export PATH="$JAVA_HOME/bin:$ANDROID_HOME/cmdline-tools/latest/bin:$PATH"
+```
+
+В SDK стоят `platform-tools`, `platforms;android-36`, `build-tools;36.0.0`, NDK r28c скачался
+сам при первой сборке. Подпись — debug-ключ: `android/key.properties` здесь нет и не должно быть.
+Проверить, что ресурсы попали в APK, можно без телефона:
+`"$ANDROID_HOME/build-tools/36.0.0/aapt2" dump badging build/app/outputs/flutter-apk/app-debug.apk`.
+
+`coverage/lcov.info` коммитится в репозиторий: после `flutter test --coverage` он меняется,
+и это нормально включать в коммит с тестами (так делал апстрим).
 
 ## Правила локализации
 
@@ -52,7 +71,14 @@ PY
 
 ## Git
 
-- `origin` — `DNikulshin/Smart-TV-Remote-Control` (форк), `upstream` — апстрим.
+- `origin` — `DNikulshin/Smart-TV-Remote-Control` (форк), `upstream` — апстрим (`mazen-salah`).
+- PR в апстрим идёт из ветки `i18n/ru`, а не из `main`: ветка — это `main` без `AGENTS.md`
+  (правила форка апстриму не нужны) плюс сами коммиты. PR #44 — вся русская локализация.
+  После слияния/правок сначала обновлять `i18n/ru`, потом переносить изменения в `main`
+  (`git cherry-pick`), чтобы файлы форка не утекли в PR.
+- Workflow CI в апстриме на PR из форка висит в `action_required`, пока мейнтейнер не
+  разрешит запуск. Поэтому перед PR полезно прогнать локально то же, что делает CI:
+  формат, анализ, тесты с покрытием и `flutter build apk --debug`.
 
 ## iOS: локализация названия
 
