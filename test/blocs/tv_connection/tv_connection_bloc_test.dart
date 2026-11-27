@@ -3,11 +3,15 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:remote/blocs/tv_connection/tv_connection_bloc.dart';
 import 'package:remote/constants/key_codes.dart';
+import 'package:remote/core/interfaces/tv_interface.dart';
 import 'package:remote/core/models/disconnection_type.dart';
+import 'package:remote/core/models/tv_app.dart';
 import 'package:remote/core/models/tv_device.dart';
 import 'package:remote/core/repositories/tv_repository.dart';
 
 class _MockTvRepository extends Mock implements TvRepository {}
+
+class _MockTVInterface extends Mock implements TVInterface {}
 
 class _FakeTvDevice extends Fake implements TVDevice {}
 
@@ -15,6 +19,7 @@ void main() {
   setUpAll(() {
     registerFallbackValue(_FakeTvDevice());
     registerFallbackValue(KeyCodes.KEY_POWER);
+    registerFallbackValue(TvApp.netflix);
   });
 
   late _MockTvRepository repository;
@@ -34,6 +39,9 @@ void main() {
     ).thenAnswer((_) => Future<void>.value());
     when(
       () => repository.sendKey(any()),
+    ).thenAnswer((_) => Future<void>.value());
+    when(
+      () => repository.launchApp(any()),
     ).thenAnswer((_) => Future<void>.value());
     when(
       () => repository.connect(
@@ -93,6 +101,49 @@ void main() {
       verify: (_) {
         verify(() => repository.sendKey(KeyCodes.KEY_VOLUP)).called(1);
       },
+    );
+
+    blocTest<TvConnectionBloc, TvConnectionState>(
+      'app launch: delegates to the repository when connected',
+      build: () => TvConnectionBloc(repository: repository),
+      seed: () => const TvConnectionState(status: TvConnectionStatus.connected),
+      act: (bloc) => bloc.add(const TvAppLaunchRequested(TvApp.netflix)),
+      expect: () => const <TvConnectionState>[],
+      verify: (_) {
+        verify(() => repository.launchApp(TvApp.netflix)).called(1);
+      },
+    );
+
+    blocTest<TvConnectionBloc, TvConnectionState>(
+      'app launch: is a no-op when not connected',
+      build: () => TvConnectionBloc(repository: repository),
+      act: (bloc) => bloc.add(const TvAppLaunchRequested(TvApp.netflix)),
+      expect: () => const <TvConnectionState>[],
+      verify: (_) {
+        verifyNever(() => repository.launchApp(any()));
+      },
+    );
+
+    blocTest<TvConnectionBloc, TvConnectionState>(
+      'app launch: a failed launch keeps the session and reports the error',
+      build: () {
+        when(
+          () => repository.launchApp(any()),
+        ).thenThrow(Exception('no such app on this TV'));
+        // The session is still alive, so the failure is reported without
+        // dropping the connection.
+        final tv = _MockTVInterface();
+        when(() => tv.isConnected).thenReturn(true);
+        when(() => repository.current).thenReturn(tv);
+        return TvConnectionBloc(repository: repository);
+      },
+      seed: () => const TvConnectionState(status: TvConnectionStatus.connected),
+      act: (bloc) => bloc.add(const TvAppLaunchRequested(TvApp.disneyPlus)),
+      expect: () => [
+        isA<TvConnectionState>()
+            .having((s) => s.status, 'status', TvConnectionStatus.connected)
+            .having((s) => s.errorMessage, 'error', contains('no such app')),
+      ],
     );
 
     blocTest<TvConnectionBloc, TvConnectionState>(

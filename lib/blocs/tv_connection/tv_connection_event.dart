@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:remote/constants/key_codes.dart';
+import 'package:remote/core/models/tv_app.dart';
 import 'package:remote/core/models/tv_device.dart';
 
 sealed class TvConnectionEvent extends Equatable {
@@ -27,6 +28,15 @@ final class TvSendKeyRequested extends TvConnectionEvent {
 
   @override
   List<Object?> get props => [key];
+}
+
+/// Opens an app on the connected TV.
+final class TvAppLaunchRequested extends TvConnectionEvent {
+  const TvAppLaunchRequested(this.app);
+  final TvApp app;
+
+  @override
+  List<Object?> get props => [app];
 }
 
 /// Forget [device], or the currently connected TV when null.

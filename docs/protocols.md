@@ -68,6 +68,27 @@ The token is persisted (`TvTokenStorage`) and appended to the URL from then
 on, so the prompt does not reappear. `ms.channel.unauthorized` means the user
 denied the prompt or the TV's *Device Connection Manager* blocks this phone.
 
+**Launching an app** — the same channel takes an `ed.apps.launch` event:
+
+```json
+{
+  "method": "ms.channel.emit",
+  "params": {
+    "event": "ed.apps.launch",
+    "to": "host",
+    "data": { "appId": "11101200001" }
+  }
+}
+```
+
+`to: "host"` addresses the TV itself rather than another device paired to
+it. The TV acknowledges nothing useful, so the app sends and forgets, and a
+set that does not know the id stays where it is. Tizen app ids are per app
+version, not per product, so the ids in `samsung_apps.dart` are the ones the
+2016+ sets mostly use; a set that ignores one is reported in issue #14.
+`GET /api/v2/applications` on port 8001 lists what a set actually has, which
+is how a future version could look ids up instead of hardcoding them.
+
 **Sending a key**
 
 ```json
@@ -130,7 +151,7 @@ URI and an optional payload. Responses carry the same `id`. Used here:
 | `ssap://tv/channelUp`, `channelDown` | channels |
 | `ssap://media.controls/play`, `pause`, `stop`, `rewind`, `fastForward` | transport |
 | `ssap://system/turnOff` | power off |
-| `ssap://system.launcher/launch` `{ "id": appId }` | app launch |
+| `ssap://system.launcher/launch` `{ "id": appId }` | app launch (`lg_apps.dart` maps the shortcut to `netflix`, `youtube.leanback.v4`, `com.disney.disneyplus-prod`, `amazon`) |
 | `ssap://com.webos.service.networkinput/getPointerInputSocket` | see below |
 
 **Buttons** — navigation, colour, digit and most remote keys are not `ssap://`

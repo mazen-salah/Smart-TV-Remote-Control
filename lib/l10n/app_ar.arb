@@ -23,6 +23,7 @@
   "reconnect": "إعادة الاتصال",
   "numericKeypad": "لوحة الأرقام",
   "power": "تشغيل",
+  "apps": "التطبيقات",
   "connecting": "جارٍ الاتصال…",
   "reconnecting": "جارٍ إعادة الاتصال…",
   "connected": "متصل",
@@ -72,5 +73,11 @@
   "forgetTv": "نسيان هذا التلفزيون",
   "forgetTvConfirm": "هل تريد إزالة {name} واقترانه؟ ستحتاج إلى السماح للتطبيق على التلفزيون مرة أخرى.",
   "forget": "نسيان",
-  "connectionFailed": "تعذر الاتصال: {reason}"
+  "connectionFailed": "تعذر الاتصال: {reason}",
+  "language": "اللغة",
+  "languageSystem": "حسب النظام",
+  "languageEnglish": "الإنجليزية",
+  "languageRussian": "الروسية",
+  "languageSpanish": "الإسبانية",
+  "languageArabic": "العربية"
 }
