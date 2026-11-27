@@ -22,13 +22,48 @@ class RemoteScreen extends StatefulWidget {
   State<RemoteScreen> createState() => _RemoteScreenState();
 }
 
-class _RemoteScreenState extends State<RemoteScreen> {
+class _RemoteScreenState extends State<RemoteScreen>
+    with WidgetsBindingObserver {
   late final HardwareVolumeKeys _volumeKeys =
       widget.volumeKeys ?? HardwareVolumeKeys();
+
+  /// Whether the app is in front of the user. Volume keys belong to the phone
+  /// as soon as it is not.
+  bool _foreground = true;
 
   bool _keypadShown = false;
 
   void _toggleKeypad() => setState(() => _keypadShown = !_keypadShown);
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    // Device selection pushes this screen once the TV is connected, so there
+    // may be no status change to listen for: align capture with the state the
+    // screen opened on.
+    _syncVolumeCapture(context.read<TvConnectionBloc>().state);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    final foreground = state == AppLifecycleState.resumed;
+    if (foreground == _foreground) return;
+    _foreground = foreground;
+    if (!foreground) {
+      unawaited(_stopVolumeCapture());
+      return;
+    }
+    _syncVolumeCapture(context.read<TvConnectionBloc>().state);
+  }
+
+  void _syncVolumeCapture(TvConnectionState state) {
+    if (state.isConnected && _foreground) {
+      unawaited(_startVolumeCapture());
+    } else {
+      unawaited(_stopVolumeCapture());
+    }
+  }
 
   /// Takes the phone's volume keys over while the remote is on screen and
   /// connected: with a TV in front of you, the rocker should change the TV's
@@ -52,6 +87,7 @@ class _RemoteScreenState extends State<RemoteScreen> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     unawaited(_stopVolumeCapture());
     super.dispose();
   }
@@ -98,11 +134,7 @@ class _RemoteScreenState extends State<RemoteScreen> {
           case _:
             break;
         }
-        if (state.isConnected) {
-          unawaited(_startVolumeCapture());
-        } else {
-          unawaited(_stopVolumeCapture());
-        }
+        _syncVolumeCapture(state);
       },
       child: Scaffold(
         appBar: AppBar(

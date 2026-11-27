@@ -125,4 +125,81 @@ void main() {
     await tester.pump();
     verifyNever(() => repository.sendKey(any()));
   });
+
+  testWidgets('captures when the screen opens on a connected TV', (
+    tester,
+  ) async {
+    // This is the normal flow: device selection connects first and only then
+    // pushes the remote, so there is no status change to react to.
+    tester.view.physicalSize = const Size(1200, 2700);
+    tester.view.devicePixelRatio = 3;
+    addTearDown(tester.view.reset);
+
+    final bloc = TvConnectionBloc(repository: repository);
+    addTearDown(bloc.close);
+    bloc.add(TvConnectRequested(TVDevice(host: '10.0.0.5')));
+    await bloc.stream.firstWhere((state) => state.isConnected);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: BlocProvider.value(
+          value: bloc,
+          child: RemoteScreen(
+            volumeKeys: HardwareVolumeKeys(channel: channel, isAndroid: true),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(platformCalls.map((call) => call.method), ['start']);
+  });
+
+  testWidgets('hands the keys back while the app is in the background', (
+    tester,
+  ) async {
+    final bloc = await pumpRemote(tester);
+    bloc.add(TvConnectRequested(TVDevice(host: '10.0.0.5')));
+    await tester.pumpAndSettle();
+    expect(platformCalls.map((call) => call.method), ['start']);
+
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.paused);
+    await tester.pumpAndSettle();
+
+    expect(platformCalls.map((call) => call.method), ['start', 'stop']);
+
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+    await tester.pumpAndSettle();
+
+    expect(platformCalls.map((call) => call.method), [
+      'start',
+      'stop',
+      'start',
+    ]);
+    addTearDown(
+      () => tester.binding.handleAppLifecycleStateChanged(
+        AppLifecycleState.resumed,
+      ),
+    );
+  });
+
+  testWidgets('stays quiet while the app is in the background', (tester) async {
+    final bloc = await pumpRemote(tester);
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.paused);
+    await tester.pumpAndSettle();
+
+    bloc.add(TvConnectRequested(TVDevice(host: '10.0.0.5')));
+    await tester.pumpAndSettle();
+
+    expect(platformCalls, isEmpty);
+    addTearDown(
+      () => tester.binding.handleAppLifecycleStateChanged(
+        AppLifecycleState.resumed,
+      ),
+    );
+  });
 }

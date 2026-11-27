@@ -89,6 +89,10 @@ class MainActivity : FlutterActivity() {
         }
 
         val session = MediaSession(this, "smart-tv-remote-volume")
+        // The callback is what gives the session a handler to dispatch volume
+        // changes through: `MediaSession.postToCallback` drops the adjustment
+        // when there is none, so without this the provider never fires.
+        session.setCallback(object : MediaSession.Callback() {})
         session.setPlaybackState(
             PlaybackState.Builder()
                 .setActions(PlaybackState.ACTION_PLAY_PAUSE)
