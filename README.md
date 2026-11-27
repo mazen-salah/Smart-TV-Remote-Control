@@ -52,7 +52,7 @@
 - Material 3 dark theme
 - Haptic feedback on every key press
 - `Semantics` labels on every button (screen-reader friendly)
-- Localized: English, Spanish, Arabic (ARB files under `lib/l10n/`)
+- Localized: English, Spanish, Arabic, French, German, Portuguese (ARB files under `lib/l10n/`)
 
 ---
 

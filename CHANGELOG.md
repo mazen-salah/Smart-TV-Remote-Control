@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Every CI run prints a coverage summary, with the least-covered files, in
   its GitHub Actions job summary. No external service or token needed;
   `tool/coverage_summary.py` produces the same report locally.
+- French, German and Portuguese translations (`lib/l10n/app_fr.arb`,
+  `app_de.arb`, `app_pt.arb`), each with the device-count plural forms its
+  language actually has. `test/l10n/arb_keys_test.dart` now checks that every
+  locale carries exactly the template's keys and placeholders — `gen-l10n`
+  falls back to English for a missing key and drops an unknown one without
+  complaining, which is how a half-translated language used to be able to ship.
 
 ## [0.4.1] - 2026-09-14
 
