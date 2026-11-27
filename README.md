@@ -51,6 +51,7 @@
 ### UX
 - Material 3 dark theme
 - Haptic feedback on every key press
+- Each TV in the picker is labelled with the brand a tap will connect to
 - `Semantics` labels on every button (screen-reader friendly)
 - Localized: English, Spanish, Arabic (ARB files under `lib/l10n/`)
 

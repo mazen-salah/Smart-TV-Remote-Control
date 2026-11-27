@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:remote/core/models/tv_brand.dart';
 import 'package:remote/core/models/tv_device.dart';
 import 'package:remote/l10n/app_localizations.dart';
 
@@ -38,13 +39,24 @@ class DeviceListItem extends StatelessWidget {
           ),
           child: const Icon(Icons.tv, color: Colors.blue, size: 24),
         ),
-        title: Text(
-          device.displayName,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
-          ),
+        title: Row(
+          children: [
+            Expanded(
+              child: Text(
+                device.displayName,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+            // Which protocol a tap will use, resolved the same way the
+            // repository resolves it.
+            _BrandChip(brand: TvBrand.fromDevice(device)),
+          ],
         ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -69,6 +81,31 @@ class DeviceListItem extends StatelessWidget {
             : const Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 16),
         onTap: onTap,
         onLongPress: onLongPress,
+      ),
+    );
+  }
+}
+
+/// Small label with the brand the app will talk to this set with.
+class _BrandChip extends StatelessWidget {
+  const _BrandChip({required this.brand});
+
+  final TvBrand brand;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      label: brand.manufacturer,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey[600]!),
+          borderRadius: BorderRadius.circular(6),
+        ),
+        child: Text(
+          brand.manufacturer,
+          style: TextStyle(color: Colors.grey[300], fontSize: 11),
+        ),
       ),
     );
   }
