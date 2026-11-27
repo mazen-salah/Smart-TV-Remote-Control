@@ -20,6 +20,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   its GitHub Actions job summary. No external service or token needed;
   `tool/coverage_summary.py` produces the same report locally.
 
+### Fixed
+- The remote screen overflowed on narrow phones: the six media buttons need
+  more than a 360 dp screen has (the width of most budget Android handsets),
+  and the numeric keypad's four fixed rows did not fit the height left on a
+  short screen. Both now give each control an equal share and scale it down
+  instead of spilling past the edge; the media buttons stay tappable at
+  320 dp. Covered by `test/ui/narrow_screen_test.dart`.
+
 ## [0.4.1] - 2026-09-14
 
 ### Fixed
