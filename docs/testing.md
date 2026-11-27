@@ -47,7 +47,9 @@ A report is worth having if it has these six lines:
 Post it on the issue for your brand: LG
 [#9](https://github.com/mazen-salah/Smart-TV-Remote-Control/issues/9), Roku
 [#16](https://github.com/mazen-salah/Smart-TV-Remote-Control/issues/16), Sony
-[#17](https://github.com/mazen-salah/Smart-TV-Remote-Control/issues/17).
+[#17](https://github.com/mazen-salah/Smart-TV-Remote-Control/issues/17). Samsung
+has no open issue — it is the one brand whose client has been run on a set — so
+send it as a new issue or as a comment on the pull request that changed it.
 
 ## LG webOS (issue #9)
 
@@ -88,6 +90,37 @@ which is why the app reports the device as unreachable.
 - Worth reporting: does a **Roku Streaming Stick or set-top box**, as opposed to
   a Roku TV, behave the same? Volume keys are passed to the TV over CEC there
   and may do nothing.
+
+## Samsung Tizen
+
+Setup: nothing to switch on for the first connect — the set asks for permission
+as soon as the app opens its control channel. The answer is remembered per
+device; the list is under **Settings → General → External Device Manager →
+Device Connection Manager** (wording differs by year), and an entry that was
+denied once stays there until it is removed. The app announces itself as
+**Smart TV Remote**. Builds before this change announced
+`DartSamsungSmartTVDriver`; an entry under that name is this same app and can be
+deleted.
+
+- Transport: `http://<ip>:8001/api/v2/` for the device info, including the MAC
+  that Wake-on-LAN needs, and
+  `wss://<ip>:8002/api/v2/channels/samsung.remote.control` for keys, with the
+  announced name base64-encoded.
+- Pairing: the first connect carries no token. The set shows the prompt, returns
+  a token and the app stores it. A second launch must connect without the
+  prompt; if it asks again, the token is not being kept.
+- Keys: Tizen takes its own key names, so the app sends `KEY_UP`, `KEY_ENTER`,
+  `KEY_RETURN`, `KEY_VOLUP` and the rest verbatim — the pad, the media row, the
+  digits, the colour keys, **HOME** and **MENU**. Whether a given set accepts
+  all of them is exactly what a report answers.
+- Tizen has no pointer socket, so the touchpad is hidden for this brand by
+  design; there is nothing to verify there.
+- **Power turns the set off** (`KEY_POWER`); an off set answers nothing on the
+  network, so waking it needs Wake-on-LAN or the physical remote.
+- Worth reporting: does the prompt name **Smart TV Remote** and does the entry
+  under Device Connection Manager match it; does a second launch skip the
+  prompt; and which keys that particular set ignores — a 2015–2016 Tizen build
+  accepts a different key set from a 2019 one.
 
 ## Sony BRAVIA (issue #17)
 
