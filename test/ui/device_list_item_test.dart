@@ -75,4 +75,17 @@ void main() {
       expect(tester.takeException(), isNull);
     });
   });
+
+  testWidgets('exposes the brand once to a screen reader', (tester) async {
+    final handle = tester.ensureSemantics();
+
+    await pumpItem(tester, TVDevice(host: '10.0.0.5', manufacturer: 'Samsung'));
+
+    // The ListTile merges its children into one node, so this is what a screen
+    // reader actually says: the brand has to appear once in that sentence.
+    final node = tester.getSemantics(find.byType(DeviceListItem));
+    expect(RegExp('Samsung').allMatches(node.label).length, 1);
+
+    handle.dispose();
+  });
 }

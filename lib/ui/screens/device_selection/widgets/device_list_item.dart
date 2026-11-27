@@ -94,18 +94,17 @@ class _BrandChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Semantics(
-      label: brand.manufacturer,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey[600]!),
-          borderRadius: BorderRadius.circular(6),
-        ),
-        child: Text(
-          brand.manufacturer,
-          style: TextStyle(color: Colors.grey[300], fontSize: 11),
-        ),
+    // No Semantics wrapper: the text below is already the label a screen
+    // reader reads, and wrapping it announces the brand twice.
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey[600]!),
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Text(
+        brand.manufacturer,
+        style: TextStyle(color: Colors.grey[300], fontSize: 11),
       ),
     );
   }
