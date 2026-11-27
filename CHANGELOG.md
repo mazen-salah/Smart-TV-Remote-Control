@@ -24,7 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   persisted in `shared_preferences`; "System default" follows the device
   again. `LocaleCubit` / `LocaleStorage`, covered by storage, cubit and
   widget tests.
-- Test suite grown from 44 to 86 cases; line coverage from 28% to 65%.
+- Test suite grown from 44 to 88 cases; line coverage from 28% to 65%.
   `FakeWebOsTv` drives the real LG client over a genuine WebSocket
   (plaintext and TLS), covering registration, the unsigned-manifest retry,
   a denied prompt, certificate pinning and mismatch, the client-key policy
@@ -35,6 +35,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Every CI run prints a coverage summary, with the least-covered files, in
   its GitHub Actions job summary. No external service or token needed;
   `tool/coverage_summary.py` produces the same report locally.
+
+### Fixed
+- The Russian device counter rendered a literal `#` (`Найдено # устройства`):
+  the ARB used the ICU `#` placeholder, which `flutter gen-l10n` keeps as
+  text. The plural cases now interpolate `{count}`, and
+  `test/l10n/localizations_test.dart` fails if any locale leaks `#` or
+  stops showing the number.
 
 ## [0.4.1] - 2026-09-14
 
