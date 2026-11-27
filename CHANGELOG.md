@@ -19,11 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   target as an `InfoPlist.strings` variant group (`ru` added to the
   project's known regions), so the launcher name matches the Android one
   on both platforms. `tool/check_ios_localization.py` checks that wiring
-  without Xcode. 80 test cases now.
+  without Xcode.
 - In-app language switcher (globe icon on the picker) with the choice
   persisted in `shared_preferences`; "System default" follows the device
-  again. `LocaleCubit` / `LocaleStorage`, covered by cubit and widget tests.
-- Test suite grown from 44 to 73 cases; line coverage from 28% to 64%.
+  again. `LocaleCubit` / `LocaleStorage`, covered by storage, cubit and
+  widget tests.
+- Test suite grown from 44 to 86 cases; line coverage from 28% to 65%.
   `FakeWebOsTv` drives the real LG client over a genuine WebSocket
   (plaintext and TLS), covering registration, the unsigned-manifest retry,
   a denied prompt, certificate pinning and mismatch, the client-key policy
