@@ -240,6 +240,12 @@ abstract class AppLocalizations {
   /// **'Power'**
   String get power;
 
+  /// Label for the row of app shortcuts on the remote
+  ///
+  /// In en, this message translates to:
+  /// **'Apps'**
+  String get apps;
+
   /// No description provided for @connecting.
   ///
   /// In en, this message translates to:

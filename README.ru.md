@@ -63,6 +63,11 @@ _Снимки сделаны с web-сборки того же кода: экр�
   [пришлите отчёт о тесте](https://github.com/mazen-salah/Smart-TV-Remote-Control/issues?q=is%3Aissue+label%3A%22help+wanted%22).
 - **Ручной ввод IP** — добавление Samsung или LG по адресу, если поиск не нашёл телевизор.
 
+### Приложения
+- Netflix, YouTube, Disney+ и Prime Video открываются в один тап: id приложения
+  различается по марке и выбирается в реализации (`ssap://system.launcher/launch`
+  для webOS, событие `ed.apps.launch` для Tizen).
+
 ### Интерфейс
 - Тёмная тема Material 3.
 - Тактильный отклик на каждое нажатие.
@@ -183,7 +188,6 @@ DI собирается в `lib/di/service_locator.dart` на `get_it`. Bloc-и 
 
 - Проверка LG WebOS на реальном железе — нужна помощь
 - Перехват аппаратных кнопок громкости (Android `MediaSession` / iOS `MPRemoteCommandCenter`) — не сделано
-- Запуск приложений (Netflix, YouTube, Disney+ по deeplink) — протокол умеет, UI нет
 - Свайп-тачпад для курсорной навигации WebOS — запланировано
 - Sony Bravia (IRCC-IP) и Roku (ECP) — не реализовано
 - Раздача через iOS TestFlight — не настроена

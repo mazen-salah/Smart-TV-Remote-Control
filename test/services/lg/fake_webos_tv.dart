@@ -111,6 +111,9 @@ class FakeWebOsTv {
   /// Every `ssap://` URI requested on the main socket.
   final List<String> requestedUris = [];
 
+  /// The payload of every request that carried one, newest last.
+  final List<Map<String, dynamic>?> requestedPayloads = [];
+
   /// Raw frames received on the pointer socket.
   final List<String> pointerFrames = [];
 
@@ -190,6 +193,11 @@ class FakeWebOsTv {
       case 'request':
         final uri = message['uri'] as String;
         requestedUris.add(uri);
+        requestedPayloads.add(
+          message['payload'] == null
+              ? null
+              : Map<String, dynamic>.from(message['payload'] as Map),
+        );
         if (uri.endsWith('getPointerInputSocket')) {
           socket.add(
             jsonEncode({

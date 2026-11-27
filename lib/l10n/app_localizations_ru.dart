@@ -91,6 +91,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get power => 'Питание';
 
   @override
+  String get apps => 'Приложения';
+
+  @override
   String get connecting => 'Подключение…';
 
   @override

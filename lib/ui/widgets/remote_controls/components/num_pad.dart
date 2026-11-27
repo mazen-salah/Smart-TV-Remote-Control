@@ -31,18 +31,16 @@ class NumPad extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: _digits
-            .map(
-              (row) => Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: row.digits.map((d) => _NumButton(digit: d)).toList(),
-              ),
-            )
-            .toList(),
-      ),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: _digits
+          .map(
+            (row) => Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: row.digits.map((d) => _NumButton(digit: d)).toList(),
+            ),
+          )
+          .toList(),
     );
   }
 }

@@ -36,6 +36,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   its GitHub Actions job summary. No external service or token needed;
   `tool/coverage_summary.py` produces the same report locally.
 
+- App shortcuts on the remote: Netflix, YouTube, Disney+ and Prime Video open
+  in one tap. The id is brand-specific and resolved in the implementation —
+  `ssap://system.launcher/launch` with a webOS id, or an `ed.apps.launch`
+  event with a Tizen one (`lg_apps.dart`, `samsung_apps.dart`). The row is
+  the last section on the remote, and the screen now scrolls instead of
+  squeezing its controls when a phone is short.
+
 ### Fixed
 - The Russian device counter rendered a literal `#` (`Найдено # устройства`):
   the ARB used the ICU `#` placeholder, which `flutter gen-l10n` keeps as

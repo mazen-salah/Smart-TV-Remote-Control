@@ -52,6 +52,11 @@
 - **LG webOS** — WebSocket client in `lib/services/lg/lg_tv_service.dart` using the secure port newer firmware requires (2023+), LG's signed pairing manifest, the pointer-input socket for navigation, colour and digit keys, and `media.controls` for transport. **Not yet verified on a real LG set**. If you own one, [we would love your test report](https://github.com/mazen-salah/Smart-TV-Remote-Control/issues?q=is%3Aissue+label%3A%22help+wanted%22).
 - **Manual IP entry** — add a Samsung or LG TV by address when discovery misses it
 
+### App shortcuts
+- Netflix, YouTube, Disney+ and Prime Video open in one tap, with the app id
+  resolved per brand (`ssap://system.launcher/launch` on webOS, an
+  `ed.apps.launch` event on Tizen)
+
 ### UX
 - Material 3 dark theme
 - Haptic feedback on every key press
@@ -158,7 +163,6 @@ Each planned item is tracked as a GitHub issue; pick one up if it interests you.
 
 - LG WebOS verification on real hardware — help wanted
 - Hardware volume-button capture (Android `MediaSession` / iOS `MPRemoteCommandCenter`) — not yet wired
-- App launcher (Netflix, YouTube, Disney+ deep links) — protocol supports it, UI pending
 - Swipe trackpad for cursor-style WebOS navigation — planned
 - Sony Bravia (IRCC-IP) and Roku (ECP) — not implemented
 - iOS TestFlight distribution — not yet set up

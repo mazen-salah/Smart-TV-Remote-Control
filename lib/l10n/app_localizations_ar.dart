@@ -82,6 +82,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get power => 'تشغيل';
 
   @override
+  String get apps => 'التطبيقات';
+
+  @override
   String get connecting => 'جارٍ الاتصال…';
 
   @override

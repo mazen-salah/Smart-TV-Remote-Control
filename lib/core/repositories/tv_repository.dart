@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:remote/constants/key_codes.dart';
 import 'package:remote/core/interfaces/tv_interface.dart';
 import 'package:remote/core/models/disconnection_type.dart';
+import 'package:remote/core/models/tv_app.dart';
 import 'package:remote/core/models/tv_brand.dart';
 import 'package:remote/core/models/tv_device.dart';
 import 'package:remote/core/services/known_tvs_storage.dart';
@@ -191,11 +192,20 @@ class TvRepository {
   }
 
   Future<void> sendKey(KeyCodes key) async {
+    await _requireCurrent().sendKey(key);
+  }
+
+  /// Brings [app] to the foreground on the active TV.
+  Future<void> launchApp(TvApp app) async {
+    await _requireCurrent().launchApp(app);
+  }
+
+  TVInterface _requireCurrent() {
     final tv = _current;
     if (tv == null) {
       throw StateError('No active TV connection');
     }
-    await tv.sendKey(key);
+    return tv;
   }
 
   Future<void> disconnect() async {

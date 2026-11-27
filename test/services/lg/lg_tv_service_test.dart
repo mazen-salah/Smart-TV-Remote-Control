@@ -174,6 +174,17 @@ void main() {
   }, skip: FakeWebOsTv.tlsUnavailableReason);
 
   group('commands', () {
+    test('launches an app by id on the main socket', () async {
+      final service = serviceFor();
+      await service.connect();
+      await service.launchApp('netflix');
+      await Future<void>.delayed(const Duration(milliseconds: 100));
+
+      expect(tv.requestedUris, contains('ssap://system.launcher/launch'));
+      expect(tv.requestedPayloads.last, {'id': 'netflix'});
+      service.disconnect();
+    });
+
     test('sends ssap requests on the main socket', () async {
       final service = serviceFor();
       await service.connect();

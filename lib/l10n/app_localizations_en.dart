@@ -82,6 +82,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get power => 'Power';
 
   @override
+  String get apps => 'Apps';
+
+  @override
   String get connecting => 'Connecting…';
 
   @override

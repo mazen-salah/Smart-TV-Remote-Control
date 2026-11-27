@@ -14,6 +14,7 @@ class TvConnectionBloc extends Bloc<TvConnectionEvent, TvConnectionState> {
     on<TvConnectRequested>(_onConnectRequested);
     on<TvDisconnectRequested>(_onDisconnectRequested);
     on<TvSendKeyRequested>(_onSendKeyRequested);
+    on<TvAppLaunchRequested>(_onAppLaunchRequested);
     on<TvForgetRequested>(_onForgetRequested);
     on<TvDisconnectionDetected>(_onDisconnectionDetected);
   }
@@ -90,6 +91,28 @@ class TvConnectionBloc extends Bloc<TvConnectionEvent, TvConnectionState> {
     } catch (e) {
       // One key failing (e.g. the LG pointer socket being slow) must not
       // take the session down while the main connection is still alive.
+      if (_repository.current?.isConnected ?? false) {
+        emit(state.copyWith(errorMessage: e.toString()));
+        return;
+      }
+      emit(
+        state.copyWith(
+          status: TvConnectionStatus.error,
+          errorMessage: e.toString(),
+        ),
+      );
+    }
+  }
+
+  Future<void> _onAppLaunchRequested(
+    TvAppLaunchRequested event,
+    Emitter<TvConnectionState> emit,
+  ) async {
+    if (state.status != TvConnectionStatus.connected) return;
+    try {
+      await _repository.launchApp(event.app);
+    } catch (e) {
+      // The TV staying on its app is not a reason to drop the session.
       if (_repository.current?.isConnected ?? false) {
         emit(state.copyWith(errorMessage: e.toString()));
         return;

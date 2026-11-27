@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:remote/core/models/tv_app.dart';
 import 'package:remote/core/models/tv_device.dart';
 import 'package:remote/core/repositories/tv_repository.dart';
 import 'package:remote/core/services/known_tvs_storage.dart';
@@ -148,5 +149,11 @@ void main() {
 
       verifyNever(() => wol.wake(mac: any(named: 'mac')));
     }, timeout: const Timeout(Duration(seconds: 60)));
+  });
+
+  group('launchApp', () {
+    test('throws StateError before a TV is connected', () {
+      expect(repository.launchApp(TvApp.netflix), throwsA(isA<StateError>()));
+    });
   });
 }

@@ -4,6 +4,8 @@ import 'package:remote/constants/key_codes.dart';
 import 'package:remote/core/interfaces/tv_interface.dart';
 import 'package:remote/core/models/connection_state.dart';
 import 'package:remote/core/models/disconnection_type.dart';
+import 'package:remote/core/models/tv_app.dart';
+import 'package:remote/services/lg/lg_apps.dart';
 import 'package:remote/services/lg/lg_buttons.dart';
 import 'package:remote/services/lg/lg_tv_service.dart';
 
@@ -104,5 +106,14 @@ class LGTV implements TVInterface {
     log('LG: no webOS mapping for ${key.name}, ignored');
   }
 
-  Future<void> launchApp(String appId) => _service.launchApp(appId);
+  @override
+  Future<void> launchApp(TvApp app) async {
+    await ensureConnection();
+    final appId = lgAppIdFor(app);
+    if (appId == null) {
+      log('LG: no webOS id for ${app.label}, ignored');
+      return;
+    }
+    await _service.launchApp(appId);
+  }
 }

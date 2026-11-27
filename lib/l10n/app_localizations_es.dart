@@ -81,6 +81,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get power => 'Encendido';
 
   @override
+  String get apps => 'Aplicaciones';
+
+  @override
   String get connecting => 'Conectando…';
 
   @override

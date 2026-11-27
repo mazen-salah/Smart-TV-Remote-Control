@@ -6,6 +6,7 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:remote/constants/key_codes.dart';
 import 'package:remote/core/models/disconnection_type.dart';
+import 'package:remote/services/samsung/samsung_apps.dart';
 import 'package:web_socket_channel/io.dart';
 
 const Duration kConnectionTimeout = Duration(seconds: 10);
@@ -246,6 +247,23 @@ class SamsungTVService {
       },
     });
 
+    _send(data);
+
+    await Future<void>.delayed(kKeyDelay);
+  }
+
+  /// Brings the installed app with [appId] to the foreground.
+  ///
+  /// Tizen acknowledges the `ed.apps.launch` event with nothing useful, so
+  /// this is fire and forget once the frame is on the wire, and a set that
+  /// does not know the id simply stays where it is.
+  Future<void> launchApp(String appId) async {
+    await ensureConnection();
+    log('Launching app: $appId');
+    _send(samsungAppLaunchCommand(appId));
+  }
+
+  void _send(String frame) {
     final ws = _ws;
     if (ws == null || ws.closeCode != null) {
       _handleDisconnection(DisconnectionType.networkError);
@@ -253,13 +271,11 @@ class SamsungTVService {
     }
 
     try {
-      ws.sink.add(data);
+      ws.sink.add(frame);
     } catch (e) {
-      log('Failed to send key: $e');
+      log('Failed to send frame: $e');
       _handleDisconnection(_classifyError(e));
-      throw Exception('Failed to send key: $e');
+      throw Exception('Failed to send frame: $e');
     }
-
-    await Future<void>.delayed(kKeyDelay);
   }
 }

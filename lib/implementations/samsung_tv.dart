@@ -1,7 +1,11 @@
+import 'dart:developer';
+
 import 'package:remote/constants/key_codes.dart';
 import 'package:remote/core/interfaces/tv_interface.dart';
 import 'package:remote/core/models/connection_state.dart';
 import 'package:remote/core/models/disconnection_type.dart';
+import 'package:remote/core/models/tv_app.dart';
+import 'package:remote/services/samsung/samsung_apps.dart';
 import 'package:remote/services/samsung/samsung_tv_service.dart';
 
 class SamsungTV implements TVInterface {
@@ -71,6 +75,16 @@ class SamsungTV implements TVInterface {
 
   @override
   Future<void> sendKey(KeyCodes key) => _service.sendKey(key);
+
+  @override
+  Future<void> launchApp(TvApp app) async {
+    final appId = samsungAppIdFor(app);
+    if (appId == null) {
+      log('Samsung: no Tizen id for ${app.label}, ignored');
+      return;
+    }
+    await _service.launchApp(appId);
+  }
 
   @override
   Future<void> ensureConnection() => _service.ensureConnection();

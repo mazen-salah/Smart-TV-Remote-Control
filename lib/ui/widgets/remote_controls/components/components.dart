@@ -1,3 +1,4 @@
+export 'app_shortcuts.dart';
 export 'color_keys.dart';
 export 'controller_button.dart';
 export 'direction_keys.dart';

@@ -86,7 +86,7 @@ class _RemoteScreenState extends State<RemoteScreen> {
           ],
         ),
         body: SafeArea(
-          child: Padding(
+          child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -96,14 +96,22 @@ class _RemoteScreenState extends State<RemoteScreen> {
                   onToggleKeypad: _toggleKeypad,
                   keypadShown: _keypadShown,
                 ),
-                const SizedBox(height: 50),
-                if (_keypadShown) const NumPad() else const DirectionKeys(),
-                const SizedBox(height: 50),
+                const SizedBox(height: 20),
+                // The middle of the remote is a fixed-height box: the arrow
+                // cluster and the keypad draw different things, and the rest
+                // of the column must not move when they swap.
+                SizedBox(
+                  height: 210,
+                  child: _keypadShown ? const NumPad() : const DirectionKeys(),
+                ),
+                const SizedBox(height: 20),
                 const ColorKeys(),
-                const SizedBox(height: 50),
+                const SizedBox(height: 20),
                 const VolumeChannelControls(),
-                const SizedBox(height: 50),
+                const SizedBox(height: 20),
                 const MediaControls(),
+                const SizedBox(height: 20),
+                const AppShortcuts(),
               ],
             ),
           ),

@@ -30,6 +30,10 @@
   "reconnect": "Reconnect",
   "numericKeypad": "Numeric keypad",
   "power": "Power",
+  "apps": "Apps",
+  "@apps": {
+    "description": "Label for the row of app shortcuts on the remote"
+  },
   "connecting": "Connecting…",
   "reconnecting": "Reconnecting…",
   "connected": "Connected",
