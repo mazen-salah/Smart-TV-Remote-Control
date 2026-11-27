@@ -19,6 +19,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Every CI run prints a coverage summary, with the least-covered files, in
   its GitHub Actions job summary. No external service or token needed;
   `tool/coverage_summary.py` produces the same report locally.
+- The device list labels every card with the brand it will connect with,
+  resolved through the same `TvBrand.fromDevice` the repository uses, so an
+  unknown set shows the brand a tap will actually pick.
 
 ## [0.4.1] - 2026-09-14
 
