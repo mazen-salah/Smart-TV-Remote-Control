@@ -8,7 +8,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- Test suite grown from 44 to 73 cases; line coverage from 28% to 64%.
+- Full Russian localization: `lib/l10n/app_ru.arb` (all 79 strings, with
+  proper Russian plural forms for the device count), the generated
+  `app_localizations_ru.dart`, and a Russian launcher name for Android
+  (`values-ru/strings.xml`). Docs in Russian: [README.ru.md](README.ru.md),
+  a step-by-step [setup guide](docs/ru/setup.md) and a
+  [privacy summary](docs/ru/privacy.md).
+- Localized iOS app name and local-network prompt: `ios/Runner/en.lproj/`
+  and `ios/Runner/ru.lproj/InfoPlist.strings` are wired into the Runner
+  target as an `InfoPlist.strings` variant group (`ru` added to the
+  project's known regions), so the launcher name matches the Android one
+  on both platforms. `tool/check_ios_localization.py` checks that wiring
+  without Xcode.
+- In-app language switcher (globe icon on the picker) with the choice
+  persisted in `shared_preferences`; "System default" follows the device
+  again. `LocaleCubit` / `LocaleStorage`, covered by storage, cubit and
+  widget tests.
+- Test suite grown from 44 to 88 cases; line coverage from 28% to 65%.
   `FakeWebOsTv` drives the real LG client over a genuine WebSocket
   (plaintext and TLS), covering registration, the unsigned-manifest retry,
   a denied prompt, certificate pinning and mismatch, the client-key policy
@@ -19,6 +35,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Every CI run prints a coverage summary, with the least-covered files, in
   its GitHub Actions job summary. No external service or token needed;
   `tool/coverage_summary.py` produces the same report locally.
+- Two more brands, both over plain HTTP on the local network.
+  **Roku** (ECP: `POST /keypress/<Key>`, `/launch/<id>`, `/query/device-info`)
+  needs no pairing — only *Control by mobile apps → Network access* switched
+  on. **Sony BRAVIA** (JSON-RPC plus the SOAP `X_SendIRCC` endpoint) needs
+  *IP control* on and the pre-shared key, which the add-by-IP dialog now asks
+  for and the app stores like any other credential. Sony button codes come
+  from the set's own `getRemoteControllerInfo` when it answers, with Sony's
+  documented table (`sony_ircc.dart`) as the fallback — `Info`, `Exit`,
+  `Rewind` and `Forward` are not in that table, so they are dropped rather
+  than guessed at. Both brands are found by SSDP (`roku:ecp`,
+  `urn:schemas-sony-com:service:ScalarWebAPI:1`), both wake from standby
+  through the MAC the device reports, and neither has been tested on real
+  hardware yet. The tests run against fake devices speaking the real
+  protocols over `dart:io` `HttpServer`.
+
+### Fixed
+- The Russian device counter rendered a literal `#` (`Найдено # устройства`):
+  the ARB used the ICU `#` placeholder, which `flutter gen-l10n` keeps as
+  text. The plural cases now interpolate `{count}`, and
+  `test/l10n/localizations_test.dart` fails if any locale leaks `#` or
+  stops showing the number.
 
 ## [0.4.1] - 2026-09-14
 

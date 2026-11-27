@@ -201,6 +201,19 @@ class AppLocalizationsAr extends AppLocalizations {
   String get brandLg => 'LG';
 
   @override
+  String get brandRoku => 'Roku';
+
+  @override
+  String get brandSony => 'Sony';
+
+  @override
+  String get preSharedKey => 'المفتاح المشترك';
+
+  @override
+  String get preSharedKeyHint =>
+      'يُضبط على التلفاز: الإعدادات ← الشبكة ← التحكم عبر IP';
+
+  @override
   String ipLabel(String host) {
     return 'IP: $host';
   }
@@ -240,4 +253,22 @@ class AppLocalizationsAr extends AppLocalizations {
   String connectionFailed(String reason) {
     return 'تعذر الاتصال: $reason';
   }
+
+  @override
+  String get language => 'اللغة';
+
+  @override
+  String get languageSystem => 'حسب النظام';
+
+  @override
+  String get languageEnglish => 'الإنجليزية';
+
+  @override
+  String get languageRussian => 'الروسية';
+
+  @override
+  String get languageSpanish => 'الإسبانية';
+
+  @override
+  String get languageArabic => 'العربية';
 }

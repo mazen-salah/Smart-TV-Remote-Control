@@ -62,6 +62,10 @@
   "brand": "العلامة التجارية",
   "brandSamsung": "Samsung",
   "brandLg": "LG",
+  "brandRoku": "Roku",
+  "brandSony": "Sony",
+  "preSharedKey": "المفتاح المشترك",
+  "preSharedKeyHint": "يُضبط على التلفاز: الإعدادات ← الشبكة ← التحكم عبر IP",
   "ipLabel": "IP: {host}",
   "macLabel": "MAC: {mac}",
   "smartHub": "Smart Hub",
@@ -72,5 +76,11 @@
   "forgetTv": "نسيان هذا التلفزيون",
   "forgetTvConfirm": "هل تريد إزالة {name} واقترانه؟ ستحتاج إلى السماح للتطبيق على التلفزيون مرة أخرى.",
   "forget": "نسيان",
-  "connectionFailed": "تعذر الاتصال: {reason}"
+  "connectionFailed": "تعذر الاتصال: {reason}",
+  "language": "اللغة",
+  "languageSystem": "حسب النظام",
+  "languageEnglish": "الإنجليزية",
+  "languageRussian": "الروسية",
+  "languageSpanish": "الإسبانية",
+  "languageArabic": "العربية"
 }

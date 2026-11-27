@@ -76,6 +76,10 @@
   "brand": "Brand",
   "brandSamsung": "Samsung",
   "brandLg": "LG",
+  "brandRoku": "Roku",
+  "brandSony": "Sony",
+  "preSharedKey": "Pre-shared key",
+  "preSharedKeyHint": "Set on the TV: Settings → Network → IP control",
   "ipLabel": "IP: {host}",
   "macLabel": "MAC: {mac}",
   "smartHub": "Smart hub",
@@ -114,5 +118,11 @@
         "type": "String"
       }
     }
-  }
+  },
+  "language": "Language",
+  "languageSystem": "System default",
+  "languageEnglish": "English",
+  "languageRussian": "Russian",
+  "languageSpanish": "Spanish",
+  "languageArabic": "Arabic"
 }

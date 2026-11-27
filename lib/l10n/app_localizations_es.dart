@@ -200,6 +200,19 @@ class AppLocalizationsEs extends AppLocalizations {
   String get brandLg => 'LG';
 
   @override
+  String get brandRoku => 'Roku';
+
+  @override
+  String get brandSony => 'Sony';
+
+  @override
+  String get preSharedKey => 'Clave precompartida';
+
+  @override
+  String get preSharedKeyHint =>
+      'Se configura en el TV: Ajustes → Red → Control IP';
+
+  @override
   String ipLabel(String host) {
     return 'IP: $host';
   }
@@ -239,4 +252,22 @@ class AppLocalizationsEs extends AppLocalizations {
   String connectionFailed(String reason) {
     return 'No se pudo conectar: $reason';
   }
+
+  @override
+  String get language => 'Idioma';
+
+  @override
+  String get languageSystem => 'Como en el sistema';
+
+  @override
+  String get languageEnglish => 'Inglés';
+
+  @override
+  String get languageRussian => 'Ruso';
+
+  @override
+  String get languageSpanish => 'Español';
+
+  @override
+  String get languageArabic => 'Árabe';
 }

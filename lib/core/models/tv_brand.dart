@@ -3,7 +3,9 @@ import 'package:remote/core/models/tv_device.dart';
 /// TV brands the app has a protocol implementation for.
 enum TvBrand {
   samsung('Samsung'),
-  lg('LG');
+  lg('LG'),
+  roku('Roku'),
+  sony('Sony');
 
   const TvBrand(this.manufacturer);
 
@@ -20,6 +22,16 @@ enum TvBrand {
         manufacturer.contains('webos') ||
         model.contains('webos')) {
       return TvBrand.lg;
+    }
+    if (manufacturer.contains('roku') || model.contains('roku')) {
+      return TvBrand.roku;
+    }
+    if (manufacturer.contains('sony') ||
+        manufacturer.contains('bravia') ||
+        model.contains('bravia') ||
+        model.contains('kdl-') ||
+        model.contains('kd-')) {
+      return TvBrand.sony;
     }
     return TvBrand.samsung;
   }

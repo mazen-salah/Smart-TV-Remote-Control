@@ -62,6 +62,10 @@
   "brand": "Marca",
   "brandSamsung": "Samsung",
   "brandLg": "LG",
+  "brandRoku": "Roku",
+  "brandSony": "Sony",
+  "preSharedKey": "Clave precompartida",
+  "preSharedKeyHint": "Se configura en el TV: Ajustes → Red → Control IP",
   "ipLabel": "IP: {host}",
   "macLabel": "MAC: {mac}",
   "smartHub": "Smart Hub",
@@ -72,5 +76,11 @@
   "forgetTv": "Olvidar este TV",
   "forgetTvConfirm": "¿Quitar {name} y su emparejamiento? Tendrás que permitir la app en el TV de nuevo.",
   "forget": "Olvidar",
-  "connectionFailed": "No se pudo conectar: {reason}"
+  "connectionFailed": "No se pudo conectar: {reason}",
+  "language": "Idioma",
+  "languageSystem": "Como en el sistema",
+  "languageEnglish": "Inglés",
+  "languageRussian": "Ruso",
+  "languageSpanish": "Español",
+  "languageArabic": "Árabe"
 }

@@ -8,6 +8,7 @@ import 'package:remote/l10n/app_localizations.dart';
 import 'package:remote/ui/screens/device_selection/widgets/device_list_item.dart';
 import 'package:remote/ui/screens/device_selection/widgets/manual_ip_dialog.dart';
 import 'package:remote/ui/screens/remote_control/remote_screen.dart';
+import 'package:remote/ui/widgets/language_menu_button.dart';
 
 class DeviceSelectionScreen extends StatefulWidget {
   const DeviceSelectionScreen({super.key});
@@ -80,6 +81,7 @@ class _DeviceSelectionView extends StatelessWidget {
       appBar: AppBar(
         title: Text(l.selectDevice),
         actions: [
+          const LanguageMenuButton(),
           IconButton(
             tooltip: l.addManually,
             icon: const Icon(Icons.add),
@@ -147,6 +149,7 @@ class _DeviceSelectionView extends StatelessWidget {
         host: result.host,
         name: result.name,
         brand: result.brand,
+        preSharedKey: result.preSharedKey,
       ),
     );
   }

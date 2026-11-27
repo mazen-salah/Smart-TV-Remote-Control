@@ -1,0 +1,3 @@
+/* Russian launcher name — same wording as android/app/src/main/res/values-ru/strings.xml. */
+"CFBundleDisplayName" = "Пульт для ТВ";
+"NSLocalNetworkUsageDescription" = "Приложение находит телевизоры в локальной сети и управляет ими.";

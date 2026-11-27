@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
 
+import 'package:flutter/foundation.dart';
 import 'package:remote/constants/key_codes.dart';
 import 'package:remote/core/interfaces/tv_interface.dart';
 import 'package:remote/core/models/disconnection_type.dart';
@@ -10,7 +11,9 @@ import 'package:remote/core/services/known_tvs_storage.dart';
 import 'package:remote/core/services/tv_token_storage.dart';
 import 'package:remote/core/services/wake_on_lan_service.dart';
 import 'package:remote/implementations/lg_tv.dart';
+import 'package:remote/implementations/roku_tv.dart';
 import 'package:remote/implementations/samsung_tv.dart';
+import 'package:remote/implementations/sony_tv.dart';
 import 'package:remote/services/mdns/bonjour_discovery_service.dart';
 import 'package:remote/services/upnp/ssdp_discovery_service.dart';
 
@@ -39,6 +42,11 @@ class TvRepository {
   final WakeOnLanService _wol;
   final SsdpDiscoveryService _ssdp;
   final BonjourDiscoveryService _bonjour;
+
+  /// What is kept for a TV under its identifier: the pairing token, the
+  /// pinned certificate (LG) and the pre-shared key (Sony). They share the
+  /// identifier and its prefixes, so they move together.
+  static const List<String> _credentialPrefixes = ['', 'cert:', 'psk:'];
 
   TVInterface? _current;
   TVDevice? _currentDevice;
@@ -106,6 +114,10 @@ class TvRepository {
     void onDisconnect(DisconnectionType type) => onDisconnected?.call(type);
 
     final TVInterface tv;
+    // A Sony key is only worth keeping once the set has accepted it: a typo
+    // must not overwrite the key that used to work.
+    String? acceptedPskKey;
+    String? acceptedPsk;
     switch (brand) {
       case TvBrand.samsung:
         final samsung = SamsungTV(
@@ -148,9 +160,48 @@ class TvRepository {
           });
         }
         tv = lg;
+      case TvBrand.sony:
+        final host = device.host;
+        if (host == null || host.isEmpty) {
+          throw ArgumentError('Sony TVs need an IP address to connect');
+        }
+        // The pre-shared key comes from the add-by-IP dialog; it is stored
+        // like the other brands' credentials once it has worked.
+        final pskKey = tokenKey != null ? 'psk:$tokenKey' : null;
+        final psk =
+            device.additionalInfo['sonyPsk'] as String? ??
+            (pskKey != null ? _tokenStorage.load(pskKey) : null);
+        final sony = SonyTV(
+          host: host,
+          mac: device.mac,
+          deviceName: device.deviceName,
+          modelName: device.modelName,
+          preSharedKey: psk,
+        )..setOnDisconnectedCallback(onDisconnect);
+        if (pskKey != null && psk != null && psk.isNotEmpty) {
+          acceptedPskKey = pskKey;
+          acceptedPsk = psk;
+        }
+        tv = sony;
+      case TvBrand.roku:
+        final host = device.host;
+        if (host == null || host.isEmpty) {
+          throw ArgumentError('Roku devices need an IP address to connect');
+        }
+        // ECP needs no pairing: there is nothing to store or send back.
+        tv = RokuTV(
+          host: host,
+          mac: device.mac,
+          deviceName: device.deviceName,
+          modelName: device.modelName,
+        )..setOnDisconnectedCallback(onDisconnect);
     }
 
     await tv.connect();
+
+    if (acceptedPskKey != null) {
+      await _tokenStorage.save(acceptedPskKey, acceptedPsk!);
+    }
 
     // The HTTP info response may have surfaced a MAC the user didn't have.
     final resolved = device.copyWith(
@@ -159,18 +210,13 @@ class TvRepository {
     );
 
     // The device is keyed by MAC once one is known. If we paired under the
-    // host-only key, carry the token over so the next connect doesn't prompt.
+    // host-only key, carry its credentials over so the next connect does not
+    // prompt again.
     final resolvedIdentifier = _identifierFor(resolved);
-    if (tokenKey != null &&
+    if (identifier != null &&
         resolvedIdentifier != null &&
         resolvedIdentifier != identifier) {
-      final token = _tokenStorage.load(tokenKey);
-      if (token != null) {
-        await _tokenStorage.save(
-          _tokenKeyFor(brand, resolvedIdentifier),
-          token,
-        );
-      }
+      await carryCredentials(brand, identifier, resolvedIdentifier);
     }
 
     _current = tv;
@@ -217,8 +263,11 @@ class TvRepository {
     for (final identifier in aliases) {
       for (final brand in TvBrand.values) {
         final key = _tokenKeyFor(brand, identifier);
-        await _tokenStorage.clear(key);
-        await _tokenStorage.clear('cert:$key');
+        // Roku stores nothing, so there is nothing to clear for it.
+        if (key == null) continue;
+        for (final prefix in _credentialPrefixes) {
+          await _tokenStorage.clear('$prefix$key');
+        }
       }
     }
     await _knownTvsStorage.remove(device);
@@ -244,11 +293,29 @@ class TvRepository {
   TVDevice? lastUsed() => _knownTvsStorage.loadLastUsed();
 
   /// Samsung tokens keep the bare identifier so existing installs keep
-  /// their pairing; other brands are namespaced.
-  String _tokenKeyFor(TvBrand brand, String identifier) => switch (brand) {
+  /// their pairing; other brands are namespaced. Roku has no credentials to
+  /// store at all, so it has no key either.
+  String? _tokenKeyFor(TvBrand brand, String identifier) => switch (brand) {
     TvBrand.samsung => identifier,
     TvBrand.lg => 'lg:$identifier',
+    TvBrand.roku => null,
+    TvBrand.sony => 'sony:$identifier',
   };
+
+  /// Moves everything stored for a TV from the identifier it was paired under
+  /// to the one it is known by now — a host-only entry gains a MAC as soon as
+  /// the TV answers, and the credentials have to move with it.
+  @visibleForTesting
+  Future<void> carryCredentials(TvBrand brand, String from, String to) async {
+    final oldKey = _tokenKeyFor(brand, from);
+    final newKey = _tokenKeyFor(brand, to);
+    if (oldKey == null || newKey == null || oldKey == newKey) return;
+    for (final prefix in _credentialPrefixes) {
+      final value = _tokenStorage.load('$prefix$oldKey');
+      if (value == null || value.isEmpty) continue;
+      await _tokenStorage.save('$prefix$newKey', value);
+    }
+  }
 
   String? _identifierFor(TVDevice device) {
     final mac = device.mac;

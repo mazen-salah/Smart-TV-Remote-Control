@@ -8,6 +8,7 @@ import 'package:intl/intl.dart' as intl;
 import 'app_localizations_ar.dart';
 import 'app_localizations_en.dart';
 import 'app_localizations_es.dart';
+import 'app_localizations_ru.dart';
 
 // ignore_for_file: type=lint
 
@@ -98,6 +99,7 @@ abstract class AppLocalizations {
     Locale('ar'),
     Locale('en'),
     Locale('es'),
+    Locale('ru'),
   ];
 
   /// No description provided for @appTitle.
@@ -472,6 +474,30 @@ abstract class AppLocalizations {
   /// **'LG'**
   String get brandLg;
 
+  /// No description provided for @brandRoku.
+  ///
+  /// In en, this message translates to:
+  /// **'Roku'**
+  String get brandRoku;
+
+  /// No description provided for @brandSony.
+  ///
+  /// In en, this message translates to:
+  /// **'Sony'**
+  String get brandSony;
+
+  /// No description provided for @preSharedKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Pre-shared key'**
+  String get preSharedKey;
+
+  /// No description provided for @preSharedKeyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Set on the TV: Settings → Network → IP control'**
+  String get preSharedKeyHint;
+
   /// No description provided for @ipLabel.
   ///
   /// In en, this message translates to:
@@ -537,6 +563,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Could not connect: {reason}'**
   String connectionFailed(String reason);
+
+  /// No description provided for @language.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get language;
+
+  /// No description provided for @languageSystem.
+  ///
+  /// In en, this message translates to:
+  /// **'System default'**
+  String get languageSystem;
+
+  /// No description provided for @languageEnglish.
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get languageEnglish;
+
+  /// No description provided for @languageRussian.
+  ///
+  /// In en, this message translates to:
+  /// **'Russian'**
+  String get languageRussian;
+
+  /// No description provided for @languageSpanish.
+  ///
+  /// In en, this message translates to:
+  /// **'Spanish'**
+  String get languageSpanish;
+
+  /// No description provided for @languageArabic.
+  ///
+  /// In en, this message translates to:
+  /// **'Arabic'**
+  String get languageArabic;
 }
 
 class _AppLocalizationsDelegate
@@ -550,7 +612,7 @@ class _AppLocalizationsDelegate
 
   @override
   bool isSupported(Locale locale) =>
-      <String>['ar', 'en', 'es'].contains(locale.languageCode);
+      <String>['ar', 'en', 'es', 'ru'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -565,6 +627,8 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
       return AppLocalizationsEn();
     case 'es':
       return AppLocalizationsEs();
+    case 'ru':
+      return AppLocalizationsRu();
   }
 
   throw FlutterError(

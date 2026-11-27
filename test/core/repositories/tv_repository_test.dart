@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:remote/core/models/tv_brand.dart';
 import 'package:remote/core/models/tv_device.dart';
 import 'package:remote/core/repositories/tv_repository.dart';
 import 'package:remote/core/services/known_tvs_storage.dart';
@@ -88,9 +89,11 @@ void main() {
       // A Samsung token saved before the MAC was known, and one after.
       await tokens.save('10.0.0.5', 'host-token');
       await tokens.save('AA:BB:CC', 'mac-token');
-      // LG keys and pinned certificates use their own prefixes.
+      // LG keys and pinned certificates use their own prefixes, and a Sony
+      // pre-shared key lives under a third one.
       await tokens.save('lg:10.0.0.5', 'host-key');
       await tokens.save('cert:lg:AA:BB:CC', 'a' * 64);
+      await tokens.save('psk:sony:10.0.0.5', 'bravia-psk');
       await knownTvs.save(device);
       await knownTvs.saveLastUsed(device);
 
@@ -100,6 +103,7 @@ void main() {
       expect(tokens.load('AA:BB:CC'), isNull);
       expect(tokens.load('lg:10.0.0.5'), isNull);
       expect(tokens.load('cert:lg:AA:BB:CC'), isNull);
+      expect(tokens.load('psk:sony:10.0.0.5'), isNull);
       expect(knownTvs.loadAll(), isEmpty);
       expect(knownTvs.loadLastUsed(), isNull);
     });
@@ -113,6 +117,38 @@ void main() {
 
       expect(tokens.load('DD:EE:FF'), 'keep-me');
       expect(knownTvs.loadAll(), hasLength(1));
+    });
+  });
+
+  group('carryCredentials', () {
+    test('moves every credential to the identifier the TV has now', () async {
+      // A Sony added by IP: the key is stored under the host until the set
+      // reports its MAC, and then it has to follow the device.
+      await tokens.save('sony:10.0.0.5', 'samsung-style-token');
+      await tokens.save('cert:sony:10.0.0.5', 'b' * 64);
+      await tokens.save('psk:sony:10.0.0.5', 'bravia-psk');
+
+      await repository.carryCredentials(
+        TvBrand.sony,
+        '10.0.0.5',
+        'AA:BB:CC:DD:EE:FF',
+      );
+
+      expect(tokens.load('sony:AA:BB:CC:DD:EE:FF'), 'samsung-style-token');
+      expect(tokens.load('cert:sony:AA:BB:CC:DD:EE:FF'), 'b' * 64);
+      expect(tokens.load('psk:sony:AA:BB:CC:DD:EE:FF'), 'bravia-psk');
+    });
+
+    test('has nothing to carry for a Roku', () async {
+      await tokens.save('psk:roku:10.0.0.5', 'unused');
+
+      await repository.carryCredentials(
+        TvBrand.roku,
+        '10.0.0.5',
+        'AA:BB:CC:DD:EE:FF',
+      );
+
+      expect(tokens.load('psk:roku:AA:BB:CC:DD:EE:FF'), isNull);
     });
   });
 
@@ -139,6 +175,18 @@ void main() {
       await expectLater(repository.connect(unreachable), throwsA(anything));
 
       verify(() => wol.wake(mac: 'AA:BB:CC:DD:EE:FF')).called(1);
+    }, timeout: const Timeout(Duration(seconds: 60)));
+
+    test('does not store a pre-shared key the TV never accepted', () async {
+      final sony = TVDevice(
+        host: '203.0.113.3',
+        manufacturer: 'Sony',
+        additionalInfo: {'sonyPsk': 'typo'},
+      );
+
+      await expectLater(repository.connect(sony), throwsA(anything));
+
+      expect(tokens.load('psk:sony:203.0.113.3'), isNull);
     }, timeout: const Timeout(Duration(seconds: 60)));
 
     test('does not send a magic packet when no MAC is known', () async {

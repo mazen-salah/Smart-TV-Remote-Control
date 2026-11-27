@@ -25,6 +25,30 @@ void main() {
       );
     });
 
+    test('recognises Roku ECP responders', () {
+      expect(
+        ssdpBrandFor(
+          server: 'Roku/9.4 UPnP/1.0 Roku/9.4',
+          st: 'roku:ecp',
+          usn: 'uuid:roku:ecp:P0A070000007',
+        ),
+        TvBrand.roku,
+      );
+      expect(ssdpBrandFor(st: 'roku:ecp'), TvBrand.roku);
+    });
+
+    test('recognises Bravia ScalarWebAPI responders', () {
+      expect(
+        ssdpBrandFor(
+          server: 'Linux/4.9 UPnP/1.0 Sony-Bravia/1.0',
+          st: 'urn:schemas-sony-com:service:ScalarWebAPI:1',
+          usn:
+              'uuid:00000000-0000-1010-8000-104FA8F9A04C::urn:schemas-sony-com:service:ScalarWebAPI:1',
+        ),
+        TvBrand.sony,
+      );
+    });
+
     test('drops routers and printers', () {
       expect(
         ssdpBrandFor(

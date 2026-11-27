@@ -5,6 +5,16 @@ final RegExp _samsungServer = RegExp(
   caseSensitive: false,
 );
 
+/// Roku devices answer `M-SEARCH` for `roku:ecp` and name themselves in the
+/// server header, e.g. `Roku/9.4 UPnP/1.0 Roku/9.4`.
+final RegExp _rokuServer = RegExp('Roku', caseSensitive: false);
+
+/// Bravia sets answer for Sony's ScalarWebAPI service.
+final RegExp _sonyIds = RegExp(
+  'schemas-sony-com|scalarwebapi',
+  caseSensitive: false,
+);
+
 /// Classifies an SSDP responder from its headers, before fetching the device
 /// description, so printers and routers are skipped without an HTTP round
 /// trip. Returns `null` for anything that is not a supported TV.
@@ -18,6 +28,12 @@ TvBrand? ssdpBrandFor({String? server, String? st, String? usn}) {
       ids.contains('webos') ||
       ids.contains('lg electronics')) {
     return TvBrand.lg;
+  }
+  if (ids.contains('roku:ecp') || _rokuServer.hasMatch(server0)) {
+    return TvBrand.roku;
+  }
+  if (_sonyIds.hasMatch(ids)) {
+    return TvBrand.sony;
   }
   return null;
 }

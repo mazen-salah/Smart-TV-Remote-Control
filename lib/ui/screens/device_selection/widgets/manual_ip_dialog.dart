@@ -2,7 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:remote/core/models/tv_brand.dart';
 import 'package:remote/l10n/app_localizations.dart';
 
-typedef ManualIpResult = ({String host, String? name, TvBrand brand});
+typedef ManualIpResult = ({
+  String host,
+  String? name,
+  TvBrand brand,
+  String? preSharedKey,
+});
 
 class ManualIpDialog extends StatefulWidget {
   const ManualIpDialog({super.key});
@@ -22,12 +27,14 @@ class _ManualIpDialogState extends State<ManualIpDialog> {
   final _formKey = GlobalKey<FormState>();
   final _ipController = TextEditingController();
   final _nameController = TextEditingController();
+  final _pskController = TextEditingController();
   TvBrand _brand = TvBrand.samsung;
 
   @override
   void dispose() {
     _ipController.dispose();
     _nameController.dispose();
+    _pskController.dispose();
     super.dispose();
   }
 
@@ -48,9 +55,14 @@ class _ManualIpDialogState extends State<ManualIpDialog> {
     if (!_formKey.currentState!.validate()) return;
     final host = _ipController.text.trim();
     final name = _nameController.text.trim();
-    Navigator.of(
-      context,
-    ).pop((host: host, name: name.isEmpty ? null : name, brand: _brand));
+    // Only a Bravia needs a pre-shared key; the other brands pair themselves.
+    final psk = _brand == TvBrand.sony ? _pskController.text.trim() : '';
+    Navigator.of(context).pop((
+      host: host,
+      name: name.isEmpty ? null : name,
+      brand: _brand,
+      preSharedKey: psk.isEmpty ? null : psk,
+    ));
   }
 
   @override
@@ -70,6 +82,8 @@ class _ManualIpDialogState extends State<ManualIpDialog> {
                   label: Text(l.brandSamsung),
                 ),
                 ButtonSegment(value: TvBrand.lg, label: Text(l.brandLg)),
+                ButtonSegment(value: TvBrand.roku, label: Text(l.brandRoku)),
+                ButtonSegment(value: TvBrand.sony, label: Text(l.brandSony)),
               ],
               selected: {_brand},
               onSelectionChanged: (selection) =>
@@ -86,6 +100,16 @@ class _ManualIpDialogState extends State<ManualIpDialog> {
               ),
               validator: _validateIp,
             ),
+            if (_brand == TvBrand.sony) ...[
+              const SizedBox(height: 12),
+              TextFormField(
+                controller: _pskController,
+                decoration: InputDecoration(
+                  labelText: l.preSharedKey,
+                  hintText: l.preSharedKeyHint,
+                ),
+              ),
+            ],
             const SizedBox(height: 12),
             TextFormField(
               controller: _nameController,

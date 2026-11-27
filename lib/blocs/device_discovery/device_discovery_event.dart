@@ -22,13 +22,17 @@ final class ManualDeviceAdded extends DeviceDiscoveryEvent {
     required this.host,
     this.name,
     this.brand = TvBrand.samsung,
+    this.preSharedKey,
   });
   final String host;
   final String? name;
   final TvBrand brand;
 
+  /// Sony only; other brands pair themselves.
+  final String? preSharedKey;
+
   @override
-  List<Object?> get props => [host, name, brand];
+  List<Object?> get props => [host, name, brand, preSharedKey];
 }
 
 /// The user removed [device] from the picker (and its pairing).

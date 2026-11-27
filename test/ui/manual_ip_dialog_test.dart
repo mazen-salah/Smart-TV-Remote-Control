@@ -88,4 +88,50 @@ void main() {
     expect(result?.brand, TvBrand.lg);
     expect(result?.name, isNull);
   });
+
+  testWidgets('asks for a pre-shared key only for Sony', (tester) async {
+    await openDialog(tester);
+
+    expect(find.text('Pre-shared key'), findsNothing);
+
+    await tester.tap(find.text('Sony'));
+    await tester.pumpAndSettle();
+    expect(find.text('Pre-shared key'), findsOneWidget);
+
+    await tester.enterText(find.byType(TextFormField).first, '192.168.1.90');
+    await tester.enterText(find.byType(TextFormField).at(1), 'my-psk');
+    await tester.tap(find.text('Add'));
+    await tester.pumpAndSettle();
+
+    expect(result?.brand, TvBrand.sony);
+    expect(result?.preSharedKey, 'my-psk');
+  });
+
+  testWidgets('leaves the key out when the Sony field is empty', (
+    tester,
+  ) async {
+    await openDialog(tester);
+
+    await tester.tap(find.text('Sony'));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextFormField).first, '192.168.1.90');
+    await tester.tap(find.text('Add'));
+    await tester.pumpAndSettle();
+
+    expect(result?.brand, TvBrand.sony);
+    expect(result?.preSharedKey, isNull);
+  });
+
+  testWidgets('never sends the key field for other brands', (tester) async {
+    await openDialog(tester);
+
+    await tester.enterText(find.byType(TextFormField).first, '192.168.1.57');
+    await tester.tap(find.text('Roku'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Add'));
+    await tester.pumpAndSettle();
+
+    expect(result?.brand, TvBrand.roku);
+    expect(result?.preSharedKey, isNull);
+  });
 }
